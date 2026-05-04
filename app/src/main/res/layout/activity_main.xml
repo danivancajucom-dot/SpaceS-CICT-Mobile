@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <!-- TOP + CONTENT -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Top Background -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="#EAC6A7"/>
+
+        <!-- Card -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:background="@drawable/rounded_top"
+            android:padding="24dp">
+
+            <!-- spacing for logo overlap -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="48dp" />
+
+            <!-- Title -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Welcome Back"
+                android:gravity="center"
+                android:textSize="26sp"
+                android:textStyle="bold"
+                android:textColor="#1A1A1A"
+                android:layout_marginBottom="8dp"/>
+
+            <!-- Subtitle -->
+
+            <!-- Email -->
+            <TextView
+                android:layout_width="258dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:text="View your schedules, request room reservations, and receive updates."
+                android:textColor="#6B7280"
+                android:textSize="14sp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="University ID / Email"
+                android:textStyle="bold"
+                android:textColor="#374151"
+                android:layout_marginBottom="8dp"/>
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:hint="Enter your ID / Email"
+                android:background="@drawable/input_bg"
+                android:padding="16dp"/>
+
+            <!-- Password -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Password"
+                android:textStyle="bold"
+                android:textColor="#374151"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="8dp"/>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="55dp">
+
+                <!-- EditText -->
+                <EditText
+                    android:id="@+id/passwordInput"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:hint="Enter your password"
+                    android:inputType="textPassword"
+                    android:background="@drawable/input_bg"
+                    android:paddingStart="16dp"
+                    android:paddingEnd="50dp"/> <!-- space for icon -->
+
+                <!-- Eye Icon -->
+                <ImageView
+                    android:id="@+id/togglePassword"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_eye"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="16dp"/>
+
+            </FrameLayout>
+
+            <!-- Forgot -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Forgot Password?"
+                android:textColor="#F97316"
+                android:layout_gravity="end"
+                android:layout_marginTop="8dp"/>
+
+            <!-- Button -->
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:text="Login"
+                android:id="@+id/loginButton"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:backgroundTint="#F97316"
+                android:layout_marginTop="24dp"/>
+
+            <!-- Terms -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="By logging in, you agree to our Terms of Service and Privacy Policy"
+                android:textSize="12sp"
+                android:textColor="#9CA3AF"
+                android:gravity="center"
+                android:layout_marginTop="16dp"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- FLOATING LOGO (OVERLAY) -->
+    <LinearLayout
+        android:layout_width="140dp"
+        android:layout_height="140dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/circle_orange"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="110dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SpaceS CICT Logo"
+            android:textStyle="bold"
+            android:textColor="#1A1A1A"/>
+
+    </LinearLayout>
+
+</FrameLayout>
