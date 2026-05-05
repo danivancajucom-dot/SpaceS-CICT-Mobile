@@ -242,6 +242,7 @@
 
             <!-- BUTTON -->
             <Button
+                android:id="@+id/reserveButton"
                 android:layout_width="236dp"
                 android:layout_height="60dp"
                 android:layout_gravity="center"

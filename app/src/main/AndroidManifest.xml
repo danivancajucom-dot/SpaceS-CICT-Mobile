@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SpaceSCICT">
         <activity
+            android:name=".ReservationActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity_reservation"
+            android:exported="false" />
+        <activity
             android:name=".ScheduleActivity"
             android:exported="false" />
         <activity

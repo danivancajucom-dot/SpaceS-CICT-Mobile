@@ -2,6 +2,7 @@ package com.example.spacescict;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Button;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,6 +20,14 @@ public class DashboardActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_dashboard);
         BottomNavigationView bottomNav = findViewById(R.id.bottomNav);
+        Button reserveButton = findViewById(R.id.reserveButton);
+
+        reserveButton.setOnClickListener(v -> {
+            Intent intent = new Intent(DashboardActivity.this, ReservationActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
 
         bottomNav.setOnItemSelectedListener(item -> {
 
