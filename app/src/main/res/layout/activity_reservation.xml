@@ -18,6 +18,7 @@
             android:id="@+id/backBtn"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:src="@drawable/ic_back"
             android:layout_centerVertical="true"/>
 
         <!-- TITLE -->
@@ -231,6 +232,7 @@
                 <TextView
                     android:text="Available Room Slots"
                     android:textStyle="bold"
+                    android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"/>
@@ -240,7 +242,8 @@
                     android:layout_width="120dp"
                     android:layout_height="48dp"
                     android:gravity="center"
-                    android:background="@drawable/button_orange"/>
+                    android:backgroundTint="#F97316" />
+
             </LinearLayout>
 
             <!-- ROOM GRID -->

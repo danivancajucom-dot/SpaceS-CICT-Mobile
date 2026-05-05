@@ -2,12 +2,15 @@ package com.example.spacescict;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.GridLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ public class ReservationActivity extends AppCompatActivity {
     Spinner purposeSpinner, attendeesSpinner, floorSpinner;
     LinearLayout attendeesLayout;
     GridLayout roomGrid;
+    ImageView backButton = findViewById(R.id.backBtn);
 
     Map<String, String[]> rooms = new HashMap<>();
 
@@ -48,6 +52,12 @@ public class ReservationActivity extends AppCompatActivity {
         setupSpinners();
         setupPickers();
         setupRooms();
+
+        backButton.setOnClickListener(v -> {
+            Intent intent = new Intent(ReservationActivity.this, DashboardActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
 
     // ================= DATE + TIME =================
