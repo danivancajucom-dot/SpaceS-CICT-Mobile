@@ -30,13 +30,14 @@
             android:gravity="center"
             android:textSize="18sp"
             android:textColor="#111827"
-            android:layout_centerInParent="true"/>
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/lexend_bold"/>
     </RelativeLayout>
 
     <!-- ================= CONTENT ================= -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content">
 
         <LinearLayout
             android:padding="20dp"
@@ -51,7 +52,8 @@
                 android:textSize="14sp"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"/>
+                android:layout_marginBottom="20dp"
+                android:fontFamily="@font/lexend_regular"/>
 
             <!-- COURSE -->
             <TextView
@@ -59,7 +61,8 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:textColor="#111827"/>
+                android:textColor="#111827"
+                android:fontFamily="@font/lexend_bold"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -73,10 +76,11 @@
                     android:layout_width="0dp"
                     android:layout_weight="1"
                     android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
                     android:padding="16dp"
                     android:hint="Enter course title"
-                    android:textColor="#111827"/>
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:fontFamily="@font/lexend_regular"/>
 
                 <ImageView
                     android:layout_width="55dp"
@@ -92,7 +96,9 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:textColor="#111827"
+                android:fontFamily="@font/lexend_bold"/>
 
             <LinearLayout
                 android:id="@+id/datePicker"
@@ -110,14 +116,16 @@
                     android:gravity="center_vertical"
                     android:padding="16dp"
                     android:text="Select Date"
-                    android:textColor="#111827"/>
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:fontFamily="@font/lexend_regular"/>
 
                 <ImageView
                     android:layout_width="55dp"
                     android:layout_height="match_parent"
                     android:background="@drawable/input_icon_bg"
                     android:padding="12dp"
-                    android:src="@drawable/ic_calendar"/>
+                    android:src="@drawable/ic_calendar" />
             </LinearLayout>
 
             <!-- START TIME -->
@@ -126,7 +134,9 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:textColor="#111827"
+                android:fontFamily="@font/lexend_bold"/>
 
             <LinearLayout
                 android:id="@+id/startTime"
@@ -143,7 +153,10 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:padding="16dp"
-                    android:text="Select Start Time"/>
+                    android:text="Select Start Time"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:fontFamily="@font/lexend_regular"/>
 
                 <ImageView
                     android:layout_width="55dp"
@@ -159,7 +172,9 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="16dp"/>
+                android:layout_marginTop="16dp"
+                android:textColor="#111827"
+                android:fontFamily="@font/lexend_bold"/>
 
             <LinearLayout
                 android:id="@+id/endTime"
@@ -176,7 +191,10 @@
                     android:layout_height="match_parent"
                     android:gravity="center_vertical"
                     android:padding="16dp"
-                    android:text="Select End Time"/>
+                    android:text="Select End Time"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:fontFamily="@font/lexend_regular"/>
 
                 <ImageView
                     android:layout_width="55dp"
@@ -192,13 +210,16 @@
                 android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:layout_marginTop="20dp"/>
+                android:layout_marginTop="20dp"
+                android:textColor="#111827"
+                android:fontFamily="@font/lexend_bold"/>
 
             <Spinner
                 android:id="@+id/purposeSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/input_bg"/>
+                android:background="@drawable/input_bg"
+                android:fontFamily="@font/lexend_regular"/>
 
             <!-- ATTENDEES -->
             <LinearLayout
@@ -213,13 +234,18 @@
                     android:textStyle="bold"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"/>
+                    android:layout_marginTop="16dp"
+                    android:textColor="#111827"
+                    android:fontFamily="@font/lexend_bold"/>
 
                 <Spinner
                     android:id="@+id/attendeesSpinner"
                     android:layout_width="match_parent"
                     android:layout_height="55dp"
-                    android:background="@drawable/input_bg"/>
+                    android:background="@drawable/input_bg"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:fontFamily="@font/lexend_regular"/>
             </LinearLayout>
 
             <!-- ROOM HEADER -->
@@ -235,14 +261,19 @@
                     android:gravity="center"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:layout_weight="1"/>
+                    android:layout_weight="1"
+                    android:textColor="#111827"
+                    android:fontFamily="@font/lexend_bold"/>
 
                 <Spinner
                     android:id="@+id/floorSpinner"
                     android:layout_width="120dp"
                     android:layout_height="48dp"
                     android:gravity="center"
-                    android:backgroundTint="#F97316" />
+                    android:backgroundTint="#F97316"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
+                    android:fontFamily="@font/lexend_regular"/>
 
             </LinearLayout>
 
@@ -264,7 +295,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:backgroundTint="#F97316"
-                android:layout_marginTop="24dp"/>
+                android:layout_marginTop="24dp"
+                android:fontFamily="@font/lexend_bold"/>
 
         </LinearLayout>
     </ScrollView>

@@ -1,5 +1,6 @@
 package com.example.spacescict;
 
+
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -21,9 +22,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
 
 public class ReservationActivity extends AppCompatActivity {
 
@@ -31,7 +34,8 @@ public class ReservationActivity extends AppCompatActivity {
     Spinner purposeSpinner, attendeesSpinner, floorSpinner;
     LinearLayout attendeesLayout;
     GridLayout roomGrid;
-    ImageView backButton = findViewById(R.id.backBtn);
+
+
 
     Map<String, String[]> rooms = new HashMap<>();
 
@@ -40,31 +44,60 @@ public class ReservationActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reservation);
 
-        datePicker = findViewById(R.id.dateText);
-        startTime = findViewById(R.id.startText);
-        endTime = findViewById(R.id.endText);
-        purposeSpinner = findViewById(R.id.purposeSpinner);
-        attendeesSpinner = findViewById(R.id.attendeesSpinner);
-        attendeesLayout = findViewById(R.id.attendeesLayout);
-        floorSpinner = findViewById(R.id.floorSpinner);
-        roomGrid = findViewById(R.id.roomGrid);
+        try {
+            ImageView backButton = findViewById(R.id.backBtn);
 
-        setupSpinners();
-        setupPickers();
-        setupRooms();
+            datePicker = findViewById(R.id.dateText);
+            startTime = findViewById(R.id.startText);
+            endTime = findViewById(R.id.endText);
 
-        backButton.setOnClickListener(v -> {
-            Intent intent = new Intent(ReservationActivity.this, DashboardActivity.class);
-            startActivity(intent);
-            finish();
-        });
+            purposeSpinner = findViewById(R.id.purposeSpinner);
+            attendeesSpinner = findViewById(R.id.attendeesSpinner);
+            floorSpinner = findViewById(R.id.floorSpinner);
+
+            attendeesLayout = findViewById(R.id.attendeesLayout);
+            roomGrid = findViewById(R.id.roomGrid);
+
+            Button submit = findViewById(R.id.submitBtn);
+
+            if (datePicker == null || startTime == null || endTime == null) {
+                throw new RuntimeException("Missing ID in XML layout");
+            }
+
+            setupSpinners();
+            setupPickers();
+            setupRooms();
+
+            backButton.setOnClickListener(v -> {
+                Intent intent = new Intent(ReservationActivity.this, DashboardActivity.class);
+                startActivity(intent);
+                finish();
+            });
+            submit.setOnClickListener(v -> {
+                ConfirmDialog.show(
+                        this,
+                        "Confirmation",
+                        " Are you sure you want to reserve?",
+                        "Confirm",
+                        "Cancel",
+                        () -> {
+                            finish();
+                        }
+                );
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     // ================= DATE + TIME =================
     void setupPickers() {
 
+
         datePicker.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
+
 
             DatePickerDialog dp = new DatePickerDialog(this,
                     (view, year, month, day) -> {
@@ -75,13 +108,16 @@ public class ReservationActivity extends AppCompatActivity {
                     c.get(Calendar.DAY_OF_MONTH)
             );
 
+
             dp.getDatePicker().setMinDate(System.currentTimeMillis()); // 🔥 no past
             dp.show();
         });
 
+
         startTime.setOnClickListener(v -> showTime(startTime));
         endTime.setOnClickListener(v -> showTime(endTime));
     }
+
 
     void showTime(TextView target) {
         TimePickerDialog tp = new TimePickerDialog(this,
@@ -91,8 +127,10 @@ public class ReservationActivity extends AppCompatActivity {
         tp.show();
     }
 
+
     // ================= SPINNERS =================
     void setupSpinners() {
+
 
         // PURPOSE
         ArrayAdapter<String> purposeAdapter = new ArrayAdapter<>(
@@ -101,9 +139,11 @@ public class ReservationActivity extends AppCompatActivity {
         );
         purposeSpinner.setAdapter(purposeAdapter);
 
+
         purposeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String selected = parent.getItemAtPosition(pos).toString();
+
 
                 if (selected.equals("Lecture")) {
                     attendeesLayout.setVisibility(View.VISIBLE);
@@ -114,17 +154,20 @@ public class ReservationActivity extends AppCompatActivity {
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
+
         // ATTENDEES
         attendeesSpinner.setAdapter(new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"10-30", "30-50", "50-70"}
         ));
 
+
         // FLOOR
         floorSpinner.setAdapter(new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"1st Floor", "3rd Floor", "4th Floor"}
         ));
+
 
         floorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -134,6 +177,7 @@ public class ReservationActivity extends AppCompatActivity {
         });
     }
 
+
     // ================= ROOMS =================
     void setupRooms() {
         rooms.put("1st Floor", new String[]{"A1","A2","A3","A4","IT13","IT14"});
@@ -141,11 +185,15 @@ public class ReservationActivity extends AppCompatActivity {
         rooms.put("4th Floor", new String[]{"CT6","CT7","CT8","ACAD1","AVR","CISCO LAB1","CISCO LAB2"});
     }
 
+
     void loadRooms(String floor) {
+
 
         roomGrid.removeAllViews();
 
+
         for (String room : rooms.get(floor)) {
+
 
             TextView btn = new TextView(this);
             btn.setText(room);
@@ -153,17 +201,21 @@ public class ReservationActivity extends AppCompatActivity {
             btn.setBackgroundResource(R.drawable.room_available);
             btn.setGravity(Gravity.CENTER);
 
+
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.setMargins(10,10,10,10);
             params.width = 0;
             params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
 
+
             btn.setLayoutParams(params);
+
 
             btn.setOnClickListener(v -> {
                 // highlight selection
                 btn.setBackgroundResource(R.drawable.room_selected);
             });
+
 
             roomGrid.addView(btn);
         }

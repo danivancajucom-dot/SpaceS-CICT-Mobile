@@ -1,0 +1,5 @@
+<!-- status_denied.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FEE2E2"/>
+    <corners android:radius="50dp"/>
+</shape>

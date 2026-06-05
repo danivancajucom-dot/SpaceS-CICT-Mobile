@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#F5F5F5">
+
+        <!-- TITLE -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Reservation Status"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#111827"
+            android:layout_marginStart="32dp"
+            android:fontFamily="@font/lexend_bold"/>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <!-- FILTERS -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="All"
+                android:textColor="#F97316"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:paddingBottom="14dp"
+                android:layout_marginEnd="50dp"
+                android:background="@drawable/filter_active"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pending"
+                android:textColor="#64748B"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="50dp"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Approved"
+                android:textColor="#64748B"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:layout_marginEnd="50dp"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Denied"
+                android:textColor="#64748B"
+                android:textSize="17sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold"/>
+        </LinearLayout>
+        </HorizontalScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingHorizontal="20dp"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#D6DCE5"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="10dp"/>
+
+        <!-- RECYCLER -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/reservationRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"/>
+
+    </LinearLayout>
+
+    <!-- FLOATING BUTTON -->
+    <FrameLayout
+        android:layout_width="86dp"
+        android:layout_height="86dp"
+        android:layout_above="@id/bottomNav"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/fab_bg"
+        android:elevation="8dp"
+        android:layout_gravity="end">
+
+        <ImageView
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_add"/>
+    </FrameLayout>
+
+</LinearLayout>

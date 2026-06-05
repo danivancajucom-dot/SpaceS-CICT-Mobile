@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:cardBackgroundColor="#FFF8F2"
+    app:strokeWidth="1dp"
+    app:strokeColor="#F2E3D5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="18dp">
+
+        <!-- ICON -->
+        <LinearLayout
+            android:id="@+id/iconContainer"
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:background="@drawable/notification_orange_bg"
+            android:gravity="center">
+
+            <ImageView
+                android:id="@+id/iconImage"
+                android:layout_width="34dp"
+                android:layout_height="34dp"
+                android:src="@drawable/ic_calendar"/>
+        </LinearLayout>
+
+        <!-- CONTENT -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="18dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- TOP -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical">
+
+                <TextView
+                    android:id="@+id/titleText"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Schedule Changed:
+Gender and Society"
+                    android:textColor="#0F172A"
+                    android:textSize="17sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/lexend_bold"/>
+
+                <TextView
+                    android:id="@+id/statusText"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NEW"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:textColor="#F97316"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:background="@drawable/status_bg"
+                    android:fontFamily="@font/lexend_regular"/>
+            </LinearLayout>
+
+            <!-- DESC -->
+            <TextView
+                android:id="@+id/descText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Room changed from CT8 to CT6 for today’s 12:00 PM lecture due to an event."
+                android:textColor="#667085"
+                android:textSize="15sp"
+                android:layout_marginTop="8dp"
+                android:lineSpacingExtra="3dp"
+                android:fontFamily="@font/lexend_regular"/>
+
+            <!-- TIME -->
+            <TextView
+                android:id="@+id/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2m ago"
+                android:textColor="#98A2B3"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:layout_marginTop="18dp"
+                android:fontFamily="@font/lexend_regular"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

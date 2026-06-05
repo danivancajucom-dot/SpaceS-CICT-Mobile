@@ -1,0 +1,5 @@
+<!-- status_approved.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#DCFCE7"/>
+    <corners android:radius="50dp"/>
+</shape>

@@ -6,26 +6,39 @@
         android:title="Home"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:icon="@drawable/ic_home"/>
+        android:icon="@drawable/ic_home"
+        android:fontFamily="@font/lexend_bold"/>
 
     <item
         android:id="@+id/nav_schedule"
         android:title="Schedule"
-        android:icon="@drawable/ic_calendar"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:icon="@drawable/ic_calendar"
+        android:fontFamily="@font/lexend_bold"/>
 
     <item
         android:id="@+id/nav_reservations"
         android:title="Reservations"
-        android:icon="@drawable/ic_check"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:icon="@drawable/ic_check"
+        android:fontFamily="@font/lexend_bold"/>
 
     <item
         android:id="@+id/nav_rooms"
         android:title="Rooms"
-        android:icon="@drawable/ic_room"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:icon="@drawable/ic_room"
+        android:fontFamily="@font/lexend_bold"/>
 
     <item
         android:id="@+id/nav_profile"
         android:title="Profile"
-        android:icon="@drawable/ic_user"/>
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:icon="@drawable/ic_user"
+        android:fontFamily="@font/lexend_bold"/>
 
 </menu>

@@ -21,30 +21,34 @@
             android:layout_centerVertical="true"/>
 
         <TextView
-            android:layout_width="312dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
             android:text="Profile"
-            android:textColor="#111827"
+            android:textColor="@color/black"
             android:textSize="18sp"
             android:textStyle="bold" />
 
         <ImageView
             android:id="@+id/editBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:background="@drawable/edit_btn_bg"
-            android:padding="10dp"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:padding="12dp"
             android:src="@drawable/ic_edit"
+            android:clickable="true"
+            android:focusable="true"
+            android:background="@drawable/edit_btn_bg"
             android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"/>
+            android:layout_centerVertical="true"
+            android:contentDescription="Edit Profile"/>
     </RelativeLayout>
 
     <!-- CONTENT -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:padding="20dp"
@@ -68,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_marginTop="30dp"
+                android:textColor="@color/black"
                 android:layout_marginBottom="10dp"/>
 
             <EditText
@@ -75,8 +80,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:text="Juan Dela Cruz"
-                android:enabled="false"
+                android:focusable="false"
+                android:clickable="false"
                 android:background="@drawable/input_bg"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280"
                 android:padding="16dp"/>
 
             <!-- EMAIL -->
@@ -86,6 +94,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
+                android:textColor="@color/black"
                 android:layout_marginBottom="10dp"/>
 
             <EditText
@@ -93,8 +102,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
                 android:text="j.delacruz@university.edu"
-                android:enabled="false"
+                android:focusable="false"
+                android:clickable="false"
                 android:background="@drawable/input_bg"
+                android:textColor="#111827"
+                android:textColorHint="#6B7280"
                 android:padding="16dp"/>
 
             <!-- PASSWORD -->
@@ -104,6 +116,7 @@
                 android:layout_height="wrap_content"
                 android:textStyle="bold"
                 android:layout_marginTop="16dp"
+                android:textColor="@color/black"
                 android:layout_marginBottom="10dp"/>
 
             <LinearLayout
@@ -118,9 +131,12 @@
                     android:layout_weight="1"
                     android:layout_height="match_parent"
                     android:text="********"
-                    android:enabled="false"
+                    android:focusable="false"
+                    android:clickable="false"
                     android:inputType="textPassword"
                     android:background="@android:color/transparent"
+                    android:textColor="#111827"
+                    android:textColorHint="#6B7280"
                     android:padding="16dp"/>
 
                 <ImageView

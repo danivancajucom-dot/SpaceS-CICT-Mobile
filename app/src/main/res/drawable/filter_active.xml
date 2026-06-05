@@ -1,0 +1,12 @@
+<!-- filter_active.xml -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="@android:color/transparent"/>
+
+    <stroke
+        android:width="0dp"
+        android:color="@android:color/transparent"/>
+
+    <padding android:bottom="10dp"/>
+
+    <size android:height="2dp"/>
+</shape>

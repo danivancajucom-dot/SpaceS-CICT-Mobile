@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="24dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="#FFFFFF">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- STATUS -->
+        <TextView
+            android:id="@+id/statusText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="AVAILABLE NOW"
+            android:textStyle="bold"
+            android:textColor="#22C55E"
+            android:background="@drawable/status_green"
+            android:paddingHorizontal="14dp"
+            android:paddingVertical="8dp"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <!-- IMAGE -->
+        <ImageView
+            android:id="@+id/roomImage"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="14dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/room1"/>
+
+        <!-- ROOM -->
+        <TextView
+            android:id="@+id/roomName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SDL2"
+            android:textStyle="bold"
+            android:textSize="20sp"
+            android:textColor="#FFFFFF"
+            android:layout_marginTop="-45dp"
+            android:layout_marginStart="12dp"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <!-- INFO -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="30dp">
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_user"
+                app:tint="#F97316" />
+
+            <TextView
+                android:id="@+id/capacityText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="30 Capacity"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#334155"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <Space
+                android:layout_width="18dp"
+                android:layout_height="1dp"/>
+
+            <ImageView
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:src="@drawable/ic_clock"
+                app:tint="#F97316" />
+
+            <TextView
+                android:id="@+id/timeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Until 3:30 PM"
+                android:textStyle="bold"
+                android:textSize="16sp"
+                android:textColor="#334155"
+                android:layout_marginStart="8dp"
+                android:fontFamily="@font/lexend_bold"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/reserveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:text="Reserve Room"
+            android:textAllCaps="false"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:textColor="#FFFFFF"
+            android:backgroundTint="#F97316"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/lexend_bold"/>
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

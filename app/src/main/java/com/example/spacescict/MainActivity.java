@@ -1,5 +1,6 @@
 package com.example.spacescict;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.InputType;
@@ -23,6 +24,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button loginButton = findViewById(R.id.loginButton);
         EditText passwordInput = findViewById(R.id.passwordInput);
+        EditText emailInput = findViewById(R.id.emailInput);
         ImageView togglePassword = findViewById(R.id.togglePassword);
 
         togglePassword.setOnClickListener(v -> {
@@ -37,9 +39,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         loginButton.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-            startActivity(intent);
-            finish();
+            if(emailInput.equals("")||passwordInput.equals("")){
+
+            }else{
+                Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
+                startActivity(intent);
+                finish();
+            }
         });
 
     }
