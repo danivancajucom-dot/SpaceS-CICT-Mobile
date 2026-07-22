@@ -1,4 +1,3 @@
-// ReservationPage.java
 package com.example.spacescict;
 
 import android.content.Context;
@@ -7,47 +6,43 @@ import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class ReservationPage {
 
     public ReservationPage(Context context, View view) {
 
-        RecyclerView recycler =
-                view.findViewById(R.id.reservationRecycler);
-
+        RecyclerView recycler = view.findViewById(R.id.reservationRecycler);
         if (recycler == null) return;
 
-        ArrayList<ReservationModel> list =
-                new ArrayList<>();
+        ArrayList<ReservationModel> list = new ArrayList<>();
+        ReservationAdapter adapter = new ReservationAdapter(list);
 
-        list.add(new ReservationModel(
-                "PENDING",
-                "SDL3",
-                "Game Development",
-                R.drawable.room1
-        ));
+        recycler.setLayoutManager(new LinearLayoutManager(context));
+        recycler.setAdapter(adapter);
 
-        list.add(new ReservationModel(
-                "APPROVED",
-                "IT13",
-                "Social and Professional Issues",
-                R.drawable.room2
-        ));
+        String uid = FirebaseAuth.getInstance().getUid();
 
-        list.add(new ReservationModel(
-                "DENIED",
-                "SDL1",
-                "Computer Programming",
-                R.drawable.room1
-        ));
+        FirebaseFirestore.getInstance()
+                .collection("reservationRequests") // 🔥 matches your web rules
+                .whereEqualTo("userId", uid)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) return;
 
-        recycler.setLayoutManager(
-                new LinearLayoutManager(context)
-        );
-
-        recycler.setAdapter(
-                new ReservationAdapter(list)
-        );
+                    list.clear();
+                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        list.add(new ReservationModel(
+                                doc.getString("status"),
+                                doc.getString("room"),
+                                doc.getString("subject"),
+                                R.drawable.room1
+                        ));
+                    }
+                    adapter.notifyDataSetChanged();
+                });
     }
 }

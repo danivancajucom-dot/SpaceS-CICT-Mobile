@@ -6,41 +6,40 @@ import android.view.View;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+
 import java.util.ArrayList;
 
 public class RoomsPage {
 
     public RoomsPage(Context context, View view) {
 
-        RecyclerView recyclerView =
-                view.findViewById(R.id.roomsRecycler);
-
+        RecyclerView recyclerView = view.findViewById(R.id.roomsRecycler);
         if (recyclerView == null) return;
 
         ArrayList<RoomModel> list = new ArrayList<>();
+        RoomAdapter adapter = new RoomAdapter(list);
 
-        list.add(new RoomModel(
-                "SDL2",
-                "AVAILABLE NOW",
-                "30 Capacity",
-                "Until 3:30 PM",
-                R.drawable.room1
-        ));
+        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        recyclerView.setAdapter(adapter);
 
-        list.add(new RoomModel(
-                "Prog Lab 1",
-                "OCCUPIED",
-                "40 Capacity",
-                "Occupied",
-                R.drawable.room2
-        ));
+        FirebaseFirestore.getInstance()
+                .collection("rooms")
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) return;
 
-        recyclerView.setLayoutManager(
-                new LinearLayoutManager(context)
-        );
-
-        recyclerView.setAdapter(
-                new RoomAdapter(list)
-        );
+                    list.clear();
+                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        list.add(new RoomModel(
+                                doc.getString("name"),
+                                doc.getString("status"),
+                                doc.getString("capacity"),
+                                doc.getString("availableUntil"),
+                                R.drawable.room1 // imageRes in Firestore is likely a URL/path, not a drawable int — see note below
+                        ));
+                    }
+                    adapter.notifyDataSetChanged();
+                });
     }
 }

@@ -1,6 +1,5 @@
 package com.example.spacescict;
 
-
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
@@ -15,18 +14,16 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class ReservationActivity extends AppCompatActivity {
 
@@ -35,9 +32,8 @@ public class ReservationActivity extends AppCompatActivity {
     LinearLayout attendeesLayout;
     GridLayout roomGrid;
 
-
-
     Map<String, String[]> rooms = new HashMap<>();
+    String selectedRoom = null; // 🔥 tracks tapped room
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +69,20 @@ public class ReservationActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             });
+
             submit.setOnClickListener(v -> {
+                if (selectedRoom == null) {
+                    Toast.makeText(this, "Please select a room", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 ConfirmDialog.show(
                         this,
                         "Confirmation",
                         " Are you sure you want to reserve?",
                         "Confirm",
                         "Cancel",
-                        () -> {
-                            finish();
-                        }
+                        () -> submitReservation()
                 );
             });
 
@@ -91,33 +91,51 @@ public class ReservationActivity extends AppCompatActivity {
         }
     }
 
+    // ================= SUBMIT =================
+    void submitReservation() {
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        Map<String, Object> reservation = new HashMap<>();
+        reservation.put("userId", uid);
+        reservation.put("room", selectedRoom);
+        reservation.put("subject", purposeSpinner.getSelectedItem().toString()); // ⚠️ swap for a real subject field if you add one
+        reservation.put("status", "PENDING");
+        reservation.put("date", datePicker.getText().toString());
+        reservation.put("startTime", startTime.getText().toString());
+        reservation.put("endTime", endTime.getText().toString());
+        reservation.put("purpose", purposeSpinner.getSelectedItem().toString());
+
+        FirebaseFirestore.getInstance()
+                .collection("reservationRequests") // 🔥 matches your web rules
+                .add(reservation)
+                .addOnSuccessListener(ref -> finish())
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                );
+    }
+
     // ================= DATE + TIME =================
     void setupPickers() {
-
 
         datePicker.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
 
-
             DatePickerDialog dp = new DatePickerDialog(this,
                     (view, year, month, day) -> {
-                        datePicker.setText(day + "/" + (month+1) + "/" + year);
+                        datePicker.setText(day + "/" + (month + 1) + "/" + year);
                     },
                     c.get(Calendar.YEAR),
                     c.get(Calendar.MONTH),
                     c.get(Calendar.DAY_OF_MONTH)
             );
 
-
-            dp.getDatePicker().setMinDate(System.currentTimeMillis()); // 🔥 no past
+            dp.getDatePicker().setMinDate(System.currentTimeMillis());
             dp.show();
         });
-
 
         startTime.setOnClickListener(v -> showTime(startTime));
         endTime.setOnClickListener(v -> showTime(endTime));
     }
-
 
     void showTime(TextView target) {
         TimePickerDialog tp = new TimePickerDialog(this,
@@ -127,47 +145,32 @@ public class ReservationActivity extends AppCompatActivity {
         tp.show();
     }
 
-
     // ================= SPINNERS =================
     void setupSpinners() {
 
-
-        // PURPOSE
         ArrayAdapter<String> purposeAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"Exam", "Hands On", "Lecture"}
         );
         purposeSpinner.setAdapter(purposeAdapter);
 
-
         purposeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String selected = parent.getItemAtPosition(pos).toString();
-
-
-                if (selected.equals("Lecture")) {
-                    attendeesLayout.setVisibility(View.VISIBLE);
-                } else {
-                    attendeesLayout.setVisibility(View.GONE);
-                }
+                attendeesLayout.setVisibility(selected.equals("Lecture") ? View.VISIBLE : View.GONE);
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-
-        // ATTENDEES
         attendeesSpinner.setAdapter(new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"10-30", "30-50", "50-70"}
         ));
 
-
-        // FLOOR
         floorSpinner.setAdapter(new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_dropdown_item,
                 new String[]{"1st Floor", "3rd Floor", "4th Floor"}
         ));
-
 
         floorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -177,7 +180,6 @@ public class ReservationActivity extends AppCompatActivity {
         });
     }
 
-
     // ================= ROOMS =================
     void setupRooms() {
         rooms.put("1st Floor", new String[]{"A1","A2","A3","A4","IT13","IT14"});
@@ -185,15 +187,12 @@ public class ReservationActivity extends AppCompatActivity {
         rooms.put("4th Floor", new String[]{"CT6","CT7","CT8","ACAD1","AVR","CISCO LAB1","CISCO LAB2"});
     }
 
-
     void loadRooms(String floor) {
 
-
         roomGrid.removeAllViews();
-
+        selectedRoom = null; // reset when floor changes
 
         for (String room : rooms.get(floor)) {
-
 
             TextView btn = new TextView(this);
             btn.setText(room);
@@ -201,21 +200,20 @@ public class ReservationActivity extends AppCompatActivity {
             btn.setBackgroundResource(R.drawable.room_available);
             btn.setGravity(Gravity.CENTER);
 
-
             GridLayout.LayoutParams params = new GridLayout.LayoutParams();
             params.setMargins(10,10,10,10);
             params.width = 0;
             params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
 
-
             btn.setLayoutParams(params);
 
-
             btn.setOnClickListener(v -> {
-                // highlight selection
+                selectedRoom = room;
+                for (int i = 0; i < roomGrid.getChildCount(); i++) {
+                    roomGrid.getChildAt(i).setBackgroundResource(R.drawable.room_available);
+                }
                 btn.setBackgroundResource(R.drawable.room_selected);
             });
-
 
             roomGrid.addView(btn);
         }

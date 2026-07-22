@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "268419005346",
+    "project_id": "spaces-cict",
+    "storage_bucket": "spaces-cict.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:268419005346:android:551ce8a21461c7f08890fb",
+        "android_client_info": {
+          "package_name": "com.company.spacescict"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCmhE4f0rTJ39YfwVyez8ThumgwpQHhRIk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

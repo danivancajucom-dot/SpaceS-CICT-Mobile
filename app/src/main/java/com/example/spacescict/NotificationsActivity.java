@@ -1,13 +1,16 @@
-// NotificationsActivity.java
 package com.example.spacescict;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.widget.ImageView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 
 import java.util.ArrayList;
 
@@ -25,45 +28,35 @@ public class NotificationsActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.notificationRecycler);
         ImageView backButton = findViewById(R.id.backBtn);
 
-        backButton.setOnClickListener(v -> {
-            finish();
-        });
+        backButton.setOnClickListener(v -> finish());
 
         list = new ArrayList<>();
+        adapter = new NotificationAdapter(list);
 
-        list.add(new NotificationModel(
-                R.drawable.notification_gray_bg,
-                "Schedule Changed:\nGender and Society",
-                "Room changed from CT8 to CT6 for today’s 12:00 PM lecture due to an event.",
-                "2m ago",
-                "NEW",
-                R.drawable.notification_orange_bg
-        ));
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(adapter);
 
-        list.add(new NotificationModel(
-                R.drawable.ic_warning,
-                "Override Alert: Lab 10",
-                "Dean Digna has requested an administrative override for your 4:00 PM slot.",
-                "15m ago",
-                "URGENT",
-                R.drawable.notification_red_bg
-        ));
+        String uid = FirebaseAuth.getInstance().getUid();
 
-        list.add(new NotificationModel(
-                R.drawable.status_green,
-                "Reservation Approved",
-                "Your request for SDL1 on Saturday, Oct 26th has been approved.",
-                "15m ago",
-                "",
-                R.drawable.notification_green_bg
-        ));
+        FirebaseFirestore.getInstance()
+                .collection("notifications") // 🔥 flat collection, matches your web rules
+                .whereEqualTo("userId", uid) // ⚠️ confirm this field name — see note above
+                .orderBy("time", Query.Direction.DESCENDING)
+                .addSnapshotListener((snapshots, error) -> {
+                    if (error != null || snapshots == null) return;
 
-        recyclerView.setLayoutManager(
-                new LinearLayoutManager(this)
-        );
-
-        recyclerView.setAdapter(
-                new NotificationAdapter(list)
-        );
+                    list.clear();
+                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        list.add(new NotificationModel(
+                                R.drawable.notification_gray_bg,
+                                doc.getString("title"),
+                                doc.getString("message"),
+                                doc.getString("time"),
+                                doc.getString("tag"),
+                                R.drawable.notification_orange_bg
+                        ));
+                    }
+                    adapter.notifyDataSetChanged();
+                });
     }
 }
