@@ -1,227 +1,217 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-    <!-- ================= CONTENT ================= -->
+<!-- ================= CONTENT ================= -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="vertical">
+
+        <!-- GREETING -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <!-- GREETING -->
+            <View
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:background="@drawable/circle_orange"/>
+
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical">
-
-                <View
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/circle_orange"/>
-
-                <LinearLayout
-                    android:layout_marginStart="12dp"
-                    android:orientation="vertical"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:text="Good morning,"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:textColor="#6B7280"
-                        android:textSize="14sp"
-                        android:fontFamily="@font/lexend_regular"/>
-
-                    <TextView
-                        android:text="Prof. Juan Dela Cruz"
-                        android:layout_height="wrap_content"
-                        android:layout_width="match_parent"
-                        android:textStyle="bold"
-                        android:textSize="20sp"
-                        android:textColor="#111827"
-                        android:fontFamily="@font/lexend_bold"/>
-
-                </LinearLayout>
-            </LinearLayout>
-
-            <!-- TODAY HEADER -->
-            <LinearLayout
-                android:layout_marginTop="24dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginStart="12dp"
+                android:orientation="vertical"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:text="Good morning,"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Today's Schedule"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:textColor="@color/black"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:text="See All"
-                    android:layout_height="wrap_content"
-                    android:textColor="#F97316"
-                    android:padding="6dp"
-                    android:fontFamily="@font/lexend_bold"/>
-            </LinearLayout>
-
-            <!-- SCHEDULE CARD -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="220dp"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="20dp"
-                app:cardElevation="6dp">
-
-                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:textColor="#6B7280"
+                    android:textSize="14sp"
+                    android:fontFamily="@font/lexend_regular"/>
 
-                    <!-- IMAGE -->
-                    <ImageView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:scaleType="centerCrop"
-                        android:src="@drawable/room2"
-                        android:background="#CCCCCC"/>
+                <TextView
+                    android:id="@+id/greetingName"
+                    android:text="Loading..."
+                    android:layout_height="wrap_content"
+                    android:layout_width="match_parent"
+                    android:textStyle="bold"
+                    android:textSize="20sp"
+                    android:textColor="#111827"
+                    android:fontFamily="@font/lexend_bold"/>
 
-                    <!-- OVERLAY -->
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:background="#66000000"/>
+            </LinearLayout>
+        </LinearLayout>
 
-                    <!-- TEXT -->
-                    <LinearLayout
-                        android:layout_gravity="bottom"
-                        android:padding="16dp"
-                        android:orientation="vertical"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content">
 
-                        <TextView
-                            android:text="Prog Lab 2"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:textColor="#FFFFFF"
-                            android:textSize="16sp"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/lexend_bold"/>
+        <!-- TODAY HEADER -->
+        <LinearLayout
+            android:layout_marginTop="24dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-                        <TextView
-                            android:text="Intro to Programming"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:textColor="#FFFFFF"
-                            android:fontFamily="@font/lexend_regular"/>
-                    </LinearLayout>
-
-                </FrameLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <!-- UPCOMING -->
             <TextView
-                android:text="Upcoming Classes"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_width="match_parent"
-                android:textStyle="bold"
+                android:layout_weight="1"
+                android:text="Today's Schedule"
                 android:textSize="18sp"
-                android:layout_marginTop="24dp"
+                android:textStyle="bold"
                 android:textColor="@color/black"
                 android:fontFamily="@font/lexend_bold"/>
 
-            <!-- CLASS ITEM -->
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="90dp"
-                android:layout_marginTop="12dp"
-                app:cardCornerRadius="16dp"
-                app:cardElevation="4dp"
-                app:cardBackgroundColor="#FFFFFF">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="See All"
+                android:layout_height="wrap_content"
+                android:textColor="#F97316"
+                android:padding="6dp"
+                android:fontFamily="@font/lexend_bold"/>
+        </LinearLayout>
 
-                <LinearLayout
-                    android:padding="12dp"
-                    android:orientation="horizontal"
+        <!-- SCHEDULE CARD -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/scheduleCard"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="12dp"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="6dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- IMAGE -->
+                <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    app:cardBackgroundColor="#FFFFFF">
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/room2"
+                    android:background="#CCCCCC"/>
 
-                    <!-- DATE -->
-                    <LinearLayout
-                        android:layout_width="70dp"
-                        android:layout_height="match_parent"
-                        android:background="#E5E7EB"
-                        android:gravity="center"
-                        android:orientation="vertical">
+                <!-- OVERLAY -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="#66000000"/>
 
-                        <TextView
-                            android:text="SAT"
-                            android:gravity="center"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/lexend_bold"/>
-                        <TextView
-                            android:gravity="center"
-                            android:text="26"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:textStyle="bold"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/lexend_bold"/>
-                    </LinearLayout>
+                <!-- STATUS BADGE -->
+                <TextView
+                    android:id="@+id/scheduleStatusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top|start"
+                    android:layout_margin="16dp"
+                    android:paddingHorizontal="12dp"
+                    android:paddingVertical="6dp"
+                    android:text="ONGOING"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:background="@drawable/status_bg"
+                    android:fontFamily="@font/lexend_bold"/>
 
-                    <!-- INFO -->
-                    <LinearLayout
-                        android:layout_marginStart="12dp"
-                        android:orientation="vertical"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
+                <!-- TEXT -->
+                <LinearLayout
+                    android:layout_gravity="bottom"
+                    android:padding="16dp"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-                        <TextView
-                            android:text="Project Management"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:textStyle="bold"
-                            android:textSize="16sp"
-                            android:textColor="@color/black"
-                            android:fontFamily="@font/lexend_bold"/>
+                    <TextView
+                        android:id="@+id/scheduleRoomText"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold"/>
 
-                        <TextView
-                            android:text="11:00 AM"
-                            android:layout_height="wrap_content"
-                            android:layout_width="match_parent"
-                            android:textColor="#6B7280"
-                            android:fontFamily="@font/lexend_regular"/>
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/scheduleSubjectText"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:textColor="#FFFFFF"
+                        android:fontFamily="@font/lexend_regular"/>
 
+                    <TextView
+                        android:id="@+id/scheduleTimeText"
+                        android:layout_height="wrap_content"
+                        android:layout_width="match_parent"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/lexend_regular"/>
                 </LinearLayout>
 
-            </androidx.cardview.widget.CardView>
+            </FrameLayout>
 
-            <!-- BUTTON -->
-            <Button
-                android:id="@+id/reserveButton"
-                android:layout_width="236dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginTop="24dp"
-                android:backgroundTint="#F97316"
-                android:text="Reserve Room"
-                android:textColor="#FFFFFF"
-                android:fontFamily="@font/lexend_bold"/>
+        </androidx.cardview.widget.CardView>
 
-        </LinearLayout>
-    </ScrollView>
+        <!-- EMPTY STATE (shown when no classes today) -->
+        <TextView
+            android:id="@+id/noScheduleText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:padding="24dp"
+            android:gravity="center"
+            android:text="No classes scheduled for today."
+            android:textColor="#6B7280"
+            android:visibility="gone"
+            android:fontFamily="@font/lexend_regular"/>
+
+        <!-- UPCOMING -->
+        <TextView
+            android:text="Upcoming Classes"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:textStyle="bold"
+            android:textSize="18sp"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/black"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/upcomingRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="false"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/noUpcomingText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp"
+            android:gravity="center"
+            android:text="No upcoming classes found."
+            android:textColor="#6B7280"
+            android:visibility="gone"
+            android:fontFamily="@font/lexend_regular"/>
+
+        <!-- BUTTON -->
+        <Button
+            android:id="@+id/reserveButton"
+            android:layout_width="236dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#F97316"
+            android:text="Reserve Room"
+            android:textColor="#FFFFFF"
+            android:fontFamily="@font/lexend_bold"/>
+
+    </LinearLayout>
+</ScrollView>

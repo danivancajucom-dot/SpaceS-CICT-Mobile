@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:268419005346:android:551ce8a21461c7f08890fb",
+        "mobilesdk_app_id": "1:268419005346:android:4e006d6d4440f7be8890fb",
         "android_client_info": {
-          "package_name": "com.company.spacescict"
+          "package_name": "com.example.spacescict"
         }
       },
       "oauth_client": [],

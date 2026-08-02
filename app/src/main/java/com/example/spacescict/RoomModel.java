@@ -1,15 +1,19 @@
 package com.example.spacescict;
 
 public class RoomModel {
-
-    String name, status, capacity, time;
+    String roomId, roomName, floor, roomType, status, occupiedUntil;
+    int capacity;
     int image;
 
-    public RoomModel(String name, String status, String capacity, String time, int image) {
-        this.name = name;
+    public RoomModel(String roomId, String roomName, String floor, String roomType,
+                     String status, String occupiedUntil, int capacity, int image) {
+        this.roomId = roomId;
+        this.roomName = roomName;
+        this.floor = floor;
+        this.roomType = roomType;
         this.status = status;
+        this.occupiedUntil = occupiedUntil;
         this.capacity = capacity;
-        this.time = time;
         this.image = image;
     }
 }

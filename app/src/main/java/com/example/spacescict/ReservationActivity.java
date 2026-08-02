@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -18,22 +20,35 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ReservationActivity extends AppCompatActivity {
 
     TextView datePicker, startTime, endTime;
-    Spinner purposeSpinner, attendeesSpinner, floorSpinner;
-    LinearLayout attendeesLayout;
+    Spinner purposeSpinner, attendeesSpinner, floorSpinner, audienceTypeSpinner;
+    LinearLayout attendeesLayout, classFieldsLayout, orgFieldLayout, customPurposeLayout;
     GridLayout roomGrid;
+    EditText courseInput, programInput, yearSectionInput, orgInput, customPurposeInput;
+    CheckBox eqAc, eqComputer, eqProjector, eqSmartBoard, eqTvDisplay;
+    LinearLayout equipmentLayout;
 
-    Map<String, String[]> rooms = new HashMap<>();
-    String selectedRoom = null; // 🔥 tracks tapped room
+    String selectedRoomId = null;
+    String selectedRoomName = null;
+    String facultyName = "";
+
+    static final String[] CLASS_PURPOSES = {"Lecture", "Hands-on", "Examination"};
+    static final String[] ORG_PURPOSES = {"Workshop", "Training", "Meeting", "Other Activity"};
+    static final String[] CLASS_STUDENT_RANGES = {"30-50", "50-60", "60-80", "80-100"};
+    static final String[] ORG_STUDENT_RANGES = {"1-30", "31-50", "51-80", "81-100", "101+"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,39 +65,48 @@ public class ReservationActivity extends AppCompatActivity {
             purposeSpinner = findViewById(R.id.purposeSpinner);
             attendeesSpinner = findViewById(R.id.attendeesSpinner);
             floorSpinner = findViewById(R.id.floorSpinner);
+            audienceTypeSpinner = findViewById(R.id.audienceTypeSpinner);
 
             attendeesLayout = findViewById(R.id.attendeesLayout);
+            classFieldsLayout = findViewById(R.id.classFieldsLayout);
+            orgFieldLayout = findViewById(R.id.orgFieldLayout);
+            customPurposeLayout = findViewById(R.id.customPurposeLayout);
+            equipmentLayout = findViewById(R.id.equipmentLayout);
+
             roomGrid = findViewById(R.id.roomGrid);
+
+            courseInput = findViewById(R.id.courseInput);
+            programInput = findViewById(R.id.programInput);
+            yearSectionInput = findViewById(R.id.yearSectionInput);
+            orgInput = findViewById(R.id.orgInput);
+            customPurposeInput = findViewById(R.id.customPurposeInput);
+
+            eqAc = findViewById(R.id.eqAc);
+            eqComputer = findViewById(R.id.eqComputer);
+            eqProjector = findViewById(R.id.eqProjector);
+            eqSmartBoard = findViewById(R.id.eqSmartBoard);
+            eqTvDisplay = findViewById(R.id.eqTvDisplay);
 
             Button submit = findViewById(R.id.submitBtn);
 
-            if (datePicker == null || startTime == null || endTime == null) {
-                throw new RuntimeException("Missing ID in XML layout");
-            }
-
+            loadFacultyName();
             setupSpinners();
             setupPickers();
-            setupRooms();
 
             backButton.setOnClickListener(v -> {
-                Intent intent = new Intent(ReservationActivity.this, DashboardActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(ReservationActivity.this, DashboardActivity.class));
                 finish();
             });
 
             submit.setOnClickListener(v -> {
-                if (selectedRoom == null) {
-                    Toast.makeText(this, "Please select a room", Toast.LENGTH_SHORT).show();
+                String error = validate();
+                if (error != null) {
+                    Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
                     return;
                 }
-
                 ConfirmDialog.show(
-                        this,
-                        "Confirmation",
-                        " Are you sure you want to reserve?",
-                        "Confirm",
-                        "Cancel",
-                        () -> submitReservation()
+                        this, "Confirmation", " Are you sure you want to reserve?",
+                        "Confirm", "Cancel", this::submitReservation
                 );
             });
 
@@ -91,44 +115,166 @@ public class ReservationActivity extends AppCompatActivity {
         }
     }
 
+    void loadFacultyName() {
+        String uid = FirebaseAuth.getInstance().getUid();
+        if (uid == null) return;
+        FirebaseFirestore.getInstance().collection("users").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    String first = doc.getString("firstName");
+                    String last = doc.getString("lastName");
+                    facultyName = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
+                });
+    }
+
+    // ================= VALIDATION (mirrors web) =================
+    String validate() {
+        String audienceType = (String) audienceTypeSpinner.getSelectedItem();
+        String purpose = (String) purposeSpinner.getSelectedItem();
+
+        if (courseInput.getText().toString().trim().isEmpty()) return "Course title is required.";
+        if (datePicker.getText().toString().equals("Select Date")) return "Select a reservation date.";
+        if (audienceType == null) return "Select audience type.";
+
+        if (audienceType.equals("Class")) {
+            if (programInput.getText().toString().trim().isEmpty()) return "Enter course/program.";
+            if (yearSectionInput.getText().toString().trim().isEmpty()) return "Enter Year / Section Group.";
+            if (purpose.equals("Hands-on") && !anyEquipmentChecked()) {
+                return "Select at least one required equipment.";
+            }
+            if ((purpose.equals("Lecture") || purpose.equals("Examination"))
+                    && attendeesSpinner.getSelectedItem() == null) {
+                return "Select the estimated number of students.";
+            }
+        }
+
+        if (audienceType.equals("Organization")) {
+            if (orgInput.getText().toString().trim().isEmpty()) return "Enter organization name.";
+            if (purpose.equals("Other Activity") && customPurposeInput.getText().toString().trim().isEmpty()) {
+                return "Please specify the activity.";
+            }
+            if (attendeesSpinner.getSelectedItem() == null) {
+                return "Select the estimated number of attendees.";
+            }
+        }
+
+        if (startTime.getText().toString().equals("Select Start Time")) return "Select a start time.";
+        if (endTime.getText().toString().equals("Select End Time")) return "Select an end time.";
+        if (selectedRoomId == null) return "Select an available room.";
+
+        return null;
+    }
+
+    boolean anyEquipmentChecked() {
+        return eqAc.isChecked() || eqComputer.isChecked() || eqProjector.isChecked()
+                || eqSmartBoard.isChecked() || eqTvDisplay.isChecked();
+    }
+
     // ================= SUBMIT =================
     void submitReservation() {
         String uid = FirebaseAuth.getInstance().getUid();
+        String audienceType = (String) audienceTypeSpinner.getSelectedItem();
+        String purpose = (String) purposeSpinner.getSelectedItem();
+
+        List<String> equipment = new ArrayList<>();
+        if (eqProjector.isChecked()) equipment.add("projector");
+        if (eqTvDisplay.isChecked()) equipment.add("tvDisplay");
+        if (eqAc.isChecked()) equipment.add("ac");
+        if (eqComputer.isChecked()) equipment.add("computer");
+        if (eqSmartBoard.isChecked()) equipment.add("smartBoard");
+
+        String purposeValue = purpose;
+        String customPurpose = "";
+
+        if ("Other Activity".equals(purpose)) {
+            customPurpose = customPurposeInput.getText().toString().trim();
+            purposeValue = customPurpose.isEmpty()
+                    ? "Other Activity"
+                    : customPurpose;
+        }
+
+        final String finalPurpose = purposeValue;
+        final String finalAudienceType = audienceType;
+
+        Map<String, Object> attendees = new HashMap<>();
+        attendees.put(
+                "course",
+                audienceType.equals("Class")
+                        ? programInput.getText().toString().trim()
+                        : ""
+        );
+        attendees.put(
+                "yearSectionGroup",
+                audienceType.equals("Class")
+                        ? yearSectionInput.getText().toString().trim()
+                        : ""
+        );
+        attendees.put(
+                "organization",
+                audienceType.equals("Organization")
+                        ? orgInput.getText().toString().trim()
+                        : ""
+        );
+        attendees.put("customPurpose", customPurpose);
 
         Map<String, Object> reservation = new HashMap<>();
         reservation.put("userId", uid);
-        reservation.put("room", selectedRoom);
-        reservation.put("subject", purposeSpinner.getSelectedItem().toString()); // ⚠️ swap for a real subject field if you add one
-        reservation.put("status", "PENDING");
+        reservation.put("facultyName", facultyName);
+        reservation.put("roomId", selectedRoomId);
+        reservation.put("roomName", selectedRoomName);
+        reservation.put("audienceType", audienceType);
+        reservation.put("attendees", attendees);
+        reservation.put("courseTitle", courseInput.getText().toString().trim());
+        reservation.put("purpose", finalPurpose);
+        reservation.put("requiredEquipment", equipment);
+        reservation.put("studentRange", attendeesSpinner.getSelectedItem() != null
+                ? attendeesSpinner.getSelectedItem().toString() : "");
         reservation.put("date", datePicker.getText().toString());
         reservation.put("startTime", startTime.getText().toString());
         reservation.put("endTime", endTime.getText().toString());
-        reservation.put("purpose", purposeSpinner.getSelectedItem().toString());
+        reservation.put("status", "Pending"); // matches web casing exactly
+        reservation.put("createdAt", Timestamp.now());
+
 
         FirebaseFirestore.getInstance()
-                .collection("reservationRequests") // 🔥 matches your web rules
+                .collection("reservationRequests")
                 .add(reservation)
-                .addOnSuccessListener(ref -> finish())
+                .addOnSuccessListener(ref -> {
+                    NotificationHelper.notifyClerkAndDepartmentHead(
+                            "New Reservation Request",
+                            facultyName + " submitted a reservation request for \"" + courseInput.getText().toString().trim()
+                                    + "\" in " + selectedRoomName + " on " + datePicker.getText() + ".",
+                            ref.getId(), "reservation-request");
+
+                    NotificationHelper.send(uid, "faculty", "Reservation Submitted",
+                            "Your reservation request for " + selectedRoomName + " on " + datePicker.getText()
+                                    + " (" + startTime.getText() + " - " + endTime.getText() + ") has been submitted successfully and is waiting for approval.",
+                            "reservation-submitted", "INFO");
+
+                    java.util.Map<String, Object> details = new java.util.HashMap<>();
+                    details.put("courseTitle", courseInput.getText().toString().trim());
+                    details.put("room", selectedRoomName);
+                    details.put("date", datePicker.getText().toString());
+                    details.put("startTime", startTime.getText().toString());
+                    details.put("endTime", endTime.getText().toString());
+                    details.put("purpose", finalPurpose);
+                    details.put("audienceType", finalAudienceType);
+
+                    ActivityLogger.log("Submitted Reservation Request", "success",
+                            selectedRoomName + " | " + courseInput.getText().toString().trim(), "SUCCESS",
+                            details, () -> finish());
+                })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                );
+                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
     // ================= DATE + TIME =================
     void setupPickers() {
-
         datePicker.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
-
             DatePickerDialog dp = new DatePickerDialog(this,
-                    (view, year, month, day) -> {
-                        datePicker.setText(day + "/" + (month + 1) + "/" + year);
-                    },
-                    c.get(Calendar.YEAR),
-                    c.get(Calendar.MONTH),
-                    c.get(Calendar.DAY_OF_MONTH)
-            );
-
+                    (view, year, month, day) -> datePicker.setText(
+                            String.format("%04d-%02d-%02d", year, month + 1, day)),
+                    c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
             dp.getDatePicker().setMinDate(System.currentTimeMillis());
             dp.show();
         });
@@ -139,83 +285,121 @@ public class ReservationActivity extends AppCompatActivity {
 
     void showTime(TextView target) {
         TimePickerDialog tp = new TimePickerDialog(this,
-                (view, hour, minute) -> {
-                    target.setText(String.format("%02d:%02d", hour, minute));
-                }, 12, 0, false);
+                (view, hour, minute) -> target.setText(String.format("%02d:%02d", hour, minute)),
+                12, 0, true); // 24h to match web's "HH:mm" format
         tp.show();
     }
 
     // ================= SPINNERS =================
     void setupSpinners() {
 
-        ArrayAdapter<String> purposeAdapter = new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"Exam", "Hands On", "Lecture"}
-        );
-        purposeSpinner.setAdapter(purposeAdapter);
+        audienceTypeSpinner.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"Class", "Organization"}));
 
-        purposeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        audienceTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
                 String selected = parent.getItemAtPosition(pos).toString();
-                attendeesLayout.setVisibility(selected.equals("Lecture") ? View.VISIBLE : View.GONE);
+                boolean isClass = selected.equals("Class");
+
+                classFieldsLayout.setVisibility(isClass ? View.VISIBLE : View.GONE);
+                orgFieldLayout.setVisibility(isClass ? View.GONE : View.VISIBLE);
+
+                purposeSpinner.setAdapter(new ArrayAdapter<>(ReservationActivity.this,
+                        android.R.layout.simple_spinner_dropdown_item,
+                        isClass ? CLASS_PURPOSES : ORG_PURPOSES));
+
+                customPurposeLayout.setVisibility(View.GONE);
+                equipmentLayout.setVisibility(View.GONE);
+                attendeesLayout.setVisibility(View.GONE);
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
 
-        attendeesSpinner.setAdapter(new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"10-30", "30-50", "50-70"}
-        ));
+        purposeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String purpose = parent.getItemAtPosition(pos).toString();
+                String audienceType = (String) audienceTypeSpinner.getSelectedItem();
+                boolean isClass = "Class".equals(audienceType);
 
-        floorSpinner.setAdapter(new ArrayAdapter<>(
-                this, android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"1st Floor", "3rd Floor", "4th Floor"}
-        ));
+                customPurposeLayout.setVisibility(purpose.equals("Other Activity") ? View.VISIBLE : View.GONE);
+                equipmentLayout.setVisibility(isClass && purpose.equals("Hands-on") ? View.VISIBLE : View.GONE);
+
+                boolean needsAttendees = isClass
+                        ? (purpose.equals("Lecture") || purpose.equals("Examination"))
+                        : true; // Organization: every purpose needs attendee range
+
+                attendeesLayout.setVisibility(needsAttendees ? View.VISIBLE : View.GONE);
+                if (needsAttendees) {
+                    attendeesSpinner.setAdapter(new ArrayAdapter<>(ReservationActivity.this,
+                            android.R.layout.simple_spinner_dropdown_item,
+                            isClass ? CLASS_STUDENT_RANGES : ORG_STUDENT_RANGES));
+                }
+            }
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+
+        floorSpinner.setAdapter(new ArrayAdapter<>(this,
+                android.R.layout.simple_spinner_dropdown_item,
+                new String[]{"1st", "3rd", "4th"})); // matches web's substring-match approach
 
         floorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                loadRooms(parent.getItemAtPosition(pos).toString());
+                loadRoomsForFloor(parent.getItemAtPosition(pos).toString());
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
     }
 
     // ================= ROOMS =================
-    void setupRooms() {
-        rooms.put("1st Floor", new String[]{"A1","A2","A3","A4","IT13","IT14"});
-        rooms.put("3rd Floor", new String[]{"IT1","IT2","SDL1","SDL2","SDL3","SDL4","Smart Prog Lab 1","Smart Prog Lab 2","Smart Prog Lab 3"});
-        rooms.put("4th Floor", new String[]{"CT6","CT7","CT8","ACAD1","AVR","CISCO LAB1","CISCO LAB2"});
-    }
-
-    void loadRooms(String floor) {
-
+    // NOTE: this still only checks the room doc's own "status" field.
+    // Web computes live availability from schedules/events/reservations/releases/
+    // reassignments/maintenance — that logic is not yet ported here. Flagging as
+    // a known gap, not silently pretending this matches web behavior.
+    void loadRoomsForFloor(String floorFilter) {
         roomGrid.removeAllViews();
-        selectedRoom = null; // reset when floor changes
+        selectedRoomId = null;
+        selectedRoomName = null;
 
-        for (String room : rooms.get(floor)) {
+        FirebaseFirestore.getInstance()
+                .collection("rooms")
+                .get()
+                .addOnSuccessListener(snapshots -> {
+                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
+                        String floor = doc.getString("floor");
+                        if (floor == null || !floor.toLowerCase().contains(floorFilter.toLowerCase())) continue;
 
-            TextView btn = new TextView(this);
-            btn.setText(room);
-            btn.setPadding(20,20,20,20);
-            btn.setBackgroundResource(R.drawable.room_available);
-            btn.setGravity(Gravity.CENTER);
+                        String roomId = doc.getId();
+                        String roomName = doc.getString("roomName");
+                        String status = doc.getString("status");
+                        boolean available = status == null || status.equalsIgnoreCase("Available");
 
-            GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-            params.setMargins(10,10,10,10);
-            params.width = 0;
-            params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                        TextView btn = new TextView(this);
+                        btn.setText(roomName);
+                        btn.setPadding(20, 20, 20, 20);
+                        btn.setBackgroundResource(available ? R.drawable.room_available : R.drawable.status_denied);
+                        btn.setGravity(Gravity.CENTER);
+                        btn.setEnabled(available);
 
-            btn.setLayoutParams(params);
+                        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                        params.setMargins(10, 10, 10, 10);
+                        params.width = 0;
+                        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                        btn.setLayoutParams(params);
 
-            btn.setOnClickListener(v -> {
-                selectedRoom = room;
-                for (int i = 0; i < roomGrid.getChildCount(); i++) {
-                    roomGrid.getChildAt(i).setBackgroundResource(R.drawable.room_available);
-                }
-                btn.setBackgroundResource(R.drawable.room_selected);
-            });
+                        btn.setOnClickListener(v -> {
+                            selectedRoomId = roomId;
+                            selectedRoomName = roomName;
+                            for (int i = 0; i < roomGrid.getChildCount(); i++) {
+                                roomGrid.getChildAt(i).setBackgroundResource(R.drawable.room_available);
+                            }
+                            btn.setBackgroundResource(R.drawable.room_selected);
+                        });
 
-            roomGrid.addView(btn);
-        }
+                        roomGrid.addView(btn);
+                    }
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Failed to load rooms: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 }

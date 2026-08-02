@@ -71,6 +71,14 @@ Gender and Society"
                     android:paddingVertical="6dp"
                     android:background="@drawable/status_bg"
                     android:fontFamily="@font/lexend_regular"/>
+
+                <ImageView
+                    android:id="@+id/archiveBtn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginStart="8dp"
+                    android:src="@drawable/ic_back"
+                    android:padding="2dp"/>
             </LinearLayout>
 
             <!-- DESC -->

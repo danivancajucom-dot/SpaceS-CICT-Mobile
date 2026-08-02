@@ -57,13 +57,34 @@
             android:layout_height="wrap_content">
 
             <!-- PROFILE IMAGE -->
-            <ImageView
+            <!-- Replace the profile ImageView block with: -->
+            <FrameLayout
                 android:layout_width="200dp"
                 android:layout_height="200dp"
-                android:layout_gravity="center"
-                android:src="@drawable/ic_user"
-                android:background="@drawable/circle_bg"
-                android:padding="40dp"/>
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:id="@+id/profilePhoto"
+                    android:layout_width="200dp"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_user"
+                    android:background="@drawable/circle_bg"
+                    android:padding="40dp"/>
+
+                <ImageView
+                    android:id="@+id/cameraBtn"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_gravity="bottom|end"
+                    android:src="@drawable/ic_edit"
+                    android:background="@drawable/edit_btn_bg"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true"/>
+            </FrameLayout>
+
+
 
             <!-- FULL NAME -->
             <TextView
@@ -79,7 +100,7 @@
                 android:id="@+id/nameInput"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:text="Juan Dela Cruz"
+                android:text="Full Name"
                 android:focusable="false"
                 android:clickable="false"
                 android:background="@drawable/input_bg"
@@ -108,8 +129,7 @@
                 android:textColor="#111827"
                 android:textColorHint="#6B7280"
                 android:padding="16dp"/>
-
-            <!-- PASSWORD -->
+            <!-- Replace the PASSWORD section entirely with: -->
             <TextView
                 android:text="Password"
                 android:layout_width="match_parent"
@@ -119,34 +139,14 @@
                 android:textColor="@color/black"
                 android:layout_marginBottom="10dp"/>
 
-            <LinearLayout
+            <Button
+                android:id="@+id/resetPasswordBtn"
                 android:layout_width="match_parent"
                 android:layout_height="55dp"
-                android:background="@drawable/input_bg"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/passwordInput"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:text="********"
-                    android:focusable="false"
-                    android:clickable="false"
-                    android:inputType="textPassword"
-                    android:background="@android:color/transparent"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:padding="16dp"/>
-
-                <ImageView
-                    android:id="@+id/eyeBtn"
-                    android:layout_width="50dp"
-                    android:layout_height="match_parent"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_eye"/>
-            </LinearLayout>
-
+                android:text="Send Password Reset Email"
+                android:textAllCaps="false"
+                android:backgroundTint="#F97316"
+                android:textColor="#FFFFFF"/>
         </LinearLayout>
     </ScrollView>
 

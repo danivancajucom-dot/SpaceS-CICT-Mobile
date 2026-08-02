@@ -41,54 +41,66 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <!-- FILTERS -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:orientation="horizontal"
-        android:paddingHorizontal="20dp"
-        android:paddingBottom="10dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingBottom="10dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:paddingBottom="8dp"
-        android:text="All"
-        android:textColor="#F97316"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:paddingBottom="8dp"
+                    android:text="All"
+                    android:textColor="#F97316"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:text="Available"
-        android:textColor="#64748B"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabAvailable"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:text="Available"
+                    android:textColor="#64748B"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:text="Available Soon"
-        android:textColor="#64748B"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabOccupied"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:text="Occupied"
+                    android:textColor="#64748B"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Occupied"
-        android:textColor="#64748B"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:fontFamily="@font/lexend_bold"/>
-    </LinearLayout>
+                <TextView
+                    android:id="@+id/tabMaintenance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Maintenance"
+                    android:textColor="#64748B"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
+            </LinearLayout>
     </HorizontalScrollView>
 
     <LinearLayout

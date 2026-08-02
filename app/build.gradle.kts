@@ -43,8 +43,8 @@ dependencies {
         testImplementation(libs.junit)
         androidTestImplementation(libs.ext.junit)
         androidTestImplementation(libs.espresso.core)
-
-        implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
+        implementation("com.github.bumptech.glide:glide:4.16.0")
+        implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
         implementation("com.google.firebase:firebase-auth")
         implementation("com.google.firebase:firebase-firestore")
     }

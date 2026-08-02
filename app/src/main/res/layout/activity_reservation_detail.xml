@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:background="#F5F5F5"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:paddingHorizontal="16dp"
+        android:background="#FFFFFF"
+        android:elevation="2dp">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_back"
+            android:layout_centerVertical="true"/>
+
+        <TextView
+            android:id="@+id/detailTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Reservation Details"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="18sp"
+            android:textColor="#111827"
+            android:layout_centerInParent="true"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <TextView
+            android:id="@+id/editBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Edit"
+            android:textColor="#F97316"
+            android:textStyle="bold"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true"
+            android:visibility="gone"
+            android:padding="8dp"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:padding="20dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/statusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="PENDING"
+                android:textStyle="bold"
+                android:paddingHorizontal="16dp"
+                android:paddingVertical="8dp"
+                android:background="@drawable/notification_gray_bg"
+                android:layout_marginBottom="16dp"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <!-- READ-ONLY VIEW -->
+            <LinearLayout
+                android:id="@+id/viewLayout"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView android:text="Requester" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp"/>
+                <TextView android:id="@+id/requesterText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+
+                <TextView android:text="Course &amp; Purpose" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <TextView android:id="@+id/coursePurposeText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+
+                <TextView android:text="Room &amp; Schedule" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <TextView android:id="@+id/roomScheduleText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+
+                <TextView android:text="Audience" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <TextView android:id="@+id/audienceText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+
+                <TextView android:text="Equipment &amp; Capacity" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <TextView android:id="@+id/equipmentCapacityText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+
+                <TextView android:id="@+id/denialReasonLabel" android:text="Reason for Denial" android:textStyle="bold" android:textColor="#DC2626" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:visibility="gone"/>
+                <TextView android:id="@+id/denialReasonText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp" android:visibility="gone"/>
+
+                <TextView android:text="Requested On" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <TextView android:id="@+id/requestedOnText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+            </LinearLayout>
+
+            <!-- EDIT VIEW -->
+            <LinearLayout
+                android:id="@+id/editLayout"
+                android:orientation="vertical"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView android:text="Room" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <Spinner android:id="@+id/editRoomSpinner" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg"/>
+                <TextView android:id="@+id/roomAvailabilityHint" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#DC2626" android:textSize="13sp" android:layout_marginTop="4dp"/>
+
+                <TextView android:text="Date" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <TextView android:id="@+id/editDateText" android:layout_width="match_parent" android:layout_height="55dp" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/input_bg"/>
+
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
+                    <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginEnd="8dp">
+                        <TextView android:text="Start Time" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <TextView android:id="@+id/editStartText" android:layout_width="match_parent" android:layout_height="55dp" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/input_bg" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                    <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="8dp">
+                        <TextView android:text="End Time" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <TextView android:id="@+id/editEndText" android:layout_width="match_parent" android:layout_height="55dp" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/input_bg" android:layout_marginTop="4dp"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <TextView android:text="Purpose" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <Spinner android:id="@+id/editPurposeSpinner" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg"/>
+
+                <TextView android:text="Estimated Attendees" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
+                <Spinner android:id="@+id/editStudentRangeSpinner" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg"/>
+
+                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp">
+                    <Button android:id="@+id/cancelEditBtn" android:text="Cancel" android:textAllCaps="false" android:layout_width="0dp" android:layout_weight="1" android:layout_height="55dp" android:backgroundTint="#E5E7EB" android:textColor="#111827" android:layout_marginEnd="8dp"/>
+                    <Button android:id="@+id/saveEditBtn" android:text="Save Changes" android:textAllCaps="false" android:layout_width="0dp" android:layout_weight="1" android:layout_height="55dp" android:backgroundTint="#F97316" android:textColor="#FFFFFF" android:layout_marginStart="8dp"/>
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

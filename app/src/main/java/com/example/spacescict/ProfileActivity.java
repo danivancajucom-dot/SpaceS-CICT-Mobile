@@ -1,7 +1,7 @@
 package com.example.spacescict;
 
 import android.os.Bundle;
-import android.text.InputType;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -18,13 +18,15 @@ import java.util.Map;
 
 public class ProfileActivity extends AppCompatActivity {
 
-    EditText name, email, password;
-    ImageView editBtn, backBtn, eyeBtn;
+    EditText name, email;
+
+    ImageView editBtn, backBtn;
+    Button resetPasswordBtn;
 
     boolean isEditing = false;
-    boolean isPasswordVisible = false;
 
     FirebaseFirestore db;
+    FirebaseAuth auth;
     String uid;
 
     @Override
@@ -34,130 +36,191 @@ public class ProfileActivity extends AppCompatActivity {
 
         name = findViewById(R.id.nameInput);
         email = findViewById(R.id.emailInput);
-        password = findViewById(R.id.passwordInput);
 
         editBtn = findViewById(R.id.editBtn);
         backBtn = findViewById(R.id.backBtn);
-        eyeBtn = findViewById(R.id.eyeBtn);
 
+        resetPasswordBtn = findViewById(R.id.resetPasswordBtn);
+
+        auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
-        uid = FirebaseAuth.getInstance().getUid();
+
+        if (auth.getCurrentUser() != null) {
+            uid = auth.getCurrentUser().getUid();
+        }
 
         loadProfile();
 
         setFieldsEnabled(false);
-        eyeBtn.setEnabled(false);
-        eyeBtn.setAlpha(0.4f);
 
-        editBtn.setOnClickListener(v -> {
-            if (!isEditing) {
-                Toast.makeText(this, "Edit mode enabled", Toast.LENGTH_SHORT).show();
-            }
-            toggleEdit();
-        });
+        editBtn.setOnClickListener(v -> toggleEdit());
+
         backBtn.setOnClickListener(v -> handleBack());
-        eyeBtn.setOnClickListener(v -> togglePassword());
+
+        resetPasswordBtn.setOnClickListener(v -> sendResetPasswordEmail());
     }
 
-    // ================= LOAD =================
-    void loadProfile() {
-        db.collection("users").document(uid).get()
+    // ================= LOAD PROFILE =================
+
+    private void loadProfile() {
+
+        if (uid == null) return;
+
+        db.collection("users")
+                .document(uid)
+                .get()
                 .addOnSuccessListener(doc -> {
+
                     if (doc.exists()) {
-                        name.setText(doc.getString("name"));
-                        email.setText(doc.getString("email"));
-                        // "role" is intentionally not shown/editable here
+
+                        String userName = doc.getString("name");
+                        String userEmail = doc.getString("email");
+
+                        name.setText(userName != null ? userName : "");
+                        email.setText(userEmail != null ? userEmail : "");
                     }
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                this,
+                                "Failed to load profile: " + e.getMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show()
                 );
     }
 
-    // ================= EDIT TOGGLE =================
-    void toggleEdit() {
+    // ================= EDIT MODE =================
+
+    private void toggleEdit() {
 
         if (!isEditing) {
+
             isEditing = true;
 
             setFieldsEnabled(true);
-            eyeBtn.setEnabled(true);
-            eyeBtn.setAlpha(1f);
 
             editBtn.setImageResource(R.drawable.ic_check);
+
+            Toast.makeText(this,
+                    "Edit mode enabled",
+                    Toast.LENGTH_SHORT).show();
+
         } else {
+
             ConfirmDialog.show(
                     this,
                     "Save Changes?",
                     "Do you want to save your changes?",
                     "Confirm",
                     "Cancel",
-                    () -> saveProfile()
+                    this::saveProfile
             );
         }
     }
 
-    void saveProfile() {
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("name", name.getText().toString());
-        updates.put("email", email.getText().toString());
-        // role deliberately excluded — not editable from mobile
+    // ================= SAVE =================
 
-        db.collection("users").document(uid)
+    private void saveProfile() {
+
+        if (uid == null) return;
+
+        String newName = name.getText().toString().trim();
+        String newEmail = email.getText().toString().trim();
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("name", newName);
+        updates.put("email", newEmail);
+
+        db.collection("users")
+                .document(uid)
                 .set(updates, SetOptions.merge())
                 .addOnSuccessListener(unused -> {
+
                     isEditing = false;
+
                     setFieldsEnabled(false);
-                    eyeBtn.setEnabled(false);
-                    eyeBtn.setAlpha(0.4f);
+
                     editBtn.setImageResource(R.drawable.ic_edit);
+
+                    Toast.makeText(
+                            this,
+                            "Profile updated successfully",
+                            Toast.LENGTH_SHORT
+                    ).show();
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                                this,
+                                "Save failed: " + e.getMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show()
                 );
     }
 
-    // ================= BACK BUTTON =================
-    void handleBack() {
+    // ================= RESET PASSWORD =================
+
+    private void sendResetPasswordEmail() {
+
+        String userEmail = email.getText().toString().trim();
+
+        if (userEmail.isEmpty()) {
+
+            Toast.makeText(
+                    this,
+                    "Email not found",
+                    Toast.LENGTH_SHORT
+            ).show();
+
+            return;
+        }
+
+        auth.sendPasswordResetEmail(userEmail)
+                .addOnSuccessListener(unused ->
+                        Toast.makeText(
+                                this,
+                                "Password reset email sent",
+                                Toast.LENGTH_LONG
+                        ).show()
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(
+                                this,
+                                e.getMessage(),
+                                Toast.LENGTH_SHORT
+                        ).show()
+                );
+    }
+
+    // ================= BACK =================
+
+    private void handleBack() {
 
         if (isEditing) {
+
             new AlertDialog.Builder(this)
                     .setTitle("Discard Changes?")
                     .setMessage("You have unsaved changes.")
-                    .setPositiveButton("Discard", (d, w) -> finish())
+                    .setPositiveButton("Discard",
+                            (dialog, which) -> finish())
                     .setNegativeButton("Stay", null)
                     .show();
+
         } else {
             finish();
         }
     }
 
-    // ================= ENABLE/DISABLE FIELDS =================
-    void setFieldsEnabled(boolean enabled) {
+    // ================= ENABLE/DISABLE =================
+
+    private void setFieldsEnabled(boolean enabled) {
+
         name.setEnabled(enabled);
         email.setEnabled(enabled);
-        password.setEnabled(enabled);
 
         name.setFocusableInTouchMode(enabled);
         email.setFocusableInTouchMode(enabled);
-        password.setFocusableInTouchMode(enabled);
 
         name.setClickable(enabled);
         email.setClickable(enabled);
-        password.setClickable(enabled);
-    }
-
-    // ================= PASSWORD TOGGLE =================
-    void togglePassword() {
-        if (!isPasswordVisible) {
-            password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_VISIBLE_PASSWORD);
-            eyeBtn.setImageResource(R.drawable.ic_eye_off);
-            isPasswordVisible = true;
-        } else {
-            password.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-            eyeBtn.setImageResource(R.drawable.ic_eye);
-            isPasswordVisible = false;
-        }
-        password.setSelection(password.getText().length());
     }
 }

@@ -12,6 +12,7 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -50,15 +51,49 @@ public class MainActivity extends AppCompatActivity {
                 return;
             }
 
+            loginButton.setEnabled(false);
+
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(result -> {
-                        Intent intent = new Intent(MainActivity.this, DashboardActivity.class);
-                        startActivity(intent);
-                        finish();
+                        String uid = mAuth.getUid();
+                        FirebaseFirestore.getInstance()
+                                .collection("users").document(uid).get()
+                                .addOnSuccessListener(doc -> {
+                                    loginButton.setEnabled(true);
+
+                                    if (!doc.exists()) {
+                                        mAuth.signOut();
+                                        Toast.makeText(this, "Account not found", Toast.LENGTH_LONG).show();
+                                        return;
+                                    }
+
+                                    String role = doc.getString("role");
+                                    String status = doc.getString("status");
+
+                                    boolean isFaculty = "Faculty".equalsIgnoreCase(role);
+                                    boolean isActive = status == null || "Active".equalsIgnoreCase(status);
+
+                                    if (isFaculty && isActive) {
+                                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                                        finish();
+                                    } else if (!isFaculty) {
+                                        mAuth.signOut();
+                                        Toast.makeText(this, "This app is for faculty accounts only", Toast.LENGTH_LONG).show();
+                                    } else {
+                                        mAuth.signOut();
+                                        Toast.makeText(this, "Your account is inactive. Contact admin.", Toast.LENGTH_LONG).show();
+                                    }
+                                })
+                                .addOnFailureListener(e -> {
+                                    loginButton.setEnabled(true);
+                                    mAuth.signOut();
+                                    Toast.makeText(this, "Could not verify account: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                });
                     })
-                    .addOnFailureListener(e ->
-                            Toast.makeText(this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show()
-                    );
+                    .addOnFailureListener(e -> {
+                        loginButton.setEnabled(true);
+                        Toast.makeText(this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
         });
     }
 }

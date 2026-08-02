@@ -54,12 +54,16 @@
 
         <!-- ALL -->
         <LinearLayout
+            android:id="@+id/tabAll"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center">
+            android:gravity="center"
+            android:clickable="true"
+            android:focusable="true">
 
             <TextView
+                android:id="@+id/tabAllText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="All"
@@ -69,6 +73,7 @@
                 android:fontFamily="@font/lexend_regular"/>
 
             <View
+                android:id="@+id/tabAllUnderline"
                 android:layout_width="34dp"
                 android:layout_height="3dp"
                 android:layout_marginTop="16dp"
@@ -77,12 +82,16 @@
 
         <!-- UNREAD -->
         <LinearLayout
+            android:id="@+id/tabUnread"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginStart="36dp"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:focusable="true">
 
             <TextView
+                android:id="@+id/tabUnreadText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Unread"
@@ -100,6 +109,7 @@
 
         <!-- ARCHIVED -->
         <TextView
+            android:id="@+id/tabArchivedText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Archived"
@@ -107,7 +117,10 @@
             android:textSize="16sp"
             android:textColor="#667085"
             android:layout_marginStart="36dp"
+            android:clickable="true"
+            android:focusable="true"
             android:fontFamily="@font/lexend_regular"/>
+
     </LinearLayout>
 
     <!-- DIVIDER -->
