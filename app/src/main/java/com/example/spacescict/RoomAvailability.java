@@ -20,6 +20,10 @@ public class RoomAvailability {
         void onResult(List<RoomStatus> rooms);
     }
 
+    public interface AvailabilityCallback {
+        void onResult(boolean available, String reason);
+    }
+
     public static class RoomStatus {
         public String id, roomName, floor, roomType, status, occupiedUntil;
         public int capacity;
@@ -61,86 +65,10 @@ public class RoomAvailability {
         if (status == null || !status.equalsIgnoreCase("maintenance")) return false;
         String mStartDate = room.getString("maintenanceStartDate");
         String mEndDate = room.getString("maintenanceEndDate");
-        if (mStartDate == null || mEndDate == null) return true; // no window = ongoing
+        if (mStartDate == null || mEndDate == null) return true;
         return date.compareTo(mStartDate) >= 0 && date.compareTo(mEndDate) <= 0;
     }
 
-    public interface AvailabilityCallback {
-        void onResult(boolean available, String reason);
-    }
-
-    // Checks a specific room/date/time for conflicts, excluding one reservation (the one being edited).
-// Covers: room schedules, events, other approved reservations, maintenance.
-// NOTE: does not yet check roomReleases/roomReassignments for this arbitrary-date case — flagged simplification.
-    public static void checkAvailability(String roomId, String date, String startTime, String endTime,
-                                         String excludeReservationId, AvailabilityCallback callback) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        String dayAbbrev = dayAbbrevForDate(date);
-
-        db.collection("rooms").document(roomId).get().addOnSuccessListener(roomDoc -> {
-            if (isUnderMaintenance(roomDoc, date, startTime, endTime)) {
-                callback.onResult(false, "This room is under maintenance during the selected time.");
-                return;
-            }
-
-            db.collection("rooms").document(roomId).collection("schedules").get()
-                    .addOnSuccessListener(schedSnap -> {
-                        for (DocumentSnapshot sched : schedSnap.getDocuments()) {
-                            Boolean initialized = sched.getBoolean("initialized");
-                            if (Boolean.TRUE.equals(initialized)) continue;
-                            if (!dayAbbrev.equals(sched.getString("day"))) continue;
-                            if (overlap(startTime, endTime, sched.getString("startTime"), sched.getString("endTime"))) {
-                                callback.onResult(false, "This room has a regular class schedule at that time.");
-                                return;
-                            }
-                        }
-
-                        db.collection("events")
-                                .whereEqualTo("roomId", roomId)
-                                .whereEqualTo("date", date)
-                                .get().addOnSuccessListener(eventSnap -> {
-                                    for (DocumentSnapshot e : eventSnap.getDocuments()) {
-                                        if (overlap(startTime, endTime, e.getString("startTime"), e.getString("endTime"))) {
-                                            callback.onResult(false, "This room has an activity scheduled at that time.");
-                                            return;
-                                        }
-                                    }
-
-                                    db.collection("reservationRequests")
-                                            .whereEqualTo("roomId", roomId)
-                                            .whereEqualTo("date", date)
-                                            .get().addOnSuccessListener(resSnap -> {
-                                                for (DocumentSnapshot r : resSnap.getDocuments()) {
-                                                    if (r.getId().equals(excludeReservationId)) continue;
-                                                    String status = r.getString("status");
-                                                    if (status == null || status.equalsIgnoreCase("Rejected")) continue;
-                                                    if (overlap(startTime, endTime, r.getString("startTime"), r.getString("endTime"))) {
-                                                        callback.onResult(false, "This room is already reserved at that time.");
-                                                        return;
-                                                    }
-                                                }
-                                                callback.onResult(true, null);
-                                            });
-                                });
-                    });
-        });
-    }
-
-    static String dayAbbrevForDate(String dateStr) {
-        String[] days = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
-        try {
-            java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            Calendar c = Calendar.getInstance();
-            c.setTime(fmt.parse(dateStr));
-            return days[c.get(Calendar.DAY_OF_WEEK) - 1];
-        } catch (Exception e) {
-            return "MON";
-        }
-    }
-    /**
-     * Computes LIVE availability for "right now, today" — used by the Rooms tab.
-     * Mirrors FacultyRoom.jsx's loadRooms().
-     */
     public static void loadCurrentStatus(ResultCallback callback) {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         String today = todayStr();
@@ -156,7 +84,6 @@ public class RoomAvailability {
                     db.collection("roomReleases").get().addOnSuccessListener(releasesSnap -> {
                         db.collection("roomReassignments").get().addOnSuccessListener(reassignSnap -> {
 
-                            // Build release map: roomId -> Set(scheduleId_date)
                             Map<String, Set<String>> releaseMap = new HashMap<>();
                             for (DocumentSnapshot d : releasesSnap.getDocuments()) {
                                 String date = d.getString("date");
@@ -166,7 +93,6 @@ public class RoomAvailability {
                                 releaseMap.computeIfAbsent(roomId, k -> new HashSet<>()).add(key);
                             }
 
-                            // Reassignments: away (old room) / into (new room)
                             Map<String, Set<String>> reassignAway = new HashMap<>();
                             Map<String, List<DocumentSnapshot>> reassignInto = new HashMap<>();
                             for (DocumentSnapshot d : reassignSnap.getDocuments()) {
@@ -192,7 +118,6 @@ public class RoomAvailability {
         });
     }
 
-    // Recursive step because each room needs its own async subcollection fetch
     private static void processRoomsSequentially(
             FirebaseFirestore db, List<DocumentSnapshot> roomDocs, int index, List<RoomStatus> results,
             QuerySnapshot eventsSnap, QuerySnapshot reservationsSnap,
@@ -297,5 +222,71 @@ public class RoomAvailability {
                     processRoomsSequentially(db, roomDocs, index + 1, results, eventsSnap, reservationsSnap,
                             releaseMap, reassignAway, reassignInto, today, currentDay, currentMinutes, callback);
                 });
+    }
+
+    public static void checkAvailability(String roomId, String date, String startTime, String endTime,
+                                         String excludeReservationId, AvailabilityCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        String dayAbbrev = dayAbbrevForDate(date);
+
+        db.collection("rooms").document(roomId).get().addOnSuccessListener(roomDoc -> {
+            if (isUnderMaintenance(roomDoc, date, startTime, endTime)) {
+                callback.onResult(false, "This room is under maintenance during the selected time.");
+                return;
+            }
+
+            db.collection("rooms").document(roomId).collection("schedules").get()
+                    .addOnSuccessListener(schedSnap -> {
+                        for (DocumentSnapshot sched : schedSnap.getDocuments()) {
+                            Boolean initialized = sched.getBoolean("initialized");
+                            if (Boolean.TRUE.equals(initialized)) continue;
+                            if (!dayAbbrev.equals(sched.getString("day"))) continue;
+                            if (overlap(startTime, endTime, sched.getString("startTime"), sched.getString("endTime"))) {
+                                callback.onResult(false, "This room has a regular class schedule at that time.");
+                                return;
+                            }
+                        }
+
+                        db.collection("events")
+                                .whereEqualTo("roomId", roomId)
+                                .whereEqualTo("date", date)
+                                .get().addOnSuccessListener(eventSnap -> {
+                                    for (DocumentSnapshot e : eventSnap.getDocuments()) {
+                                        if (overlap(startTime, endTime, e.getString("startTime"), e.getString("endTime"))) {
+                                            callback.onResult(false, "This room has an activity scheduled at that time.");
+                                            return;
+                                        }
+                                    }
+
+                                    db.collection("reservationRequests")
+                                            .whereEqualTo("roomId", roomId)
+                                            .whereEqualTo("date", date)
+                                            .get().addOnSuccessListener(resSnap -> {
+                                                for (DocumentSnapshot r : resSnap.getDocuments()) {
+                                                    if (r.getId().equals(excludeReservationId)) continue;
+                                                    String status = r.getString("status");
+                                                    if (status == null || status.equalsIgnoreCase("Rejected")) continue;
+                                                    if (overlap(startTime, endTime, r.getString("startTime"), r.getString("endTime"))) {
+                                                        callback.onResult(false, "This room is already reserved at that time.");
+                                                        return;
+                                                    }
+                                                }
+                                                callback.onResult(true, null);
+                                            });
+                                });
+                    });
+        });
+    }
+
+    static String dayAbbrevForDate(String dateStr) {
+        String[] days = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
+        try {
+            java.text.SimpleDateFormat fmt = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            Calendar c = Calendar.getInstance();
+            c.setTime(fmt.parse(dateStr));
+            return days[c.get(Calendar.DAY_OF_WEEK) - 1];
+        } catch (Exception e) {
+            return "MON";
+        }
     }
 }

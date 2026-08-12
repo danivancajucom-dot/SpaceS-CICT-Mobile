@@ -23,6 +23,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     public interface OnActionListener {
         void onTap(NotificationModel n, int position);
         void onArchive(NotificationModel n, int position);
+        void onViewAction(NotificationModel n);
     }
 
     public NotificationAdapter(List<NotificationModel> list, OnActionListener listener) {

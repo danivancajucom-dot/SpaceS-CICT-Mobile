@@ -4,8 +4,10 @@ import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -30,15 +32,31 @@ public class ReservationDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_RESERVATION_ID = "reservationId";
 
+    static final String[] CLASS_PURPOSES = {"Lecture", "Hands-on", "Examination"};
+    static final String[] ORG_PURPOSES = {"Workshop", "Training", "Meeting", "Other Activity"};
+    static final String[] CLASS_STUDENT_RANGES = {"30-50", "50-60", "60-80", "80-100"};
+    static final String[] ORG_STUDENT_RANGES = {"1-30", "31-50", "51-80", "81-100", "101+"};
+
+    static final Map<String, String> EQUIPMENT_LABELS = new HashMap<>();
+    static {
+        EQUIPMENT_LABELS.put("projector", "Projector");
+        EQUIPMENT_LABELS.put("tvDisplay", "TV Display");
+        EQUIPMENT_LABELS.put("ac", "AC");
+        EQUIPMENT_LABELS.put("computer", "Computer");
+        EQUIPMENT_LABELS.put("smartBoard", "Smart Board");
+    }
+
     TextView statusBadge, requesterText, coursePurposeText, roomScheduleText, audienceText,
             equipmentCapacityText, denialReasonLabel, denialReasonText, requestedOnText, editBtn,
             editDateText, editStartText, editEndText, roomAvailabilityHint;
-    View viewLayout, editLayout;
+    View viewLayout, editLayout, editCustomPurposeLayout;
     Spinner editRoomSpinner, editPurposeSpinner, editStudentRangeSpinner;
+    EditText editCustomPurposeInput;
     Button cancelEditBtn, saveEditBtn;
 
     String reservationId;
     Map<String, Object> reservation;
+    String audienceType = "";
     List<DocumentSnapshot> allRooms = new ArrayList<>();
     boolean editing = false;
 
@@ -62,6 +80,8 @@ public class ReservationDetailActivity extends AppCompatActivity {
         editBtn = findViewById(R.id.editBtn);
         viewLayout = findViewById(R.id.viewLayout);
         editLayout = findViewById(R.id.editLayout);
+        editCustomPurposeLayout = findViewById(R.id.editCustomPurposeLayout);
+        editCustomPurposeInput = findViewById(R.id.editCustomPurposeInput);
         editDateText = findViewById(R.id.editDateText);
         editStartText = findViewById(R.id.editStartText);
         editEndText = findViewById(R.id.editEndText);
@@ -97,6 +117,7 @@ public class ReservationDetailActivity extends AppCompatActivity {
                         return;
                     }
                     reservation = doc.getData();
+                    audienceType = str(reservation.get("audienceType"));
                     renderView();
                 });
     }
@@ -113,16 +134,21 @@ public class ReservationDetailActivity extends AppCompatActivity {
         requesterText.setText(str(reservation.get("facultyName")));
 
         String purpose = str(reservation.get("purpose"));
-        coursePurposeText.setText("Course Title: " + str(reservation.get("courseTitle"))
+        Object attendeesObj = reservation.get("attendees");
+        Map<String, Object> attendees = attendeesObj instanceof Map ? (Map<String, Object>) attendeesObj : new HashMap<>();
+
+        StringBuilder coursePurpose = new StringBuilder("Course Title: " + str(reservation.get("courseTitle"))
                 + "\nPurpose: " + purpose);
+        String customPurpose = str(attendees.get("customPurpose"));
+        if (!customPurpose.isEmpty()) {
+            coursePurpose.append("\nSpecified Activity: ").append(customPurpose);
+        }
+        coursePurposeText.setText(coursePurpose.toString());
 
         roomScheduleText.setText("Room: " + str(reservation.get("roomName"))
                 + "\nDate: " + str(reservation.get("date"))
                 + "\nTime: " + str(reservation.get("startTime")) + " – " + str(reservation.get("endTime")));
 
-        Object attendeesObj = reservation.get("attendees");
-        Map<String, Object> attendees = attendeesObj instanceof Map ? (Map<String, Object>) attendeesObj : new HashMap<>();
-        String audienceType = str(reservation.get("audienceType"));
         StringBuilder audience = new StringBuilder("Type: " + audienceType);
         if ("Class".equalsIgnoreCase(audienceType)) {
             audience.append("\nCourse: ").append(str(attendees.get("course")));
@@ -132,8 +158,15 @@ public class ReservationDetailActivity extends AppCompatActivity {
         }
         audienceText.setText(audience.toString());
 
-        List<String> equipment = (List<String>) reservation.get("requiredEquipment");
-        String equipmentStr = equipment == null || equipment.isEmpty() ? "None" : android.text.TextUtils.join(", ", equipment);
+        List<String> equipmentRaw = (List<String>) reservation.get("requiredEquipment");
+        String equipmentStr = "None";
+        if (equipmentRaw != null && !equipmentRaw.isEmpty()) {
+            List<String> labels = new ArrayList<>();
+            for (String eq : equipmentRaw) {
+                labels.add(EQUIPMENT_LABELS.getOrDefault(eq, eq));
+            }
+            equipmentStr = android.text.TextUtils.join(", ", labels);
+        }
         equipmentCapacityText.setText("Equipment: " + equipmentStr
                 + "\nEstimated Attendees: " + str(reservation.get("studentRange")));
 
@@ -165,15 +198,39 @@ public class ReservationDetailActivity extends AppCompatActivity {
         editStartText.setText(str(reservation.get("startTime")));
         editEndText.setText(str(reservation.get("endTime")));
 
-        String[] purposes = {"Lecture", "Hands-on", "Examination", "Workshop", "Training", "Meeting", "Other Activity"};
-        editPurposeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, purposes));
-        String currentPurpose = str(reservation.get("purpose"));
-        for (int i = 0; i < purposes.length; i++) if (purposes[i].equals(currentPurpose)) editPurposeSpinner.setSelection(i);
+        boolean isClass = "Class".equalsIgnoreCase(audienceType);
+        String[] purposes = isClass ? CLASS_PURPOSES : ORG_PURPOSES;
+        String[] ranges = isClass ? CLASS_STUDENT_RANGES : ORG_STUDENT_RANGES;
 
-        String[] ranges = {"30-50", "50-60", "60-80", "80-100", "1-30", "31-50", "51-80", "81-100", "101+"};
-        editStudentRangeSpinner.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ranges));
+        ArrayAdapter<String> purposeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, purposes);
+        editPurposeSpinner.setAdapter(purposeAdapter);
+        String currentPurpose = str(reservation.get("purpose"));
+        int purposeIndex = 0;
+        for (int i = 0; i < purposes.length; i++) if (purposes[i].equals(currentPurpose)) purposeIndex = i;
+        editPurposeSpinner.setSelection(purposeIndex);
+
+        editPurposeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
+                String selected = parent.getItemAtPosition(pos).toString();
+                editCustomPurposeLayout.setVisibility("Other Activity".equals(selected) ? View.VISIBLE : View.GONE);
+            }
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+        editCustomPurposeLayout.setVisibility("Other Activity".equals(currentPurpose) ? View.VISIBLE : View.GONE);
+
+        Object attendeesObj = reservation.get("attendees");
+        if (attendeesObj instanceof Map) {
+            @SuppressWarnings("unchecked")
+            Map<String, Object> attendees = (Map<String, Object>) attendeesObj;
+            editCustomPurposeInput.setText(str(attendees.get("customPurpose")));
+        }
+
+        ArrayAdapter<String> rangeAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, ranges);
+        editStudentRangeSpinner.setAdapter(rangeAdapter);
         String currentRange = str(reservation.get("studentRange"));
-        for (int i = 0; i < ranges.length; i++) if (ranges[i].equals(currentRange)) editStudentRangeSpinner.setSelection(i);
+        int rangeIndex = 0;
+        for (int i = 0; i < ranges.length; i++) if (ranges[i].equals(currentRange)) rangeIndex = i;
+        editStudentRangeSpinner.setSelection(rangeIndex);
 
         loadRoomsForEdit();
     }
@@ -231,6 +288,12 @@ public class ReservationDetailActivity extends AppCompatActivity {
         String endTime = editEndText.getText().toString();
         String purpose = (String) editPurposeSpinner.getSelectedItem();
         String studentRange = (String) editStudentRangeSpinner.getSelectedItem();
+        String customPurpose = editCustomPurposeInput.getText().toString().trim();
+
+        if ("Other Activity".equals(purpose) && customPurpose.isEmpty()) {
+            Toast.makeText(this, "Please specify the activity", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         saveEditBtn.setEnabled(false);
         roomAvailabilityHint.setText("");
@@ -242,13 +305,14 @@ public class ReservationDetailActivity extends AppCompatActivity {
                     roomAvailabilityHint.setText(reason);
                     return;
                 }
-                commitChanges(roomId, roomName, date, startTime, endTime, purpose, studentRange);
+                commitChanges(roomId, roomName, date, startTime, endTime, purpose, studentRange, customPurpose);
             });
         });
     }
 
+    @SuppressWarnings("unchecked")
     void commitChanges(String roomId, String roomName, String date, String startTime,
-                       String endTime, String purpose, String studentRange) {
+                       String endTime, String purpose, String studentRange, String customPurpose) {
         Map<String, Object> updates = new HashMap<>();
         updates.put("roomId", roomId);
         updates.put("roomName", roomName);
@@ -258,6 +322,12 @@ public class ReservationDetailActivity extends AppCompatActivity {
         updates.put("purpose", purpose);
         updates.put("studentRange", studentRange);
         updates.put("updatedAt", Timestamp.now());
+
+        Object attendeesObj = reservation.get("attendees");
+        Map<String, Object> attendees = attendeesObj instanceof Map
+                ? new HashMap<>((Map<String, Object>) attendeesObj) : new HashMap<>();
+        attendees.put("customPurpose", "Other Activity".equals(purpose) ? customPurpose : "");
+        updates.put("attendees", attendees);
 
         FirebaseFirestore.getInstance().collection("reservationRequests").document(reservationId)
                 .update(updates)

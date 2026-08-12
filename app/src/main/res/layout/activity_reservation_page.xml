@@ -3,11 +3,10 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="#F5F5F5">
 
-    <!-- TITLE -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -16,17 +15,14 @@
         android:textStyle="bold"
         android:textColor="#111827"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="16dp"
         android:fontFamily="@font/lexend_bold"/>
 
-    <!-- FILTERS -->
     <HorizontalScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none">
-
+        android:layout_height="wrap_content">
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:orientation="horizontal"
@@ -43,7 +39,6 @@
                 android:textStyle="bold"
                 android:paddingBottom="14dp"
                 android:layout_marginEnd="50dp"
-                android:background="@drawable/filter_active"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="@font/lexend_bold"/>
@@ -56,7 +51,6 @@
                 android:textColor="#64748B"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:paddingBottom="14dp"
                 android:layout_marginEnd="50dp"
                 android:clickable="true"
                 android:focusable="true"
@@ -70,7 +64,6 @@
                 android:textColor="#64748B"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:paddingBottom="14dp"
                 android:layout_marginEnd="50dp"
                 android:clickable="true"
                 android:focusable="true"
@@ -84,18 +77,16 @@
                 android:textColor="#64748B"
                 android:textSize="17sp"
                 android:textStyle="bold"
-                android:paddingBottom="14dp"
                 android:clickable="true"
                 android:focusable="true"
                 android:fontFamily="@font/lexend_bold"/>
-
         </LinearLayout>
-
     </HorizontalScrollView>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:paddingHorizontal="20dp"
         android:orientation="vertical">
 
@@ -106,35 +97,12 @@
             android:layout_marginTop="10dp"
             android:layout_marginBottom="10dp"/>
 
-        <!-- RESERVATION LIST -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/reservationRecycler"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
+            android:layout_height="match_parent"
             android:clipToPadding="false"/>
 
     </LinearLayout>
-
-    <!-- FLOATING ADD BUTTON -->
-    <FrameLayout
-        android:id="@+id/fabAddReservation"
-        android:layout_width="86dp"
-        android:layout_height="86dp"
-        android:layout_gravity="end"
-        android:layout_margin="24dp"
-        android:background="@drawable/fab_bg"
-        android:elevation="8dp"
-        android:clickable="true"
-        android:focusable="true">
-
-        <ImageView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_gravity="center"
-            android:src="@drawable/ic_add"
-            android:contentDescription="Add Reservation"/>
-
-    </FrameLayout>
 
 </LinearLayout>

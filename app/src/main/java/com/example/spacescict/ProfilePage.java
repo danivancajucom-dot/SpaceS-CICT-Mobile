@@ -1,7 +1,6 @@
 package com.example.spacescict;
 
 import android.content.Context;
-import android.net.Uri;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -10,6 +9,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
@@ -28,7 +28,7 @@ public class ProfilePage {
     FirebaseFirestore db;
     String uid;
     Runnable onBack;
-    PhotoPickerHandler photoPickerHandler; // set by DashboardActivity
+    PhotoPickerHandler photoPickerHandler;
 
     public interface PhotoPickerHandler {
         void launchPicker();
@@ -84,7 +84,7 @@ public class ProfilePage {
 
                         String photoUrl = doc.getString("photoUrl");
                         if (photoUrl != null && !photoUrl.isEmpty()) {
-                            com.bumptech.glide.Glide.with(context)
+                            Glide.with(context)
                                     .load(photoUrl)
                                     .circleCrop()
                                     .placeholder(R.drawable.ic_user)
@@ -96,16 +96,6 @@ public class ProfilePage {
                         Toast.makeText(context, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    public void onPhotoUploaded(String photoUrl) {
-        db.collection("users").document(uid).update("photoUrl", photoUrl)
-                .addOnSuccessListener(unused -> {
-                    com.bumptech.glide.Glide.with(context)
-                            .load(photoUrl)
-                            .circleCrop()
-                            .into(profilePhoto);
-                    Toast.makeText(context, "Photo updated", Toast.LENGTH_SHORT).show();
-                });
-    }
     void sendPasswordReset() {
         String userEmail = email.getText().toString().trim();
         if (userEmail.isEmpty()) return;
@@ -150,13 +140,19 @@ public class ProfilePage {
                     cameraBtn.setVisibility(View.GONE);
                     editBtn.setImageResource(R.drawable.ic_edit);
 
-                    Map<String, Object> details = new HashMap<>();
-                    ActivityLogger.log("Updated profile", "edit", "Faculty Profile", "Success", details, null);
+                    ActivityLogger.log("Updated profile", "edit", "Faculty Profile", "Success", new HashMap<>(), null);
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(context, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
+    public void onPhotoUploaded(String photoUrl) {
+        db.collection("users").document(uid).update("photoUrl", photoUrl)
+                .addOnSuccessListener(unused -> {
+                    Glide.with(context).load(photoUrl).circleCrop().into(profilePhoto);
+                    Toast.makeText(context, "Photo updated", Toast.LENGTH_SHORT).show();
+                });
+    }
 
     void handleBack() {
         if (isEditing) {
@@ -175,6 +171,5 @@ public class ProfilePage {
         name.setEnabled(enabled);
         name.setFocusableInTouchMode(enabled);
         name.setClickable(enabled);
-        // email intentionally stays read-only, matching web (readOnly on email field there too)
     }
 }

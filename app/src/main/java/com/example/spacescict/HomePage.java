@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -21,13 +23,17 @@ public class HomePage {
     Button reserveButton;
     TextView greetingName, scheduleStatusBadge, scheduleRoomText, scheduleSubjectText,
             scheduleTimeText, noScheduleText, noUpcomingText;
+    ImageView homeProfileImage;
     View scheduleCard;
     RecyclerView upcomingRecycler;
+    Context context;
 
     public HomePage(Context context, View view) {
+        this.context = context;
 
         reserveButton = view.findViewById(R.id.reserveButton);
         greetingName = view.findViewById(R.id.greetingName);
+        homeProfileImage = view.findViewById(R.id.homeProfileImage);
         scheduleCard = view.findViewById(R.id.scheduleCard);
         scheduleStatusBadge = view.findViewById(R.id.scheduleStatusBadge);
         scheduleRoomText = view.findViewById(R.id.scheduleRoomText);
@@ -55,6 +61,15 @@ public class HomePage {
                     String last = doc.getString("lastName");
                     String fullName = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
                     greetingName.setText(fullName.isEmpty() ? "Faculty" : "Prof. " + fullName);
+
+                    String photoUrl = doc.getString("photoUrl");
+                    if (homeProfileImage != null && photoUrl != null && !photoUrl.isEmpty()) {
+                        Glide.with(context)
+                                .load(photoUrl)
+                                .circleCrop()
+                                .placeholder(R.drawable.ic_user)
+                                .into(homeProfileImage);
+                    }
                 })
                 .addOnFailureListener(e -> greetingName.setText("Faculty"));
     }

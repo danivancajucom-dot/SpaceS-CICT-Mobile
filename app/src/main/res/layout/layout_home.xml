@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- ================= CONTENT ================= -->
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -12,16 +10,18 @@
         android:padding="16dp"
         android:orientation="vertical">
 
-        <!-- GREETING -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
             android:gravity="center_vertical">
 
-            <View
+            <ImageView
+                android:id="@+id/homeProfileImage"
                 android:layout_width="50dp"
                 android:layout_height="50dp"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_user"
                 android:background="@drawable/circle_orange"/>
 
             <LinearLayout
@@ -51,8 +51,6 @@
             </LinearLayout>
         </LinearLayout>
 
-
-        <!-- TODAY HEADER -->
         <LinearLayout
             android:layout_marginTop="24dp"
             android:layout_width="match_parent"
@@ -78,7 +76,6 @@
                 android:fontFamily="@font/lexend_bold"/>
         </LinearLayout>
 
-        <!-- SCHEDULE CARD -->
         <androidx.cardview.widget.CardView
             android:id="@+id/scheduleCard"
             android:layout_width="match_parent"
@@ -91,7 +88,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- IMAGE -->
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -99,13 +95,11 @@
                     android:src="@drawable/room2"
                     android:background="#CCCCCC"/>
 
-                <!-- OVERLAY -->
                 <View
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:background="#66000000"/>
 
-                <!-- STATUS BADGE -->
                 <TextView
                     android:id="@+id/scheduleStatusBadge"
                     android:layout_width="wrap_content"
@@ -121,7 +115,6 @@
                     android:background="@drawable/status_bg"
                     android:fontFamily="@font/lexend_bold"/>
 
-                <!-- TEXT -->
                 <LinearLayout
                     android:layout_gravity="bottom"
                     android:padding="16dp"
@@ -159,7 +152,6 @@
 
         </androidx.cardview.widget.CardView>
 
-        <!-- EMPTY STATE (shown when no classes today) -->
         <TextView
             android:id="@+id/noScheduleText"
             android:layout_width="match_parent"
@@ -172,7 +164,6 @@
             android:visibility="gone"
             android:fontFamily="@font/lexend_regular"/>
 
-        <!-- UPCOMING -->
         <TextView
             android:text="Upcoming Classes"
             android:layout_height="wrap_content"
@@ -201,7 +192,6 @@
             android:visibility="gone"
             android:fontFamily="@font/lexend_regular"/>
 
-        <!-- BUTTON -->
         <Button
             android:id="@+id/reserveButton"
             android:layout_width="236dp"

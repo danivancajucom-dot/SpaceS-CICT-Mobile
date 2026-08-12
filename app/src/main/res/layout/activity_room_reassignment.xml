@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:padding="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:text="Room Reassignment Request"
+            android:textStyle="bold"
+            android:textSize="22sp"
+            android:textColor="#111827"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <TextView
+            android:text="The Department Head has proposed a temporary room change for one of your classes."
+            android:textColor="#6B7280"
+            android:layout_marginTop="6dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lexend_regular"/>
+
+        <TextView android:text="Class Information" android:textStyle="bold" android:textColor="#111827" android:layout_marginTop="20dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+        <TextView android:id="@+id/infoText" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="6dp" android:textColor="#374151"/>
+
+        <TextView android:text="Room Change" android:textStyle="bold" android:textColor="#111827" android:layout_marginTop="20dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+
+        <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:gravity="center_vertical">
+            <TextView android:id="@+id/oldRoomText" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:gravity="center" android:textStyle="bold" android:textSize="18sp"/>
+            <TextView android:text="→" android:textSize="20sp" android:paddingHorizontal="12dp" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+            <TextView android:id="@+id/newRoomText" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:gravity="center" android:textStyle="bold" android:textSize="18sp" android:textColor="#F97316"/>
+        </LinearLayout>
+
+        <TextView
+            android:text="This reassignment only applies to this scheduled class. Your regular weekly room assignment will remain unchanged."
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            android:padding="12dp"
+            android:background="#FFF7ED"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout android:id="@+id/actionsLayout" android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp">
+            <Button android:id="@+id/rejectBtn" android:text="Reject" android:textAllCaps="false" android:layout_width="0dp" android:layout_weight="1" android:layout_height="55dp" android:backgroundTint="#E5E7EB" android:textColor="#111827" android:layout_marginEnd="8dp"/>
+            <Button android:id="@+id/approveBtn" android:text="Accept Room" android:textAllCaps="false" android:layout_width="0dp" android:layout_weight="1" android:layout_height="55dp" android:backgroundTint="#F97316" android:textColor="#FFFFFF" android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/expiredText"
+            android:text="This room reassignment has already ended. The response period is now closed."
+            android:textColor="#991B1B"
+            android:background="#FEF2F2"
+            android:padding="16dp"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+</ScrollView>

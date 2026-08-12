@@ -126,7 +126,6 @@ public class ReservationActivity extends AppCompatActivity {
                 });
     }
 
-    // ================= VALIDATION (mirrors web) =================
     String validate() {
         String audienceType = (String) audienceTypeSpinner.getSelectedItem();
         String purpose = (String) purposeSpinner.getSelectedItem();
@@ -169,7 +168,6 @@ public class ReservationActivity extends AppCompatActivity {
                 || eqSmartBoard.isChecked() || eqTvDisplay.isChecked();
     }
 
-    // ================= SUBMIT =================
     void submitReservation() {
         String uid = FirebaseAuth.getInstance().getUid();
         String audienceType = (String) audienceTypeSpinner.getSelectedItem();
@@ -182,38 +180,17 @@ public class ReservationActivity extends AppCompatActivity {
         if (eqComputer.isChecked()) equipment.add("computer");
         if (eqSmartBoard.isChecked()) equipment.add("smartBoard");
 
-        String purposeValue = purpose;
+        String finalPurpose = purpose;
         String customPurpose = "";
-
         if ("Other Activity".equals(purpose)) {
             customPurpose = customPurposeInput.getText().toString().trim();
-            purposeValue = customPurpose.isEmpty()
-                    ? "Other Activity"
-                    : customPurpose;
+            finalPurpose = customPurpose.isEmpty() ? "Other Activity" : customPurpose;
         }
 
-        final String finalPurpose = purposeValue;
-        final String finalAudienceType = audienceType;
-
         Map<String, Object> attendees = new HashMap<>();
-        attendees.put(
-                "course",
-                audienceType.equals("Class")
-                        ? programInput.getText().toString().trim()
-                        : ""
-        );
-        attendees.put(
-                "yearSectionGroup",
-                audienceType.equals("Class")
-                        ? yearSectionInput.getText().toString().trim()
-                        : ""
-        );
-        attendees.put(
-                "organization",
-                audienceType.equals("Organization")
-                        ? orgInput.getText().toString().trim()
-                        : ""
-        );
+        attendees.put("course", audienceType.equals("Class") ? programInput.getText().toString().trim() : "");
+        attendees.put("yearSectionGroup", audienceType.equals("Class") ? yearSectionInput.getText().toString().trim() : "");
+        attendees.put("organization", audienceType.equals("Organization") ? orgInput.getText().toString().trim() : "");
         attendees.put("customPurpose", customPurpose);
 
         Map<String, Object> reservation = new HashMap<>();
@@ -231,10 +208,10 @@ public class ReservationActivity extends AppCompatActivity {
         reservation.put("date", datePicker.getText().toString());
         reservation.put("startTime", startTime.getText().toString());
         reservation.put("endTime", endTime.getText().toString());
-        reservation.put("status", "Pending"); // matches web casing exactly
+        reservation.put("status", "Pending");
         reservation.put("createdAt", Timestamp.now());
 
-
+        String finalFinalPurpose = finalPurpose;
         FirebaseFirestore.getInstance()
                 .collection("reservationRequests")
                 .add(reservation)
@@ -250,24 +227,23 @@ public class ReservationActivity extends AppCompatActivity {
                                     + " (" + startTime.getText() + " - " + endTime.getText() + ") has been submitted successfully and is waiting for approval.",
                             "reservation-submitted", "INFO");
 
-                    java.util.Map<String, Object> details = new java.util.HashMap<>();
+                    Map<String, Object> details = new HashMap<>();
                     details.put("courseTitle", courseInput.getText().toString().trim());
                     details.put("room", selectedRoomName);
                     details.put("date", datePicker.getText().toString());
                     details.put("startTime", startTime.getText().toString());
                     details.put("endTime", endTime.getText().toString());
-                    details.put("purpose", finalPurpose);
-                    details.put("audienceType", finalAudienceType);
+                    details.put("purpose", finalFinalPurpose);
+                    details.put("audienceType", audienceType);
 
                     ActivityLogger.log("Submitted Reservation Request", "success",
                             selectedRoomName + " | " + courseInput.getText().toString().trim(), "SUCCESS",
-                            details, () -> finish());
+                            details, this::finish);
                 })
                 .addOnFailureListener(e ->
                         Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    // ================= DATE + TIME =================
     void setupPickers() {
         datePicker.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
@@ -286,11 +262,10 @@ public class ReservationActivity extends AppCompatActivity {
     void showTime(TextView target) {
         TimePickerDialog tp = new TimePickerDialog(this,
                 (view, hour, minute) -> target.setText(String.format("%02d:%02d", hour, minute)),
-                12, 0, true); // 24h to match web's "HH:mm" format
+                12, 0, true);
         tp.show();
     }
 
-    // ================= SPINNERS =================
     void setupSpinners() {
 
         audienceTypeSpinner.setAdapter(new ArrayAdapter<>(this,
@@ -327,7 +302,7 @@ public class ReservationActivity extends AppCompatActivity {
 
                 boolean needsAttendees = isClass
                         ? (purpose.equals("Lecture") || purpose.equals("Examination"))
-                        : true; // Organization: every purpose needs attendee range
+                        : true;
 
                 attendeesLayout.setVisibility(needsAttendees ? View.VISIBLE : View.GONE);
                 if (needsAttendees) {
@@ -341,7 +316,7 @@ public class ReservationActivity extends AppCompatActivity {
 
         floorSpinner.setAdapter(new ArrayAdapter<>(this,
                 android.R.layout.simple_spinner_dropdown_item,
-                new String[]{"1st", "3rd", "4th"})); // matches web's substring-match approach
+                new String[]{"1st", "3rd", "4th"}));
 
         floorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
@@ -351,11 +326,6 @@ public class ReservationActivity extends AppCompatActivity {
         });
     }
 
-    // ================= ROOMS =================
-    // NOTE: this still only checks the room doc's own "status" field.
-    // Web computes live availability from schedules/events/reservations/releases/
-    // reassignments/maintenance — that logic is not yet ported here. Flagging as
-    // a known gap, not silently pretending this matches web behavior.
     void loadRoomsForFloor(String floorFilter) {
         roomGrid.removeAllViews();
         selectedRoomId = null;

@@ -3,7 +3,7 @@ package com.example.spacescict;
 import com.google.firebase.Timestamp;
 
 public class NotificationModel {
-    public String id;
+    public String id, assignmentId;
     int icon;
     String title, desc, badge, type;
     Timestamp createdAt;

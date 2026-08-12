@@ -57,25 +57,23 @@
             android:layout_height="wrap_content">
 
             <!-- PROFILE IMAGE -->
-            <!-- Replace the profile ImageView block with: -->
             <FrameLayout
-                android:layout_width="200dp"
-                android:layout_height="200dp"
+                android:layout_width="230dp"
+                android:layout_height="230dp"
                 android:layout_gravity="center">
 
                 <ImageView
                     android:id="@+id/profilePhoto"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
+                    android:layout_width="210dp"
+                    android:layout_height="210dp"
                     android:scaleType="centerCrop"
                     android:src="@drawable/ic_user"
-                    android:background="@drawable/circle_bg"
-                    android:padding="40dp"/>
+                    android:background="@drawable/circle_bg"/>
 
                 <ImageView
                     android:id="@+id/cameraBtn"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="52dp"
+                    android:layout_height="52dp"
                     android:layout_gravity="bottom|end"
                     android:src="@drawable/ic_edit"
                     android:background="@drawable/edit_btn_bg"

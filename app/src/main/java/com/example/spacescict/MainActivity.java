@@ -6,9 +6,12 @@ import android.text.InputType;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -30,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         EditText passwordInput = findViewById(R.id.passwordInput);
         EditText emailInput = findViewById(R.id.emailInput);
         ImageView togglePassword = findViewById(R.id.togglePassword);
+        TextView forgotPasswordText = findViewById(R.id.forgotPasswordText);
 
         togglePassword.setOnClickListener(v -> {
             if (passwordInput.getInputType() == (InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD)) {
@@ -41,6 +45,10 @@ public class MainActivity extends AppCompatActivity {
             }
             passwordInput.setSelection(passwordInput.length());
         });
+
+        if (forgotPasswordText != null) {
+            forgotPasswordText.setOnClickListener(v -> showForgotPasswordDialog(emailInput.getText().toString().trim()));
+        }
 
         loginButton.setOnClickListener(v -> {
             String email = emailInput.getText().toString().trim();
@@ -95,5 +103,37 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         });
+    }
+
+    void showForgotPasswordDialog(String prefillEmail) {
+        LinearLayout body = new LinearLayout(this);
+        body.setOrientation(LinearLayout.VERTICAL);
+        int pad = (int) (24 * getResources().getDisplayMetrics().density);
+        body.setPadding(pad, pad, pad, 0);
+
+        EditText emailField = new EditText(this);
+        emailField.setHint("Enter your faculty email");
+        emailField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
+        if (!prefillEmail.isEmpty()) emailField.setText(prefillEmail);
+        body.addView(emailField);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Reset Password")
+                .setMessage("We'll send a password reset link to this email.")
+                .setView(body)
+                .setNegativeButton("Cancel", null)
+                .setPositiveButton("Send", (d, w) -> {
+                    String email = emailField.getText().toString().trim();
+                    if (email.isEmpty()) {
+                        Toast.makeText(this, "Enter your email first", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    mAuth.sendPasswordResetEmail(email)
+                            .addOnSuccessListener(unused ->
+                                    Toast.makeText(this, "Reset email sent. Check your inbox.", Toast.LENGTH_LONG).show())
+                            .addOnFailureListener(e ->
+                                    Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                })
+                .show();
     }
 }

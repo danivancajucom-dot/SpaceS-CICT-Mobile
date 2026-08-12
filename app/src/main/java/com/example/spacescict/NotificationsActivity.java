@@ -1,5 +1,6 @@
 package com.example.spacescict;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.widget.ImageView;
@@ -48,16 +49,36 @@ public class NotificationsActivity extends AppCompatActivity {
         adapter = new NotificationAdapter(filteredList, new NotificationAdapter.OnActionListener() {
             @Override
             public void onTap(NotificationModel n, int position) {
+                // Navigate to reassignment screen if applicable, without changing read state prematurely
+                boolean isReassignment = "room-reassignment".equals(n.type) && n.assignmentId != null;
+
                 if (n.unread) {
                     n.unread = false;
-                    adapter.notifyItemChanged(position);
                     markNotificationRead(n);
+                    // Re-filter immediately — item must disappear right away if we're on the Unread tab
+                    applyFilter();
+                }
+
+                if (isReassignment) {
+                    Intent intent = new Intent(NotificationsActivity.this, RoomReassignmentActivity.class);
+                    intent.putExtra(RoomReassignmentActivity.EXTRA_ASSIGNMENT_ID, n.assignmentId);
+                    startActivity(intent);
                 }
             }
 
             @Override
             public void onArchive(NotificationModel n, int position) {
+                // Optimistic local update — don't wait for Firestore round-trip to reflect it in the UI
+                n.archived = true;
+                applyFilter();
                 archiveNotification(n);
+            }
+
+            @Override
+            public void onViewAction(NotificationModel n) {
+                Intent intent = new Intent(NotificationsActivity.this, RoomReassignmentActivity.class);
+                intent.putExtra(RoomReassignmentActivity.EXTRA_ASSIGNMENT_ID, n.assignmentId);
+                startActivity(intent);
             }
         });
 
@@ -93,6 +114,7 @@ public class NotificationsActivity extends AppCompatActivity {
                                 R.drawable.notification_orange_bg
                         );
                         n.id = doc.getId();
+                        n.assignmentId = doc.getString("assignmentId");
                         fullList.add(n);
                     }
                     applyFilter();
@@ -142,6 +164,10 @@ public class NotificationsActivity extends AppCompatActivity {
         if (n.id == null) return;
         FirebaseFirestore.getInstance().collection("notifications").document(n.id)
                 .update("archived", true)
-                .addOnSuccessListener(unused -> applyFilter());
+                .addOnFailureListener(e -> {
+                    // Revert the optimistic update if the write actually failed
+                    n.archived = false;
+                    applyFilter();
+                });
     }
 }

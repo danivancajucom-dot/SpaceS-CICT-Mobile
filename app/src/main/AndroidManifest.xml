@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,32 +13,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SpaceSCICT">
-        <activity
-            android:name=".ReservationPage"
-            android:exported="false" />
-        <activity
-            android:name=".NotificationsActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ReservationActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ProfileActivity"
-            android:exported="false" />
-        <activity
-            android:name=".DashboardActivity"
-            android:exported="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name=".ReservationDetailActivity" android:exported="false"/>
+        <activity android:name=".DashboardActivity" android:exported="false" />
+        <activity android:name=".ReservationActivity" android:exported="false" />
+        <activity android:name=".ReservationDetailActivity" android:exported="false" />
+        <activity android:name=".RoomReassignmentActivity" android:exported="false" />
+        <activity android:name=".NotificationsActivity" android:exported="false" />
+
+        <!-- Only keep this if ProfileActivity.java still exists in your project -->
+        <activity android:name=".ProfileActivity" android:exported="false" />
 
     </application>
 

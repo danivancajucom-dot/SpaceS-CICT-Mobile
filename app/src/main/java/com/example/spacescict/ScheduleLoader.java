@@ -23,7 +23,7 @@ public class ScheduleLoader {
         public String id, kind, subject, roomName, section, startTime, endTime, date, faculty, originalRoom;
         public long occurrenceMillis;
         public boolean isToday;
-        public String status; // ONGOING / UPCOMING / COMPLETED — only set for today's items
+        public String status;
     }
 
     public interface Callback {
@@ -33,9 +33,7 @@ public class ScheduleLoader {
 
     public interface WeekCallback {
         void onResult(Map<String, List<ScheduleItem>> byDay, String weekLabel, String termLabel);
-        default void onError(String message) {
-            // default no-op so existing callers don't break; WeeklySchedulePage overrides this
-        }
+        default void onError(String message) {}
     }
 
     static final String[] DAY_LABELS = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
@@ -127,7 +125,7 @@ public class ScheduleLoader {
 
     static Calendar getStartOfWeek(Calendar date) {
         Calendar d = (Calendar) date.clone();
-        int day = d.get(Calendar.DAY_OF_WEEK); // SUN=1..SAT=7
+        int day = d.get(Calendar.DAY_OF_WEEK);
         int diff = day == Calendar.SUNDAY ? -6 : Calendar.MONDAY - day;
         d.add(Calendar.DAY_OF_MONTH, diff);
         d.set(Calendar.HOUR_OF_DAY, 0);
@@ -149,10 +147,6 @@ public class ScheduleLoader {
         return startMonth + " " + start.get(Calendar.DAY_OF_MONTH) + " - " + endMonth + " "
                 + end.get(Calendar.DAY_OF_MONTH) + ", " + end.get(Calendar.YEAR);
     }
-
-    // ============================================================
-    // TODAY + UPCOMING (used by Home dashboard)
-    // ============================================================
 
     public static void load(Callback callback) {
         String uid = FirebaseAuth.getInstance().getUid();
@@ -337,10 +331,6 @@ public class ScheduleLoader {
         callback.onResult(todaysItems, upcomingItems, termLabel, latestSchedules.size(), roomsUsedSet.size());
     }
 
-    // ============================================================
-    // FULL WEEK VIEW (merged in, replaces the separate WeeklyScheduleLoader)
-    // ============================================================
-
     public static void loadWeek(int weekOffset, WeekCallback callback) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) {
@@ -401,6 +391,7 @@ public class ScheduleLoader {
                 })
                 .addOnFailureListener(e -> callback.onError("users: " + e.getMessage()));
     }
+
     static void buildWeekItems(List<DocumentSnapshot> schedules, Map<String, String> roomNames,
                                List<DocumentSnapshot> events, List<DocumentSnapshot> reservations,
                                List<DocumentSnapshot> reassignments, String[] weekDates,
@@ -426,9 +417,11 @@ public class ScheduleLoader {
                     ? s.getReference().getParent().getParent().getId() : null;
 
             ScheduleItem item = new ScheduleItem();
+            item.id = s.getId();
             item.kind = "schedule";
             item.subject = s.getString("subject");
             item.roomName = roomId != null ? roomNames.get(roomId) : null;
+            item.section = s.getString("section");
             item.startTime = s.getString("startTime");
             item.endTime = s.getString("endTime");
             item.date = dateStr;
@@ -441,6 +434,7 @@ public class ScheduleLoader {
             if (date == null || !weekDateSet.contains(date)) continue;
             String dayAbbrev = dayAbbrevForDate(date);
             ScheduleItem item = new ScheduleItem();
+            item.id = e.getId();
             item.kind = "event";
             String title = e.getString("title");
             String purpose = e.getString("purpose");
@@ -464,6 +458,7 @@ public class ScheduleLoader {
 
             String dayAbbrev = dayAbbrevForDate(date);
             ScheduleItem item = new ScheduleItem();
+            item.id = r.getId();
             item.kind = "reservation";
             String courseTitle = r.getString("courseTitle");
             String purpose = r.getString("purpose");
@@ -484,6 +479,7 @@ public class ScheduleLoader {
 
             String dayAbbrev = dayAbbrevForDate(date);
             ScheduleItem item = new ScheduleItem();
+            item.id = r.getId();
             item.kind = "reassignment";
             String courseTitle = r.getString("courseTitle");
             item.subject = (courseTitle != null ? courseTitle : "Class") + " (Moved)";
@@ -502,10 +498,6 @@ public class ScheduleLoader {
 
         callback.onResult(byDay, weekLabel, termLabel);
     }
-
-    // ============================================================
-    // Shared helpers
-    // ============================================================
 
     static String fullNameKey(DocumentSnapshot userDoc) {
         String first = userDoc.getString("firstName");

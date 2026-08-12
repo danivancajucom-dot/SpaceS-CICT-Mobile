@@ -94,12 +94,6 @@ public class DashboardActivity extends AppCompatActivity {
         });
     }
 
-    private void loadWeeklySchedule() {
-        header.setVisibility(View.VISIBLE);
-        contentFrame.removeAllViews();
-        View view = LayoutInflater.from(this).inflate(R.layout.activity_weekly_schedule, contentFrame, true);
-        new WeeklySchedulePage(this, view);
-    }
     private void loadHome() {
         header.setVisibility(View.VISIBLE);
         contentFrame.removeAllViews();
@@ -119,6 +113,13 @@ public class DashboardActivity extends AppCompatActivity {
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.activity_reservation_page, contentFrame, true);
         new ReservationPage(this, view);
+    }
+
+    private void loadWeeklySchedule() {
+        header.setVisibility(View.VISIBLE);
+        contentFrame.removeAllViews();
+        View view = LayoutInflater.from(this).inflate(R.layout.activity_weekly_schedule, contentFrame, true);
+        new WeeklySchedulePage(this, view);
     }
 
     private void loadProfile() {

@@ -26,7 +26,6 @@ public class NotificationHelper {
         FirebaseFirestore.getInstance().collection("notifications").add(n);
     }
 
-    // Notifies every clerk + department-head user, matches web's notifyClerkAndDepartmentHead
     public static void notifyClerkAndDepartmentHead(String title, String message,
                                                     String reservationId, String type) {
         FirebaseFirestore.getInstance().collection("users").get()

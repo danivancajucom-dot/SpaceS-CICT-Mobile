@@ -40,22 +40,33 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         RoomModel room = list.get(i);
 
         h.roomName.setText(room.roomName);
-        h.capacity.setText(room.capacity + " Capacity");
         h.image.setImageResource(room.image);
+
+        // Capacity — always shown, this is the fact you need before reserving regardless of status
+        h.capacity.setText(room.capacity > 0 ? room.capacity + " Capacity" : "Capacity N/A");
+
+        // Floor — always shown too, another pre-reservation fact
+        h.floor.setText(room.floor != null && !room.floor.isEmpty() ? room.floor : "Floor N/A");
+
+        // Room type, e.g. "Conference Room", "Computer Lab"
+        h.roomType.setText(room.roomType != null && !room.roomType.isEmpty() ? room.roomType : "");
 
         String status = room.status != null ? room.status : "";
         h.status.setText(status.toUpperCase());
 
         if (status.equalsIgnoreCase("Available")) {
             h.status.setTextColor(Color.parseColor("#22C55E"));
-            h.time.setText(room.floor != null ? room.floor + " Floor" : "");
+            h.time.setText("Available now");
         } else if (status.equalsIgnoreCase("Occupied")) {
             h.status.setTextColor(Color.parseColor("#DC2626"));
             h.time.setText(room.occupiedUntil != null && !room.occupiedUntil.isEmpty()
-                    ? "Until " + room.occupiedUntil : "Occupied");
+                    ? "Occupied until " + room.occupiedUntil : "Currently occupied");
         } else if (status.equalsIgnoreCase("Maintenance")) {
             h.status.setTextColor(Color.parseColor("#F59E0B"));
-            h.time.setText("Under Maintenance");
+            h.time.setText("Under maintenance");
+        } else {
+            h.status.setTextColor(Color.parseColor("#64748B"));
+            h.time.setText("Status unknown");
         }
 
         h.reserveBtn.setOnClickListener(v -> {
@@ -71,7 +82,7 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView roomName, status, capacity, time;
+        TextView roomName, status, capacity, floor, roomType, time;
         ImageView image;
         Button reserveBtn;
 
@@ -80,6 +91,8 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
             roomName = itemView.findViewById(R.id.roomName);
             status = itemView.findViewById(R.id.statusText);
             capacity = itemView.findViewById(R.id.capacityText);
+            floor = itemView.findViewById(R.id.floorText);
+            roomType = itemView.findViewById(R.id.roomTypeText);
             time = itemView.findViewById(R.id.timeText);
             image = itemView.findViewById(R.id.roomImage);
             reserveBtn = itemView.findViewById(R.id.reserveBtn);
