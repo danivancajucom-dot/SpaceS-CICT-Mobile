@@ -4,95 +4,162 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="30dp"
-    app:cardCornerRadius="24dp"
-    app:cardElevation="6dp"
-    app:cardBackgroundColor="#FFFFFF">
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/surface">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="18dp">
+        android:orientation="vertical">
 
-        <!-- TOP -->
-            <TextView
-                android:id="@+id/statusText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="PENDING"
-                android:textColor="#D97706"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="10dp"
-                android:background="@drawable/notification_gray_bg"
-                android:fontFamily="@font/lexend_bold"/>
-
-        <!-- IMAGE -->
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="270dp"
-            android:layout_marginTop="16dp">
+            android:layout_height="140dp">
 
             <ImageView
                 android:id="@+id/roomImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:scaleType="centerCrop"
-                android:src="@drawable/room1"
-                android:background="@drawable/image_radius"/>
+                android:src="@drawable/room1"/>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="#35000000"/>
+                android:background="#66000000"/>
 
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom|start"
-                android:orientation="vertical"
-                android:layout_margin="22dp">
+                android:layout_gravity="top|start"
+                android:layout_margin="12dp"
+                app:cardCornerRadius="999dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/warning">
 
                 <TextView
-                    android:id="@+id/roomName"
+                    android:id="@+id/statusText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="SDL3"
+                    android:paddingHorizontal="14dp"
+                    android:paddingVertical="7dp"
                     android:textColor="#FFFFFF"
-                    android:textSize="19sp"
+                    android:textSize="10sp"
                     android:textStyle="bold"
                     android:fontFamily="@font/lexend_bold"/>
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="horizontal"
+                android:padding="14dp">
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/roomName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:textSize="16sp"
+                        android:textColor="#FFFFFF"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <TextView
+                        android:id="@+id/subjectText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="12.5sp"
+                        android:textColor="#FFFFFF"
+                        android:alpha="0.92"
+                        android:layout_marginTop="2dp"
+                        android:fontFamily="@font/lexend_regular"/>
+                </LinearLayout>
 
                 <TextView
-                    android:id="@+id/subjectText"
+                    android:id="@+id/dateTimeText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Game Development"
+                    android:layout_gravity="bottom"
+                    android:textSize="11sp"
                     android:textColor="#FFFFFF"
-                    android:textSize="18sp"
-                    android:textStyle="bold"
-                    android:layout_marginTop="4dp"
-                    android:fontFamily="@font/lexend_bold"/>
+                    android:alpha="0.9"
+                    android:gravity="end"
+                    android:fontFamily="@font/lexend_regular"/>
             </LinearLayout>
 
         </FrameLayout>
 
-        <!-- BUTTON -->
-        <Button
-            android:id="@+id/detailsBtn"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:text="View Details"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:layout_marginTop="18dp"
-            android:backgroundTint="#F97316"
-            android:fontFamily="@font/lexend_bold"/>
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="14dp">
 
+            <androidx.cardview.widget.CardView
+                android:id="@+id/denialReasonCard"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:visibility="gone"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/danger_soft">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="12dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="⚠ Reason for Denial"
+                        android:textStyle="bold"
+                        android:textSize="12sp"
+                        android:textColor="@color/danger"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <TextView
+                        android:id="@+id/denialReasonText"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ink_700"
+                        android:textSize="12.5sp"
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/lexend_regular"/>
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/detailsBtnCard"
+                android:layout_width="match_parent"
+                android:layout_height="46dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/brand_orange_soft">
+
+                <TextView
+                    android:id="@+id/detailsBtn"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="View Details"
+                    android:textColor="@color/brand_orange"
+                    android:textStyle="bold"
+                    android:textSize="13sp"
+                    android:fontFamily="@font/lexend_bold"/>
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

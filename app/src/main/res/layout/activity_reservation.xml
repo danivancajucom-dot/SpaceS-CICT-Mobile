@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#F3F4F6"
+    android:background="@color/bg_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- ================= HEADER ================= -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="2dp">
+        android:background="@color/surface"
+        android:elevation="1dp">
 
         <ImageView
             android:id="@+id/backBtn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/ic_back"
             android:layout_centerVertical="true"/>
 
@@ -26,13 +26,12 @@
             android:text="Reservation Request"
             android:textStyle="bold"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="#111827"
+            android:textSize="17sp"
+            android:textColor="@color/ink_900"
             android:layout_centerInParent="true"
             android:fontFamily="@font/lexend_bold"/>
     </RelativeLayout>
 
-    <!-- ================= CONTENT ================= -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -43,439 +42,387 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:text="Fill out the details below to reserve a classroom."
-                android:textColor="#6B7280"
-                android:textSize="14sp"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <!-- COURSE TITLE -->
-            <TextView
-                android:text="Course Title"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/input_split"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/courseInput"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:padding="16dp"
-                    android:hint="e.g. CC104"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/input_icon_bg"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_laptop"/>
-            </LinearLayout>
-
-            <!-- PROGRAM -->
-            <TextView
-                android:text="Program"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="6dp"
-                android:background="@drawable/input_split"
-                android:orientation="horizontal">
-
-                <EditText
-                    android:id="@+id/programInput"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:padding="16dp"
-                    android:hint="e.g. BSIT"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-            </LinearLayout>
-
-            <!-- AUDIENCE TYPE -->
-            <TextView
-                android:text="Audience Type"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <Spinner
-                android:id="@+id/audienceTypeSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="@drawable/input_bg"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <!-- CLASS FIELDS -->
-            <LinearLayout
-                android:id="@+id/classFieldsLayout"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Year &amp; Section"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:textColor="#111827"
-                    android:fontFamily="@font/lexend_bold"/>
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/surface">
 
                 <LinearLayout
+                    android:orientation="vertical"
+                    android:padding="20dp"
                     android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/input_split"
-                    android:orientation="horizontal">
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:text="Fill out the details below to reserve a classroom."
+                        android:textColor="@color/ink_500"
+                        android:textSize="13sp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="18dp"
+                        android:fontFamily="@font/lexend_regular"/>
+
+                    <TextView
+                        android:text="Course Title"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
 
                     <EditText
-                        android:id="@+id/yearSectionInput"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:padding="16dp"
-                        android:hint="e.g. 3I-G1"
-                        android:textColor="#111827"
-                        android:textColorHint="#6B7280"
+                        android:id="@+id/courseInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:padding="14dp"
+                        android:hint="e.g. CC104"
+                        android:textColor="@color/ink_900"
+                        android:textColorHint="@color/ink_500"
+                        android:textSize="14sp"
                         android:fontFamily="@font/lexend_regular"/>
-                </LinearLayout>
-            </LinearLayout>
 
-            <!-- ORGANIZATION FIELD -->
-            <LinearLayout
-                android:id="@+id/orgFieldLayout"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Organization Name"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:textColor="#111827"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/input_split"
-                    android:orientation="horizontal">
+                    <TextView
+                        android:text="Program"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
 
                     <EditText
-                        android:id="@+id/orgInput"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:padding="16dp"
-                        android:hint="Enter organization name"
-                        android:textColor="#111827"
-                        android:textColorHint="#6B7280"
+                        android:id="@+id/programInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:padding="14dp"
+                        android:hint="e.g. BSIT"
+                        android:textColor="@color/ink_900"
+                        android:textColorHint="@color/ink_500"
+                        android:textSize="14sp"
                         android:fontFamily="@font/lexend_regular"/>
-                </LinearLayout>
-            </LinearLayout>
 
-            <!-- CUSTOM PURPOSE (Organization -> Other Activity only) -->
-            <LinearLayout
-                android:id="@+id/customPurposeLayout"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <TextView
+                        android:text="Audience Type"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
 
-                <TextView
-                    android:text="Specify Activity"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:textColor="#111827"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/input_split"
-                    android:orientation="horizontal">
-
-                    <EditText
-                        android:id="@+id/customPurposeInput"
-                        android:layout_width="0dp"
-                        android:layout_weight="1"
-                        android:layout_height="match_parent"
-                        android:padding="16dp"
-                        android:hint="Describe the activity"
-                        android:textColor="#111827"
-                        android:textColorHint="#6B7280"
+                    <Spinner
+                        android:id="@+id/audienceTypeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:paddingHorizontal="14dp"
                         android:fontFamily="@font/lexend_regular"/>
+
+                    <LinearLayout
+                        android:id="@+id/classFieldsLayout"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Year &amp; Section"
+                            android:textStyle="bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textColor="@color/ink_900"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/lexend_bold"/>
+
+                        <EditText
+                            android:id="@+id/yearSectionInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/input_field_bg"
+                            android:padding="14dp"
+                            android:hint="e.g. 3I-G1"
+                            android:textColor="@color/ink_900"
+                            android:textColorHint="@color/ink_500"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/orgFieldLayout"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Organization Name"
+                            android:textStyle="bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textColor="@color/ink_900"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/lexend_bold"/>
+
+                        <EditText
+                            android:id="@+id/orgInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/input_field_bg"
+                            android:padding="14dp"
+                            android:hint="Enter organization name"
+                            android:textColor="@color/ink_900"
+                            android:textColorHint="@color/ink_500"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:text="Select Date"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <TextView
+                        android:id="@+id/dateText"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:gravity="center_vertical"
+                        android:padding="14dp"
+                        android:text="Select Date"
+                        android:textColor="@color/ink_900"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/lexend_regular"/>
+
+                    <TextView
+                        android:text="Start Time"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <TextView
+                        android:id="@+id/startText"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:gravity="center_vertical"
+                        android:padding="14dp"
+                        android:text="Select Start Time"
+                        android:textColor="@color/ink_900"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/lexend_regular"/>
+
+                    <TextView
+                        android:text="End Time"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <TextView
+                        android:id="@+id/endText"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:gravity="center_vertical"
+                        android:padding="14dp"
+                        android:text="Select End Time"
+                        android:textColor="@color/ink_900"
+                        android:textSize="14sp"
+                        android:fontFamily="@font/lexend_regular"/>
+
+                    <TextView
+                        android:text="Purpose of Reservation"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <Spinner
+                        android:id="@+id/purposeSpinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="6dp"
+                        android:background="@drawable/input_field_bg"
+                        android:paddingHorizontal="14dp"
+                        android:fontFamily="@font/lexend_regular"/>
+
+                    <LinearLayout
+                        android:id="@+id/customPurposeLayout"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Specify Activity"
+                            android:textStyle="bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textColor="@color/ink_900"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/lexend_bold"/>
+
+                        <EditText
+                            android:id="@+id/customPurposeInput"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/input_field_bg"
+                            android:padding="14dp"
+                            android:hint="Describe the activity"
+                            android:textColor="@color/ink_900"
+                            android:textColorHint="@color/ink_500"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/attendeesLayout"
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TextView
+                            android:text="Number of Attendees"
+                            android:textStyle="bold"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="16dp"
+                            android:textColor="@color/ink_900"
+                            android:textSize="13sp"
+                            android:fontFamily="@font/lexend_bold"/>
+
+                        <Spinner
+                            android:id="@+id/attendeesSpinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="52dp"
+                            android:layout_marginTop="6dp"
+                            android:background="@drawable/input_field_bg"
+                            android:paddingHorizontal="14dp"
+                            android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+
+                    <TextView
+                        android:text="Required Equipment"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:fontFamily="@font/lexend_bold"/>
+
+                    <LinearLayout
+                        android:id="@+id/equipmentLayout"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <CheckBox android:id="@+id/eqAc" android:text="Air Conditioning"
+                            android:textColor="@color/ink_700"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <CheckBox android:id="@+id/eqComputer" android:text="Computer"
+                            android:textColor="@color/ink_700"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <CheckBox android:id="@+id/eqProjector" android:text="Projector"
+                            android:textColor="@color/ink_700"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <CheckBox android:id="@+id/eqSmartBoard" android:text="Smart Board"
+                            android:textColor="@color/ink_700"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                        <CheckBox android:id="@+id/eqTvDisplay" android:text="TV Display"
+                            android:textColor="@color/ink_700"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_marginTop="20dp"
+                        android:orientation="horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
+
+                        <TextView
+                            android:text="Available Room Slots"
+                            android:textStyle="bold"
+                            android:layout_width="0dp"
+                            android:layout_weight="1"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/ink_900"
+                            android:textSize="14sp"
+                            android:fontFamily="@font/lexend_bold"/>
+
+                        <Spinner
+                            android:id="@+id/floorSpinner"
+                            android:layout_width="120dp"
+                            android:layout_height="44dp"
+                            android:background="@drawable/input_field_bg"
+                            android:paddingHorizontal="10dp"
+                            android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+
+                    <GridLayout
+                        android:id="@+id/roomGrid"
+                        android:columnCount="3"
+                        android:layout_marginTop="12dp"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"/>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:layout_marginTop="24dp"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/brand_orange">
+
+                        <Button
+                            android:id="@+id/submitBtn"
+                            android:text="Submit Request"
+                            android:textAllCaps="false"
+                            android:textSize="15sp"
+                            android:textColor="#FFFFFF"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:background="@android:color/transparent"
+                            android:fontFamily="@font/lexend_bold"/>
+                    </androidx.cardview.widget.CardView>
+
                 </LinearLayout>
-            </LinearLayout>
-            <!-- DATE -->
-            <TextView
-                android:text="Select Date"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <LinearLayout
-                android:id="@+id/datePicker"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="@drawable/input_split"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp">
-
-                <TextView
-                    android:id="@+id/dateText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:text="Select Date"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/input_icon_bg"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_calendar" />
-            </LinearLayout>
-
-            <!-- START TIME -->
-            <TextView
-                android:text="Start Time"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <LinearLayout
-                android:id="@+id/startTime"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="@drawable/input_split"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp">
-
-                <TextView
-                    android:id="@+id/startText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:text="Select Start Time"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/input_icon_bg"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_clock"/>
-            </LinearLayout>
-
-            <!-- END TIME -->
-            <TextView
-                android:text="End Time"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="16dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <LinearLayout
-                android:id="@+id/endTime"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="@drawable/input_split"
-                android:orientation="horizontal"
-                android:layout_marginTop="6dp">
-
-                <TextView
-                    android:id="@+id/endText"
-                    android:layout_width="0dp"
-                    android:layout_weight="1"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:padding="16dp"
-                    android:text="Select End Time"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-
-                <ImageView
-                    android:layout_width="55dp"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/input_icon_bg"
-                    android:padding="12dp"
-                    android:src="@drawable/ic_clock"/>
-            </LinearLayout>
-
-            <!-- PURPOSE -->
-            <TextView
-                android:text="Purpose of Reservation"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <Spinner
-                android:id="@+id/purposeSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="@drawable/input_bg"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <!-- ATTENDEES (always visible now) -->
-            <LinearLayout
-                android:id="@+id/attendeesLayout"
-                android:orientation="vertical"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Number of Attendees"
-                    android:textStyle="bold"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="16dp"
-                    android:textColor="#111827"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <Spinner
-                    android:id="@+id/attendeesSpinner"
-                    android:layout_width="match_parent"
-                    android:layout_height="55dp"
-                    android:background="@drawable/input_bg"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-            </LinearLayout>
-
-            <!-- REQUIRED EQUIPMENT -->
-            <TextView
-                android:text="Required Equipment"
-                android:textStyle="bold"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginTop="20dp"
-                android:textColor="#111827"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <LinearLayout
-                android:id="@+id/equipmentLayout"
-                android:orientation="vertical"
-                android:layout_marginTop="8dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <CheckBox android:id="@+id/eqAc" android:text="Air Conditioning"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <CheckBox android:id="@+id/eqComputer" android:text="Computer"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <CheckBox android:id="@+id/eqProjector" android:text="Projector"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <CheckBox android:id="@+id/eqSmartBoard" android:text="Smart Board"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                <CheckBox android:id="@+id/eqTvDisplay" android:text="TV Display"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-            </LinearLayout>
-
-            <!-- ROOM HEADER -->
-            <LinearLayout
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:text="Available Room Slots"
-                    android:textStyle="bold"
-                    android:gravity="center"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:textColor="#111827"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <Spinner
-                    android:id="@+id/floorSpinner"
-                    android:layout_width="120dp"
-                    android:layout_height="48dp"
-                    android:gravity="center"
-                    android:backgroundTint="#F97316"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-            </LinearLayout>
-
-            <!-- ROOM GRID -->
-            <GridLayout
-                android:id="@+id/roomGrid"
-                android:columnCount="3"
-                android:layout_marginTop="12dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
-
-            <!-- SUBMIT -->
-            <Button
-                android:id="@+id/submitBtn"
-                android:text="Submit Request -->"
-                android:textAllCaps="false"
-                android:textSize="18sp"
-                android:textColor="#FFFFFF"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:backgroundTint="#F97316"
-                android:layout_marginTop="24dp"
-                android:fontFamily="@font/lexend_bold"/>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

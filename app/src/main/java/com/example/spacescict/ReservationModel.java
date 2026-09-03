@@ -2,7 +2,7 @@ package com.example.spacescict;
 
 public class ReservationModel {
     public String id;
-    String status, roomName, courseTitle;
+    String status, roomName, courseTitle, facultyName, date, startTime, endTime, purpose, denialReason;
     int image;
 
     public ReservationModel(String status, String roomName, String courseTitle, int image) {

@@ -52,7 +52,7 @@ public class ReservationDetailActivity extends AppCompatActivity {
     View viewLayout, editLayout, editCustomPurposeLayout;
     Spinner editRoomSpinner, editPurposeSpinner, editStudentRangeSpinner;
     EditText editCustomPurposeInput;
-    Button cancelEditBtn, saveEditBtn;
+    Button cancelEditBtn, saveEditBtn, cancelReservationBtn;
 
     String reservationId;
     Map<String, Object> reservation;
@@ -91,6 +91,11 @@ public class ReservationDetailActivity extends AppCompatActivity {
         roomAvailabilityHint = findViewById(R.id.roomAvailabilityHint);
         cancelEditBtn = findViewById(R.id.cancelEditBtn);
         saveEditBtn = findViewById(R.id.saveEditBtn);
+        cancelReservationBtn = findViewById(R.id.cancelReservationBtn);
+        if (cancelReservationBtn != null) {
+            cancelReservationBtn.setOnClickListener(v -> showCancelConfirmation());
+        }
+
 
         reservationId = getIntent().getStringExtra(EXTRA_RESERVATION_ID);
         if (reservationId == null) {
@@ -108,6 +113,82 @@ public class ReservationDetailActivity extends AppCompatActivity {
         saveEditBtn.setOnClickListener(v -> saveChanges());
     }
 
+    void showCancelConfirmation() {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Cancel Reservation")
+                .setMessage("Are you sure you want to cancel this reservation? This action cannot be undone.")
+                .setNegativeButton("No, Go Back", null)
+                .setPositiveButton("Yes, Cancel", (d, w) -> cancelReservation())
+                .show();
+    }
+
+    void cancelReservation() {
+        LoadingOverlay.show(this, "Cancelling reservation...");
+        String uid = FirebaseAuth.getInstance().getUid();
+
+        FirebaseFirestore.getInstance().collection("users").document(uid).get()
+                .addOnSuccessListener(userDoc -> {
+                    String first = userDoc.getString("firstName");
+                    String last = userDoc.getString("lastName");
+                    String facultyNameFull = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
+                    if (facultyNameFull.isEmpty()) facultyNameFull = "Faculty";
+                    String finalFacultyName = facultyNameFull;
+
+                    Map<String, Object> updates = new HashMap<>();
+                    updates.put("status", "cancelled"); // matches web's exact casing, not "Cancelled"
+                    updates.put("cancelledAt", Timestamp.now());
+                    updates.put("updatedAt", Timestamp.now());
+
+                    String roomName = str(reservation.get("roomName"));
+                    String date = str(reservation.get("date"));
+                    String courseTitle = str(reservation.get("courseTitle"));
+
+                    FirebaseFirestore.getInstance().collection("reservationRequests").document(reservationId)
+                            .update(updates)
+                            .addOnSuccessListener(unused -> {
+
+                                Map<String, Object> logDetails = new HashMap<>();
+                                Map<String, Object> reservationData = new HashMap<>();
+                                reservationData.put("room", roomName);
+                                reservationData.put("date", date);
+                                reservationData.put("startTime", str(reservation.get("startTime")));
+                                reservationData.put("endTime", str(reservation.get("endTime")));
+                                reservationData.put("purpose", str(reservation.get("purpose")));
+                                logDetails.put("reservationId", reservationId);
+                                logDetails.put("reservationData", reservationData);
+
+                                NotificationHelper.send(uid, "faculty", "Reservation Cancelled",
+                                        "You have cancelled your reservation for " + roomName + " on " + date + ".",
+                                        "reservation-cancelled", "WARNING");
+
+                                FirebaseFirestore.getInstance().collection("users").get()
+                                        .addOnSuccessListener(usersSnap -> {
+                                            for (DocumentSnapshot userDocSnap : usersSnap.getDocuments()) {
+                                                String role = userDocSnap.getString("role");
+                                                if (role == null) continue;
+                                                String r = role.toLowerCase().trim();
+                                                String ownerType = r.equals("clerk") ? "clerk"
+                                                        : r.equals("department-head") ? "department-head" : null;
+                                                if (ownerType == null) continue;
+
+                                                NotificationHelper.send(userDocSnap.getId(), ownerType, "Reservation Cancelled",
+                                                        finalFacultyName + " cancelled their reservation for " + roomName + " on " + date + ".",
+                                                        "reservation-cancelled", "WARNING");
+                                            }
+                                        });
+
+                                ActivityLogger.log("Cancelled Pending Reservation", "cancel",
+                                        roomName + " - " + courseTitle, "SUCCESS", logDetails, () -> {
+                                            Toast.makeText(this, "Reservation cancelled successfully!", Toast.LENGTH_SHORT).show();
+                                            finish();
+                                        });
+                            })
+                            .addOnFailureListener(e -> {
+                                LoadingOverlay.hide();
+                                Toast.makeText(this, "Failed to cancel: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                            });
+                });
+    }
     void loadReservation() {
         FirebaseFirestore.getInstance().collection("reservationRequests").document(reservationId).get()
                 .addOnSuccessListener(doc -> {
@@ -126,6 +207,17 @@ public class ReservationDetailActivity extends AppCompatActivity {
     void renderView() {
         String status = str(reservation.get("status"));
         statusBadge.setText(status != null ? status.toUpperCase() : "");
+        androidx.cardview.widget.CardView statusCard = (androidx.cardview.widget.CardView) statusBadge.getParent();
+        String statusLower = status != null ? status.toLowerCase() : "";
+        if (statusLower.equals("approved")) {
+            statusCard.setCardBackgroundColor(android.graphics.Color.parseColor("#22C55E"));
+        } else if (statusLower.equals("cancelled")) {
+            statusCard.setCardBackgroundColor(android.graphics.Color.parseColor("#6B7280"));
+        } else if (statusLower.equals("rejected")) {
+            statusCard.setCardBackgroundColor(android.graphics.Color.parseColor("#EF4444"));
+        } else {
+            statusCard.setCardBackgroundColor(android.graphics.Color.parseColor("#F97316"));
+        }
 
         if ("Pending".equalsIgnoreCase(status)) {
             editBtn.setVisibility(View.VISIBLE);
@@ -171,8 +263,7 @@ public class ReservationDetailActivity extends AppCompatActivity {
                 + "\nEstimated Attendees: " + str(reservation.get("studentRange")));
 
         if ("Rejected".equalsIgnoreCase(status)) {
-            denialReasonLabel.setVisibility(View.VISIBLE);
-            denialReasonText.setVisibility(View.VISIBLE);
+            findViewById(R.id.denialCard).setVisibility("Rejected".equalsIgnoreCase(status) ? View.VISIBLE : View.GONE);            denialReasonText.setVisibility(View.VISIBLE);
             String reason = str(reservation.get("denialReason"));
             denialReasonText.setText(reason.isEmpty() ? "No reason provided." : reason);
         }
@@ -297,9 +388,10 @@ public class ReservationDetailActivity extends AppCompatActivity {
 
         saveEditBtn.setEnabled(false);
         roomAvailabilityHint.setText("");
-
+        LoadingOverlay.show(this, "Checking room availability...");
         RoomAvailability.checkAvailability(roomId, date, startTime, endTime, reservationId, (available, reason) -> {
             runOnUiThread(() -> {
+                LoadingOverlay.hide();
                 saveEditBtn.setEnabled(true);
                 if (!available) {
                     roomAvailabilityHint.setText(reason);
@@ -328,10 +420,13 @@ public class ReservationDetailActivity extends AppCompatActivity {
                 ? new HashMap<>((Map<String, Object>) attendeesObj) : new HashMap<>();
         attendees.put("customPurpose", "Other Activity".equals(purpose) ? customPurpose : "");
         updates.put("attendees", attendees);
+        LoadingOverlay.show(this, "Saving changes...");
+
 
         FirebaseFirestore.getInstance().collection("reservationRequests").document(reservationId)
                 .update(updates)
                 .addOnSuccessListener(unused -> {
+                    LoadingOverlay.hide();
                     String uid = FirebaseAuth.getInstance().getUid();
                     String courseTitle = str(reservation.get("courseTitle"));
 
@@ -348,7 +443,9 @@ public class ReservationDetailActivity extends AppCompatActivity {
                     Toast.makeText(this, "Reservation updated", Toast.LENGTH_SHORT).show();
                     finish();
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e -> {
+                    LoadingOverlay.hide();
+                    Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
     }
 }

@@ -174,57 +174,67 @@ public class ScheduleLoader {
                     List<DocumentSnapshot> latestSchedules = latestTermSchedules(matched);
                     String termLabel = termLabelFor(latestSchedules);
 
-                    db.collection("roomReleases").get().addOnSuccessListener(releaseSnap -> {
-                        Set<String> releasedKeys = new HashSet<>();
-                        for (DocumentSnapshot d : releaseSnap.getDocuments()) {
-                            if (uid.equals(d.getString("releasedBy"))) {
-                                releasedKeys.add(d.getString("scheduleId") + "_" + d.getString("date"));
-                            }
-                        }
+                    db.collection("facultySchedules").whereEqualTo("userId", uid).get()
+                            .addOnSuccessListener(onlineSnap -> {
+                                List<DocumentSnapshot> onlineSchedules = onlineSnap.getDocuments();
 
-                        db.collection("roomReassignments").get().addOnSuccessListener(reassignSnap -> {
-                            Set<String> awayKeys = new HashSet<>();
-                            List<DocumentSnapshot> reassignedInto = new ArrayList<>();
-                            for (DocumentSnapshot d : reassignSnap.getDocuments()) {
-                                String status = d.getString("status");
-                                String facultyId = d.getString("facultyId");
-                                if (status == null || !status.equalsIgnoreCase("approved")) continue;
-                                if (!uid.equals(facultyId)) continue;
-                                if (d.getString("oldRoomId") != null) {
-                                    awayKeys.add(d.getString("scheduleId") + "_" + d.getString("date"));
-                                }
-                                reassignedInto.add(d);
-                            }
+                                // NEW: fetch events for conflict-override, matching WeeklySchedule's logic
+                                db.collection("events").get().addOnSuccessListener(eventsSnap -> {
 
-                            db.collection("reservationRequests").get().addOnSuccessListener(resSnap -> {
-                                List<DocumentSnapshot> approvedReservations = new ArrayList<>();
-                                for (DocumentSnapshot r : resSnap.getDocuments()) {
-                                    String status = r.getString("status");
-                                    if (status == null || !status.equalsIgnoreCase("approved")) continue;
-                                    boolean isOwnerById = uid.equals(r.getString("userId")) || uid.equals(r.getString("createdBy"));
-                                    boolean isOwnerByName = normalizeName(r.getString("facultyName")).equals(nameToMatch);
-                                    if (isOwnerById || isOwnerByName) approvedReservations.add(r);
-                                }
+                                    db.collection("roomReleases").get().addOnSuccessListener(releaseSnap -> {
+                                        Set<String> releasedKeys = new HashSet<>();
+                                        for (DocumentSnapshot d : releaseSnap.getDocuments()) {
+                                            if (uid.equals(d.getString("releasedBy"))) {
+                                                releasedKeys.add(d.getString("scheduleId") + "_" + d.getString("date"));
+                                            }
+                                        }
 
-                                buildTodayItems(latestSchedules, roomNames, releasedKeys, awayKeys,
-                                        reassignedInto, approvedReservations, termLabel, callback);
+                                        db.collection("roomReassignments").get().addOnSuccessListener(reassignSnap -> {
+                                            Set<String> awayKeys = new HashSet<>();
+                                            List<DocumentSnapshot> reassignedInto = new ArrayList<>();
+                                            for (DocumentSnapshot d : reassignSnap.getDocuments()) {
+                                                String status = d.getString("status");
+                                                String facultyId = d.getString("facultyId");
+                                                if (status == null || !status.equalsIgnoreCase("approved")) continue;
+                                                if (!uid.equals(facultyId)) continue;
+                                                if (d.getString("oldRoomId") != null) {
+                                                    awayKeys.add(d.getString("scheduleId") + "_" + d.getString("date"));
+                                                }
+                                                reassignedInto.add(d);
+                                            }
+
+                                            db.collection("reservationRequests").get().addOnSuccessListener(resSnap -> {
+                                                List<DocumentSnapshot> approvedReservations = new ArrayList<>();
+                                                for (DocumentSnapshot r : resSnap.getDocuments()) {
+                                                    String status = r.getString("status");
+                                                    if (status == null || !status.equalsIgnoreCase("approved")) continue;
+                                                    boolean isOwnerById = uid.equals(r.getString("userId")) || uid.equals(r.getString("createdBy"));
+                                                    boolean isOwnerByName = normalizeName(r.getString("facultyName")).equals(nameToMatch);
+                                                    if (isOwnerById || isOwnerByName) approvedReservations.add(r);
+                                                }
+
+                                                buildTodayItems(latestSchedules, onlineSchedules, roomNames, releasedKeys, awayKeys,
+                                                        reassignedInto, approvedReservations, eventsSnap.getDocuments(), termLabel, callback);
+                                            });
+                                        });
+                                    });
+                                });
                             });
-                        });
-                    });
                 });
             });
         });
     }
 
-    static void buildTodayItems(List<DocumentSnapshot> latestSchedules, Map<String, String> roomNames,
-                                Set<String> releasedKeys, Set<String> awayKeys, List<DocumentSnapshot> reassignedInto,
-                                List<DocumentSnapshot> approvedReservations, String termLabel, Callback callback) {
+    static void buildTodayItems(List<DocumentSnapshot> latestSchedules, List<DocumentSnapshot> onlineSchedules,
+                                Map<String, String> roomNames, Set<String> releasedKeys, Set<String> awayKeys,
+                                List<DocumentSnapshot> reassignedInto, List<DocumentSnapshot> approvedReservations,
+                                List<DocumentSnapshot> events, String termLabel, Callback callback) {
 
         Calendar now = Calendar.getInstance();
         String todayStr = toDateStr(now);
         int currentMinutes = now.get(Calendar.HOUR_OF_DAY) * 60 + now.get(Calendar.MINUTE);
 
-        List<ScheduleItem> allItems = new ArrayList<>();
+        List<ScheduleItem> scheduleCandidates = new ArrayList<>();
 
         for (DocumentSnapshot s : latestSchedules) {
             String day = s.getString("day");
@@ -256,6 +266,79 @@ public class ScheduleLoader {
             item.occurrenceMillis = occurrence;
             item.isToday = dateStr.equals(todayStr);
             item.faculty = s.getString("faculty");
+            scheduleCandidates.add(item);
+        }
+
+        // NEW: conflict-override — a room activity overlapping a schedule (same date) hides that schedule item
+        List<ScheduleItem> allItems = new ArrayList<>();
+        for (ScheduleItem sched : scheduleCandidates) {
+            boolean overridden = false;
+            for (DocumentSnapshot e : events) {
+                String eDate = e.getString("date");
+                if (eDate == null || !eDate.equals(sched.date)) continue;
+                if (overlap(e.getString("startTime"), e.getString("endTime"), sched.startTime, sched.endTime)) {
+                    overridden = true;
+                    break;
+                }
+            }
+            if (!overridden) allItems.add(sched);
+        }
+
+        // Add room activities that are today and overlap the faculty's own rooms/time — matching web's activityItems
+        for (DocumentSnapshot e : events) {
+            String eDate = e.getString("date");
+            if (eDate == null || !eDate.equals(todayStr)) continue;
+            boolean relevant = false;
+            for (ScheduleItem sched : scheduleCandidates) {
+                if (sched.date.equals(eDate) && overlap(e.getString("startTime"), e.getString("endTime"), sched.startTime, sched.endTime)) {
+                    relevant = true;
+                    break;
+                }
+            }
+            if (!relevant) continue;
+
+            ScheduleItem item = new ScheduleItem();
+            item.id = e.getId();
+            item.kind = "event";
+            String title = e.getString("title");
+            String purpose = e.getString("purpose");
+            item.subject = title != null ? title : (purpose != null ? purpose : "Room Activity");
+            item.roomName = e.getString("roomName");
+            item.startTime = e.getString("startTime");
+            item.endTime = e.getString("endTime");
+            item.date = eDate;
+            item.occurrenceMillis = dateTimeToMillis(eDate, e.getString("startTime"));
+            item.isToday = true;
+            allItems.add(item);
+        }
+
+        for (DocumentSnapshot r : onlineSchedules) {
+            // (online schedules unaffected by room conflicts, keep as-is)
+        }
+
+        for (DocumentSnapshot s : onlineSchedules) {
+            String day = s.getString("day");
+            String startTime = s.getString("startTime");
+            String endTime = s.getString("endTime");
+            long occurrence = getNextOccurrenceMillis(day, startTime, now);
+            if (occurrence == -1) continue;
+
+            Calendar occCal = Calendar.getInstance();
+            occCal.setTimeInMillis(occurrence);
+            String dateStr = toDateStr(occCal);
+
+            ScheduleItem item = new ScheduleItem();
+            item.id = s.getId();
+            item.kind = "faculty-online";
+            item.subject = s.getString("subject");
+            item.roomName = "Online";
+            item.section = s.getString("section");
+            item.startTime = startTime;
+            item.endTime = endTime;
+            item.date = dateStr;
+            item.occurrenceMillis = occurrence;
+            item.isToday = dateStr.equals(todayStr);
+            item.faculty = s.getString("facultyName");
             allItems.add(item);
         }
 
@@ -328,7 +411,7 @@ public class ScheduleLoader {
         Set<String> roomsUsedSet = new HashSet<>();
         for (ScheduleItem item : allItems) if (item.roomName != null) roomsUsedSet.add(item.roomName);
 
-        callback.onResult(todaysItems, upcomingItems, termLabel, latestSchedules.size(), roomsUsedSet.size());
+        callback.onResult(todaysItems, upcomingItems, termLabel, latestSchedules.size() + onlineSchedules.size(), roomsUsedSet.size());
     }
 
     public static void loadWeek(int weekOffset, WeekCallback callback) {
@@ -367,36 +450,44 @@ public class ScheduleLoader {
                                 List<DocumentSnapshot> latestSchedules = latestTermSchedules(matched);
                                 String termLabel = termLabelFor(latestSchedules);
 
-                                db.collection("rooms").get()
-                                        .addOnSuccessListener(roomsSnap -> {
-                                            Map<String, String> roomNames = new HashMap<>();
-                                            for (DocumentSnapshot r : roomsSnap.getDocuments()) roomNames.put(r.getId(), r.getString("roomName"));
+                                db.collection("facultySchedules").whereEqualTo("userId", uid).get()
+                                        .addOnSuccessListener(onlineSnap -> {
+                                            List<DocumentSnapshot> onlineSchedules = onlineSnap.getDocuments();
 
-                                            db.collection("events").get()
-                                                    .addOnSuccessListener(eventSnap ->
-                                                            db.collection("reservationRequests").get()
-                                                                    .addOnSuccessListener(resSnap ->
-                                                                            db.collection("roomReassignments").get()
-                                                                                    .addOnSuccessListener(reassignSnap ->
-                                                                                            buildWeekItems(latestSchedules, roomNames, eventSnap.getDocuments(),
-                                                                                                    resSnap.getDocuments(), reassignSnap.getDocuments(),
-                                                                                                    weekDates, uid, nameToMatch, weekLabel, termLabel, callback))
-                                                                                    .addOnFailureListener(e -> callback.onError("roomReassignments: " + e.getMessage())))
-                                                                    .addOnFailureListener(e -> callback.onError("reservationRequests: " + e.getMessage())))
-                                                    .addOnFailureListener(e -> callback.onError("events: " + e.getMessage()));
+                                            db.collection("rooms").get()
+                                                    .addOnSuccessListener(roomsSnap -> {
+                                                        Map<String, String> roomNames = new HashMap<>();
+                                                        for (DocumentSnapshot r : roomsSnap.getDocuments()) roomNames.put(r.getId(), r.getString("roomName"));
+
+                                                        db.collection("events").get()
+                                                                .addOnSuccessListener(eventSnap ->
+                                                                        db.collection("reservationRequests").get()
+                                                                                .addOnSuccessListener(resSnap ->
+                                                                                        db.collection("roomReassignments").get()
+                                                                                                .addOnSuccessListener(reassignSnap ->
+                                                                                                        db.collection("roomReleases").get()
+                                                                                                                .addOnSuccessListener(releaseSnap ->
+                                                                                                                        buildWeekItems(latestSchedules, onlineSchedules, roomNames, eventSnap.getDocuments(),
+                                                                                                                                resSnap.getDocuments(), reassignSnap.getDocuments(), releaseSnap.getDocuments(),
+                                                                                                                                weekDates, uid, nameToMatch, weekLabel, termLabel, callback))
+                                                                                                                .addOnFailureListener(e -> callback.onError("roomReleases: " + e.getMessage())))
+                                                                                                .addOnFailureListener(e -> callback.onError("roomReassignments: " + e.getMessage())))
+                                                                                .addOnFailureListener(e -> callback.onError("reservationRequests: " + e.getMessage())))
+                                                                .addOnFailureListener(e -> callback.onError("events: " + e.getMessage()));
+                                                    })
+                                                    .addOnFailureListener(e -> callback.onError("rooms: " + e.getMessage()));
                                         })
-                                        .addOnFailureListener(e -> callback.onError("rooms: " + e.getMessage()));
+                                        .addOnFailureListener(e -> callback.onError("facultySchedules: " + e.getMessage()));
                             })
                             .addOnFailureListener(e -> callback.onError("schedules collectionGroup: " + e.getMessage()));
                 })
                 .addOnFailureListener(e -> callback.onError("users: " + e.getMessage()));
     }
 
-    static void buildWeekItems(List<DocumentSnapshot> schedules, Map<String, String> roomNames,
-                               List<DocumentSnapshot> events, List<DocumentSnapshot> reservations,
-                               List<DocumentSnapshot> reassignments, String[] weekDates,
-                               String uid, String nameToMatch, String weekLabel, String termLabel,
-                               WeekCallback callback) {
+    static void buildWeekItems(List<DocumentSnapshot> schedules, List<DocumentSnapshot> onlineSchedules,
+                               Map<String, String> roomNames, List<DocumentSnapshot> events, List<DocumentSnapshot> reservations,
+                               List<DocumentSnapshot> reassignments, List<DocumentSnapshot> releases, String[] weekDates,
+                               String uid, String nameToMatch, String weekLabel, String termLabel, WeekCallback callback) {
 
         Map<String, List<ScheduleItem>> byDay = new HashMap<>();
         for (String d : MON_FIRST) byDay.put(d, new ArrayList<>());
@@ -404,6 +495,25 @@ public class ScheduleLoader {
         Set<String> weekDateSet = new HashSet<>();
         Collections.addAll(weekDateSet, weekDates);
 
+        Set<String> releasedKeys = new HashSet<>();
+        for (DocumentSnapshot r : releases) {
+            String scheduleId = r.getString("scheduleId");
+            String date = r.getString("date");
+            if (scheduleId != null && date != null) releasedKeys.add(scheduleId + "_" + date);
+        }
+
+        // NEW: build reassigned-away keys (schedule occurrence moved elsewhere this date)
+        Set<String> reassignedKeys = new HashSet<>();
+        for (DocumentSnapshot r : reassignments) {
+            String status = r.getString("status");
+            if (status == null || !status.equalsIgnoreCase("approved")) continue;
+            String scheduleId = r.getString("scheduleId");
+            String date = r.getString("date");
+            if (scheduleId != null && date != null) reassignedKeys.add(scheduleId + "_" + date);
+        }
+
+        // Build schedule items first, but hold them so we can check conflicts before adding to byDay
+        List<ScheduleItem> scheduleItems = new ArrayList<>();
         for (DocumentSnapshot s : schedules) {
             String day = s.getString("day");
             if (day == null || !byDay.containsKey(day)) continue;
@@ -413,11 +523,16 @@ public class ScheduleLoader {
             if (dayIdx == -1) continue;
 
             String dateStr = weekDates[dayIdx];
+            String scheduleId = s.getId();
+            String occurrenceKey = scheduleId + "_" + dateStr;
+            if (releasedKeys.contains(occurrenceKey)) continue;
+            if (reassignedKeys.contains(occurrenceKey)) continue; // NEW: skip reassigned-away occurrences
+
             String roomId = s.getReference().getParent().getParent() != null
                     ? s.getReference().getParent().getParent().getId() : null;
 
             ScheduleItem item = new ScheduleItem();
-            item.id = s.getId();
+            item.id = scheduleId;
             item.kind = "schedule";
             item.subject = s.getString("subject");
             item.roomName = roomId != null ? roomNames.get(roomId) : null;
@@ -426,13 +541,17 @@ public class ScheduleLoader {
             item.endTime = s.getString("endTime");
             item.date = dateStr;
             item.faculty = s.getString("faculty");
-            byDay.get(day).add(item);
+            scheduleItems.add(item);
         }
 
+        // NEW: build activity items separately, checking overlap against scheduleItems
+        List<ScheduleItem> activityItems = new ArrayList<>();
+        Set<String> overriddenScheduleIds = new HashSet<>();
         for (DocumentSnapshot e : events) {
             String date = e.getString("date");
             if (date == null || !weekDateSet.contains(date)) continue;
             String dayAbbrev = dayAbbrevForDate(date);
+
             ScheduleItem item = new ScheduleItem();
             item.id = e.getId();
             item.kind = "event";
@@ -443,7 +562,48 @@ public class ScheduleLoader {
             item.startTime = e.getString("startTime");
             item.endTime = e.getString("endTime");
             item.date = date;
+
+            for (ScheduleItem sched : scheduleItems) {
+                if (!dayAbbrev.equals(sched.date != null ? dayAbbrevForDate(sched.date) : "")) continue;
+                if (!sched.date.equals(date)) continue;
+                if (overlap(item.startTime, item.endTime, sched.startTime, sched.endTime)) {
+                    overriddenScheduleIds.add(sched.id + "_" + sched.date);
+                    break;
+                }
+            }
+
+            activityItems.add(item);
             byDay.getOrDefault(dayAbbrev, new ArrayList<>()).add(item);
+        }
+
+        // Add schedule items EXCEPT the ones overridden by a conflicting activity
+        for (ScheduleItem sched : scheduleItems) {
+            String key = sched.id + "_" + sched.date;
+            if (overriddenScheduleIds.contains(key)) continue; // NEW: hide, activity takes precedence
+            byDay.get(dayAbbrevForDate(sched.date)).add(sched);
+        }
+
+        for (DocumentSnapshot s : onlineSchedules) {
+            String day = s.getString("day");
+            if (day == null || !byDay.containsKey(day)) continue;
+
+            int dayIdx = -1;
+            for (int i = 0; i < MON_FIRST.length; i++) if (MON_FIRST[i].equals(day)) dayIdx = i;
+            if (dayIdx == -1) continue;
+
+            String dateStr = weekDates[dayIdx];
+
+            ScheduleItem item = new ScheduleItem();
+            item.id = s.getId();
+            item.kind = "faculty-online";
+            item.subject = s.getString("subject");
+            item.roomName = "Online";
+            item.section = s.getString("section");
+            item.startTime = s.getString("startTime");
+            item.endTime = s.getString("endTime");
+            item.date = dateStr;
+            item.faculty = s.getString("facultyName");
+            byDay.get(day).add(item);
         }
 
         for (DocumentSnapshot r : reservations) {
@@ -519,6 +679,13 @@ public class ScheduleLoader {
         return matched;
     }
 
+    static boolean overlap(String aStart, String aEnd, String bStart, String bEnd) {
+        int[] as = parseTimeParts(aStart), ae = parseTimeParts(aEnd);
+        int[] bs = parseTimeParts(bStart), be = parseTimeParts(bEnd);
+        int aStartMin = as[0]*60+as[1], aEndMin = ae[0]*60+ae[1];
+        int bStartMin = bs[0]*60+bs[1], bEndMin = be[0]*60+be[1];
+        return aStartMin < bEndMin && aEndMin > bStartMin;
+    }
     static List<DocumentSnapshot> latestTermSchedules(List<DocumentSnapshot> matched) {
         DocumentSnapshot latest = null;
         int bestY = -1, bestS = -1;

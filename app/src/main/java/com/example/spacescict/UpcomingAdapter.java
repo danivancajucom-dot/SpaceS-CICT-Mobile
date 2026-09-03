@@ -39,6 +39,7 @@ public class UpcomingAdapter extends RecyclerView.Adapter<UpcomingAdapter.ViewHo
         String tag = "";
         if (item.kind.equals("reassignment")) tag = " (Moved)";
         else if (item.kind.equals("reservation")) tag = " (Reservation)";
+        else if (item.kind.equals("faculty-online")) tag = " (Online)";
         h.subjectLabel.setText(item.subject + tag);
 
         h.roomTimeLabel.setText(item.roomName + " • " + formatTime(item.startTime));

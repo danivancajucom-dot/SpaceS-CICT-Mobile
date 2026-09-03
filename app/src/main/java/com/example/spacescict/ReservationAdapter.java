@@ -4,11 +4,10 @@ import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -41,26 +40,36 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int i) {
         ReservationModel model = list.get(i);
+        String status = model.status != null ? model.status.toLowerCase().trim() : "";
 
-        h.status.setText(model.status);
-        h.room.setText(model.roomName);
-        h.subject.setText(model.courseTitle);
-        h.image.setImageResource(model.image);
+        h.roomName.setText(model.roomName != null ? model.roomName : "");
+        h.subject.setText(model.courseTitle != null ? model.courseTitle : "");
+        h.dateTime.setText((model.date != null ? model.date : "") + " | "
+                + (model.startTime != null ? model.startTime : "") + " - " + (model.endTime != null ? model.endTime : ""));
+        h.status.setText(model.status != null ? model.status.toUpperCase() : "");
+
+        CardView statusCard = (CardView) h.status.getParent();
+        if (status.equals("pending")) {
+            statusCard.setCardBackgroundColor(Color.parseColor("#F97316"));
+        } else if (status.equals("approved")) {
+            statusCard.setCardBackgroundColor(Color.parseColor("#22C55E"));
+        } else if (status.equals("cancelled")) {
+            statusCard.setCardBackgroundColor(Color.parseColor("#6B7280"));
+        } else {
+            statusCard.setCardBackgroundColor(Color.parseColor("#EF4444"));
+        }
+
+        boolean isDenied = status.equals("rejected") || status.equals("denied");
+        h.denialReasonCard.setVisibility(isDenied ? View.VISIBLE : View.GONE);
+        if (isDenied) {
+            String reason = model.denialReason != null && !model.denialReason.isEmpty()
+                    ? model.denialReason : "No reason provided.";
+            h.denialReasonText.setText(reason);
+        }
 
         h.itemView.setOnClickListener(v -> {
             if (listener != null) listener.onClick(model);
         });
-
-        if ("Pending".equalsIgnoreCase(model.status)) {
-            h.status.setBackgroundResource(R.drawable.status_pending);
-            h.status.setTextColor(Color.parseColor("#D97706"));
-        } else if ("Approved".equalsIgnoreCase(model.status)) {
-            h.status.setBackgroundResource(R.drawable.status_approved);
-            h.status.setTextColor(Color.parseColor("#16A34A"));
-        } else {
-            h.status.setBackgroundResource(R.drawable.status_denied);
-            h.status.setTextColor(Color.parseColor("#DC2626"));
-        }
     }
 
     @Override
@@ -69,16 +78,17 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {
-        TextView status, room, subject;
-        ImageView image;
-        Button detailsBtn;
+        TextView status, roomName, subject, dateTime, denialReasonText, detailsBtn;
+        CardView denialReasonCard;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             status = itemView.findViewById(R.id.statusText);
-            room = itemView.findViewById(R.id.roomName);
+            roomName = itemView.findViewById(R.id.roomName);
             subject = itemView.findViewById(R.id.subjectText);
-            image = itemView.findViewById(R.id.roomImage);
+            dateTime = itemView.findViewById(R.id.dateTimeText);
+            denialReasonCard = itemView.findViewById(R.id.denialReasonCard);
+            denialReasonText = itemView.findViewById(R.id.denialReasonText);
             detailsBtn = itemView.findViewById(R.id.detailsBtn);
         }
     }

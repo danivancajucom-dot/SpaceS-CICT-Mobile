@@ -60,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             loginButton.setEnabled(false);
+            LoadingOverlay.show(this, "Signing in...");
 
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnSuccessListener(result -> {
@@ -70,6 +71,7 @@ public class MainActivity extends AppCompatActivity {
                                     loginButton.setEnabled(true);
 
                                     if (!doc.exists()) {
+                                        LoadingOverlay.hide();
                                         mAuth.signOut();
                                         Toast.makeText(this, "Account not found", Toast.LENGTH_LONG).show();
                                         return;
@@ -82,58 +84,74 @@ public class MainActivity extends AppCompatActivity {
                                     boolean isActive = status == null || "Active".equalsIgnoreCase(status);
 
                                     if (isFaculty && isActive) {
+                                        LoadingOverlay.show(this, "Getting things ready...");
                                         startActivity(new Intent(MainActivity.this, DashboardActivity.class));
                                         finish();
                                     } else if (!isFaculty) {
+                                        LoadingOverlay.hide();
                                         mAuth.signOut();
                                         Toast.makeText(this, "This app is for faculty accounts only", Toast.LENGTH_LONG).show();
                                     } else {
+                                        LoadingOverlay.hide();
                                         mAuth.signOut();
                                         Toast.makeText(this, "Your account is inactive. Contact admin.", Toast.LENGTH_LONG).show();
                                     }
                                 })
                                 .addOnFailureListener(e -> {
                                     loginButton.setEnabled(true);
+                                    LoadingOverlay.hide();
                                     mAuth.signOut();
                                     Toast.makeText(this, "Could not verify account: " + e.getMessage(), Toast.LENGTH_LONG).show();
                                 });
                     })
                     .addOnFailureListener(e -> {
                         loginButton.setEnabled(true);
+                        LoadingOverlay.hide();
                         Toast.makeText(this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         });
     }
 
     void showForgotPasswordDialog(String prefillEmail) {
-        LinearLayout body = new LinearLayout(this);
-        body.setOrientation(LinearLayout.VERTICAL);
-        int pad = (int) (24 * getResources().getDisplayMetrics().density);
-        body.setPadding(pad, pad, pad, 0);
+        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
 
-        EditText emailField = new EditText(this);
-        emailField.setHint("Enter your faculty email");
-        emailField.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_EMAIL_ADDRESS);
-        if (!prefillEmail.isEmpty()) emailField.setText(prefillEmail);
-        body.addView(emailField);
+        android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(dialogView);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
 
-        new AlertDialog.Builder(this)
-                .setTitle("Reset Password")
-                .setMessage("We'll send a password reset link to this email.")
-                .setView(body)
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Send", (d, w) -> {
-                    String email = emailField.getText().toString().trim();
-                    if (email.isEmpty()) {
-                        Toast.makeText(this, "Enter your email first", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    mAuth.sendPasswordResetEmail(email)
-                            .addOnSuccessListener(unused ->
-                                    Toast.makeText(this, "Reset email sent. Check your inbox.", Toast.LENGTH_LONG).show())
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-                })
-                .show();
+        EditText resetEmailInput = dialogView.findViewById(R.id.resetEmailInput);
+        if (!prefillEmail.isEmpty()) resetEmailInput.setText(prefillEmail);
+
+        dialogView.findViewById(R.id.resetCancelBtn).setOnClickListener(v -> dialog.dismiss());
+
+        dialogView.findViewById(R.id.resetSendBtn).setOnClickListener(v -> {
+            String email = resetEmailInput.getText().toString().trim();
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Enter your email first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            LoadingOverlay.show(this, "Sending reset link...");
+
+            mAuth.sendPasswordResetEmail(email)
+                    .addOnSuccessListener(unused -> {
+                        LoadingOverlay.hide();
+                        dialog.dismiss();
+                        Toast.makeText(this, "Reset email sent. Check your inbox.", Toast.LENGTH_LONG).show();
+                    })
+                    .addOnFailureListener(e -> {
+                        LoadingOverlay.hide();
+                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+        });
+
+        dialog.show();
+
+        // Fixed sizing: force the dialog to 88% of screen width, not WRAP_CONTENT
+        // This is what was rendering as a thin strip before.
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        int dialogWidth = (int) (screenWidth * 0.88);
+        dialog.getWindow().setLayout(dialogWidth, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
-}
+    }

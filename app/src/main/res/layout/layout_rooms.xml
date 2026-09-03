@@ -3,126 +3,84 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F5F5F5">
-
-<!-- SEARCH -->
-<LinearLayout android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginHorizontal="20dp"
-    android:background="@drawable/input_bg"
-    android:gravity="center_vertical"
-    android:paddingHorizontal="18dp"
-    xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <ImageView
-        android:layout_width="24dp"
-        android:layout_height="24dp"
-        android:src="@drawable/ic_search"
-        app:tint="#94A3B8" />
-
-    <EditText
-        android:id="@+id/searchInput"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:hint="Search rooms..."
-        android:textSize="16sp"
-        android:textColor="#111827"
-        android:textColorHint="#6B7280"
-        android:background="@android:color/transparent"
-        android:paddingStart="12dp"
-        android:fontFamily="@font/lexend_bold"/>
-
-</LinearLayout>
-
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-    <!-- FILTERS -->
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:orientation="horizontal"
-                android:paddingHorizontal="20dp"
-                android:paddingBottom="10dp">
-
-                <TextView
-                    android:id="@+id/tabAll"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:paddingBottom="8dp"
-                    android:text="All"
-                    android:textColor="#F97316"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <TextView
-                    android:id="@+id/tabAvailable"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:text="Available"
-                    android:textColor="#64748B"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <TextView
-                    android:id="@+id/tabOccupied"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="24dp"
-                    android:text="Occupied"
-                    android:textColor="#64748B"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <TextView
-                    android:id="@+id/tabMaintenance"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Maintenance"
-                    android:textColor="#64748B"
-                    android:textSize="16sp"
-                    android:textStyle="bold"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:fontFamily="@font/lexend_bold"/>
-            </LinearLayout>
-    </HorizontalScrollView>
+    android:background="@color/bg_page">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingHorizontal="20dp"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:background="@color/surface"
+        android:paddingBottom="4dp">
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#E2E8F0"
-        android:layout_marginTop="10dp"
-        android:layout_marginBottom="10dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_margin="16dp"
+            android:background="@drawable/input_field_bg"
+            android:gravity="center_vertical"
+            android:paddingHorizontal="16dp">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/roomsRecycler"
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_search"
+                app:tint="@color/ink_500" />
+
+            <EditText
+                android:id="@+id/searchInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:hint="Search rooms..."
+                android:textSize="14sp"
+                android:textColor="@color/ink_900"
+                android:textColorHint="@color/ink_500"
+                android:background="@android:color/transparent"
+                android:paddingStart="10dp"
+                android:fontFamily="@font/lexend_regular"/>
+        </LinearLayout>
+
+        <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            />
+            android:scrollbars="none">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingHorizontal="16dp"
+                android:paddingBottom="12dp">
+
+                <TextView android:id="@+id/tabAll" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginEnd="22dp" android:text="All" android:textColor="@color/brand_orange"
+                    android:textSize="14sp" android:textStyle="bold" android:clickable="true" android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
+
+                <TextView android:id="@+id/tabAvailable" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginEnd="22dp" android:text="Available" android:textColor="@color/ink_500"
+                    android:textSize="14sp" android:textStyle="bold" android:clickable="true" android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
+
+                <TextView android:id="@+id/tabOccupied" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:layout_marginEnd="22dp" android:text="Occupied" android:textColor="@color/ink_500"
+                    android:textSize="14sp" android:textStyle="bold" android:clickable="true" android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
+
+                <TextView android:id="@+id/tabMaintenance" android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Maintenance" android:textColor="@color/ink_500"
+                    android:textSize="14sp" android:textStyle="bold" android:clickable="true" android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"/>
+            </LinearLayout>
+        </HorizontalScrollView>
     </LinearLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/roomsRecycler"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        android:clipToPadding="false"/>
 
 </LinearLayout>

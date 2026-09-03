@@ -5,6 +5,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,6 +17,12 @@ import com.google.firebase.firestore.SetOptions;
 
 import java.util.HashMap;
 import java.util.Map;
+
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import com.google.firebase.firestore.Query;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ProfilePage {
 
@@ -29,6 +36,12 @@ public class ProfilePage {
     String uid;
     Runnable onBack;
     PhotoPickerHandler photoPickerHandler;
+
+
+    View tabDetails, tabActivityLog, detailsTabContent, activityTabContent;
+    RecyclerView activityRecycler;
+    TextView noActivityText;
+    List<ActivityLogModel> activityList = new ArrayList<>();
 
     public interface PhotoPickerHandler {
         void launchPicker();
@@ -46,6 +59,18 @@ public class ProfilePage {
         profilePhoto = view.findViewById(R.id.profilePhoto);
         cameraBtn = view.findViewById(R.id.cameraBtn);
         resetPasswordBtn = view.findViewById(R.id.resetPasswordBtn);
+
+        tabDetails = view.findViewById(R.id.tabDetails);
+        tabActivityLog = view.findViewById(R.id.tabActivityLog);
+        detailsTabContent = view.findViewById(R.id.detailsTabContent);
+        activityTabContent = view.findViewById(R.id.activityTabContent);
+        activityRecycler = view.findViewById(R.id.activityRecycler);
+        noActivityText = view.findViewById(R.id.noActivityText);
+
+        if (tabDetails != null && tabActivityLog != null) {
+            tabDetails.setOnClickListener(v -> switchTab(true));
+            tabActivityLog.setOnClickListener(v -> switchTab(false));
+        }
 
         db = FirebaseFirestore.getInstance();
         uid = FirebaseAuth.getInstance().getUid();
@@ -73,6 +98,63 @@ public class ProfilePage {
         resetPasswordBtn.setOnClickListener(v -> sendPasswordReset());
     }
 
+    void switchTab(boolean showDetails) {
+        if (detailsTabContent != null) detailsTabContent.setVisibility(showDetails ? View.VISIBLE : View.GONE);
+        if (activityTabContent != null) activityTabContent.setVisibility(showDetails ? View.GONE : View.VISIBLE);
+
+        androidx.cardview.widget.CardView detailsCard = (androidx.cardview.widget.CardView) tabDetails;
+        androidx.cardview.widget.CardView activityCard = (androidx.cardview.widget.CardView) tabActivityLog;
+
+        detailsCard.setCardBackgroundColor(showDetails
+                ? android.graphics.Color.parseColor("#F97316") : android.graphics.Color.parseColor("#FFFFFF"));
+        activityCard.setCardBackgroundColor(!showDetails
+                ? android.graphics.Color.parseColor("#F97316") : android.graphics.Color.parseColor("#FFFFFF"));
+
+        TextView detailsText = (TextView) detailsCard.getChildAt(0);
+        TextView activityText = (TextView) activityCard.getChildAt(0);
+        detailsText.setTextColor(showDetails ? android.graphics.Color.WHITE : android.graphics.Color.parseColor("#44403C"));
+        activityText.setTextColor(!showDetails ? android.graphics.Color.WHITE : android.graphics.Color.parseColor("#44403C"));
+
+        if (!showDetails && activityRecycler != null && activityRecycler.getAdapter() == null) {
+            loadActivityLog();
+        }
+    }
+    void loadActivityLog() {
+        if (activityRecycler == null) return;
+        if (uid == null) return;
+
+        db.collection("activityLogs")
+                .whereEqualTo("userId", uid)
+                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .limit(50)
+                .get()
+                .addOnSuccessListener(snap -> {
+                    activityList.clear();
+                    for (com.google.firebase.firestore.DocumentSnapshot doc : snap.getDocuments()) {
+                        activityList.add(new ActivityLogModel(
+                                doc.getId(),
+                                doc.getString("action"),
+                                doc.getString("actionType"),
+                                doc.getString("target"),
+                                doc.getString("status"),
+                                doc.getTimestamp("timestamp")
+                        ));
+                    }
+
+                    activityRecycler.setLayoutManager(new LinearLayoutManager(context));
+                    activityRecycler.setAdapter(new ActivityLogAdapter(activityList));
+
+                    if (noActivityText != null) {
+                        noActivityText.setVisibility(activityList.isEmpty() ? View.VISIBLE : View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    if (noActivityText != null) {
+                        noActivityText.setText("Failed to load activity: " + e.getMessage());
+                        noActivityText.setVisibility(View.VISIBLE);
+                    }
+                });
+    }
     void loadProfile() {
         db.collection("users").document(uid).get()
                 .addOnSuccessListener(doc -> {

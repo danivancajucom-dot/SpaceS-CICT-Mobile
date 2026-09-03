@@ -28,8 +28,14 @@ public class RoomsPage {
         tabOccupied = view.findViewById(R.id.tabOccupied);
         tabMaintenance = view.findViewById(R.id.tabMaintenance);
 
-        adapter = new RoomAdapter(filteredList, room ->
-                context.startActivity(new Intent(context, ReservationActivity.class)));
+        adapter = new RoomAdapter(filteredList,
+                room -> context.startActivity(new Intent(context, ReservationActivity.class)),
+                room -> {
+                    Intent intent = new Intent(context, RoomScheduleActivity.class);
+                    intent.putExtra(RoomScheduleActivity.EXTRA_ROOM_ID, room.roomId);
+                    intent.putExtra(RoomScheduleActivity.EXTRA_ROOM_NAME, room.roomName);
+                    context.startActivity(intent);
+                });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(context));
         recyclerView.setAdapter(adapter);

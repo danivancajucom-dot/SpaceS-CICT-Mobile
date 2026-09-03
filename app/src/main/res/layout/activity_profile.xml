@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="#F3F4F6"
     android:layout_width="match_parent"
@@ -43,6 +44,66 @@
             android:layout_centerVertical="true"
             android:contentDescription="Edit Profile"/>
     </RelativeLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/bg_page"
+        android:padding="16dp">
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/tabDetails"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/brand_orange"
+            xmlns:app="http://schemas.android.com/apk/res-auto">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Details"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:fontFamily="@font/lexend_bold"/>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/tabActivityLog"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="46dp"
+            android:layout_marginStart="10dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/surface">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="Activity Log"
+                android:textColor="@color/ink_700"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:fontFamily="@font/lexend_bold"/>
+        </androidx.cardview.widget.CardView>
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EFE7DF"/>
+
+    <FrameLayout
+        android:id="@+id/detailsTabContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
 
     <!-- CONTENT -->
     <ScrollView
@@ -147,5 +208,34 @@
                 android:textColor="#FFFFFF"/>
         </LinearLayout>
     </ScrollView>
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/activityTabContent"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/activityRecycler"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingHorizontal="16dp"
+            android:paddingTop="12dp"
+            android:clipToPadding="false"/>
+
+        <TextView
+            android:id="@+id/noActivityText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="40dp"
+            android:gravity="center"
+            android:text="No activity yet"
+            android:textColor="#6B7280"
+            android:visibility="gone"
+            android:fontFamily="@font/lexend_regular"/>
+
+    </LinearLayout>
 
 </LinearLayout>

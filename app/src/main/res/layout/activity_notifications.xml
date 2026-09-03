@@ -5,56 +5,55 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#F7F5F3">
+    android:background="@color/bg_page">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="95dp"
-        android:background="#FAF8F6"
-        android:paddingHorizontal="22dp"
-        android:paddingTop="20dp">
+        android:background="@color/surface"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="18dp">
 
         <ImageView
             android:id="@+id/backBtn"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_back"
-            app:tint="#111827"/>
+            app:tint="@color/ink_900"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Notifications"
             android:textStyle="bold"
-            android:textSize="22sp"
-            android:textColor="#111827"
+            android:textSize="19sp"
+            android:textColor="@color/ink_900"
             android:fontFamily="@font/lexend_bold"
             android:layout_centerInParent="true"/>
 
         <ImageView
             android:id="@+id/filterBtn"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:src="@drawable/ic_filter"
-            app:tint="#111827"/>
+            app:tint="@color/ink_900"/>
     </RelativeLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
+        android:layout_height="60dp"
         android:orientation="horizontal"
         android:gravity="center_vertical"
-        android:paddingHorizontal="24dp"
-        android:background="#FAF8F6">
+        android:paddingHorizontal="20dp"
+        android:background="@color/surface">
 
         <LinearLayout
             android:id="@+id/tabAll"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:orientation="vertical"
             android:gravity="center"
             android:clickable="true"
             android:focusable="true">
@@ -65,23 +64,16 @@
                 android:layout_height="wrap_content"
                 android:text="All"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#F97316"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <View
-                android:id="@+id/tabAllUnderline"
-                android:layout_width="34dp"
-                android:layout_height="3dp"
-                android:layout_marginTop="16dp"
-                android:background="#F97316"/>
+                android:textSize="14sp"
+                android:textColor="@color/brand_orange"
+                android:fontFamily="@font/lexend_bold"/>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/tabUnread"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="36dp"
+            android:layout_marginStart="28dp"
             android:gravity="center_vertical"
             android:clickable="true"
             android:focusable="true">
@@ -92,15 +84,9 @@
                 android:layout_height="wrap_content"
                 android:text="Unread"
                 android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="#667085"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <View
-                android:layout_width="10dp"
-                android:layout_height="10dp"
-                android:layout_marginStart="8dp"
-                android:background="@drawable/orange_dot"/>
+                android:textSize="14sp"
+                android:textColor="@color/ink_500"
+                android:fontFamily="@font/lexend_bold"/>
         </LinearLayout>
 
         <TextView
@@ -109,26 +95,25 @@
             android:layout_height="wrap_content"
             android:text="Archived"
             android:textStyle="bold"
-            android:textSize="16sp"
-            android:textColor="#667085"
-            android:layout_marginStart="36dp"
+            android:textSize="14sp"
+            android:textColor="@color/ink_500"
+            android:layout_marginStart="28dp"
             android:clickable="true"
             android:focusable="true"
-            android:fontFamily="@font/lexend_regular"/>
-
+            android:fontFamily="@font/lexend_bold"/>
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="#EFE7DF"/>
+        android:background="@color/divider"/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingHorizontal="20dp"
-        android:paddingTop="18dp"
+        android:paddingTop="16dp"
         android:clipToPadding="false"/>
 
 </LinearLayout>

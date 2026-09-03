@@ -222,7 +222,14 @@ public class WeeklySchedulePage {
         lp.topMargin = top + dp(1);
         block.setLayoutParams(lp);
 
-        block.setOnClickListener(v -> showDetailsDialog(item));
+        block.setOnClickListener(v -> {
+            String status = computeStatus(item);
+            if (item.kind.equals("schedule") && !status.equals("COMPLETED")) {
+                showReleaseDialog(item); // matches web: schedule tap goes straight to release, no details step
+            } else {
+                showDetailsDialog(item);
+            }
+        });
 
         return block;
     }
@@ -232,6 +239,7 @@ public class WeeklySchedulePage {
     Colors colorFor(String kind) {
         switch (kind) {
             case "schedule": return new Colors(Color.parseColor("#EEF2FF"), Color.parseColor("#3651D4"));
+            case "faculty-online": return new Colors(Color.parseColor("#F3E8FF"), Color.parseColor("#7E22CE"));
             case "event": return new Colors(Color.parseColor("#ECFDF5"), Color.parseColor("#1A9E5C"));
             case "reservation": return new Colors(Color.parseColor("#FFF7ED"), Color.parseColor("#C2621A"));
             case "reassignment": return new Colors(Color.parseColor("#F5F3FF"), Color.parseColor("#6D28D9"));
@@ -240,44 +248,101 @@ public class WeeklySchedulePage {
     }
 
     void showDetailsDialog(ScheduleLoader.ScheduleItem item) {
-        LinearLayout body = new LinearLayout(context);
-        body.setOrientation(LinearLayout.VERTICAL);
-        body.setPadding(dp(24), dp(16), dp(24), dp(16));
+        LinearLayout root = new LinearLayout(context);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(24), dp(20), dp(24), dp(20));
+        root.setBackgroundColor(Color.WHITE);
 
-        addDetailRow(body, "Subject", item.subject);
-        addDetailRow(body, "Room", item.roomName);
-        addDetailRow(body, "Date", item.date);
-        addDetailRow(body, "Time", formatTime(item.startTime) + " - " + formatTime(item.endTime));
-        if (item.section != null && !item.section.isEmpty()) addDetailRow(body, "Section", item.section);
-        if (item.faculty != null && !item.faculty.isEmpty()) addDetailRow(body, "Faculty", item.faculty);
+        TextView title = new TextView(context);
+        title.setText(titleFor(item.kind));
+        title.setTextColor(Color.parseColor("#1C1917"));
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextSize(18);
+        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        titleParams.bottomMargin = dp(16);
+        title.setLayoutParams(titleParams);
+        root.addView(title);
+
+        addDetailRow(root, "Subject", item.subject);
+        addDetailRow(root, "Room", item.roomName);
+        addDetailRow(root, "Date", item.date);
+        addDetailRow(root, "Time", formatTime(item.startTime) + " - " + formatTime(item.endTime));
+        if (item.section != null && !item.section.isEmpty()) addDetailRow(root, "Section", item.section);
+        if (item.faculty != null && !item.faculty.isEmpty()) addDetailRow(root, "Faculty", item.faculty);
         if (item.kind.equals("reassignment") && item.originalRoom != null) {
-            addDetailRow(body, "Moved from", item.originalRoom);
+            addDetailRow(root, "Moved from", item.originalRoom);
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(context)
-                .setTitle(titleFor(item.kind))
-                .setView(body)
-                .setNegativeButton("Close", null);
+        androidx.cardview.widget.CardView closeCard = new androidx.cardview.widget.CardView(context);
+        closeCard.setRadius(dp(14));
+        closeCard.setCardElevation(0);
+        closeCard.setCardBackgroundColor(Color.parseColor("#F97316"));
+        LinearLayout.LayoutParams closeCardParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
+        closeCardParams.topMargin = dp(20);
+        closeCard.setLayoutParams(closeCardParams);
 
-        String status = computeStatus(item);
-        if (item.kind.equals("schedule") && !status.equals("COMPLETED")) {
-            builder.setPositiveButton("Release Room", (d, w) -> showReleaseDialog(item));
-        }
+        TextView closeBtn = new TextView(context);
+        closeBtn.setText("Close");
+        closeBtn.setTextColor(Color.WHITE);
+        closeBtn.setTypeface(null, Typeface.BOLD);
+        closeBtn.setGravity(Gravity.CENTER);
+        closeBtn.setLayoutParams(new FrameLayout.LayoutParams(
+                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        closeCard.addView(closeBtn);
+        root.addView(closeCard);
 
-        builder.show();
+        android.app.Dialog dialog = new android.app.Dialog(context);
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(root);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
+
+        closeBtn.setOnClickListener(v -> dialog.dismiss());
+
+        dialog.show();
+        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        dialog.getWindow().setLayout((int) (screenWidth * 0.88), android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+
+        // Rounded corners for the dialog itself
+        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+        bg.setColor(Color.WHITE);
+        bg.setCornerRadius(dp(20));
+        root.setBackground(bg);
     }
 
     void addDetailRow(LinearLayout parent, String label, String value) {
-        TextView tv = new TextView(context);
-        tv.setText(label + ": " + (value != null ? value : "N/A"));
-        tv.setTextColor(Color.parseColor("#374151"));
-        tv.setPadding(0, dp(4), 0, dp(4));
-        parent.addView(tv);
+        LinearLayout row = new LinearLayout(context);
+        row.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        rowParams.bottomMargin = dp(12);
+        row.setLayoutParams(rowParams);
+
+        TextView labelView = new TextView(context);
+        labelView.setText(label);
+        labelView.setTextColor(Color.parseColor("#78716C"));
+        labelView.setTextSize(11);
+        row.addView(labelView);
+
+        TextView valueView = new TextView(context);
+        valueView.setText(value != null && !value.isEmpty() ? value : "N/A");
+        valueView.setTextColor(Color.parseColor("#1C1917"));
+        valueView.setTextSize(14);
+        valueView.setTypeface(null, Typeface.BOLD);
+        LinearLayout.LayoutParams valueParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        valueParams.topMargin = dp(2);
+        valueView.setLayoutParams(valueParams);
+        row.addView(valueView);
+
+        parent.addView(row);
     }
 
     String titleFor(String kind) {
         switch (kind) {
             case "schedule": return "Class Schedule";
+            case "faculty-online": return "Online Class";
             case "event": return "Room Activity";
             case "reservation": return "Reservation";
             case "reassignment": return "Reassigned Class";
@@ -381,6 +446,8 @@ public class WeeklySchedulePage {
                                     Toast.makeText(context, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
                 });
     }
+
+
 
     void notifyRelease(String facultyId, String facultyName, String roomName, String subject,
                        String date, String startTime, String endTime) {

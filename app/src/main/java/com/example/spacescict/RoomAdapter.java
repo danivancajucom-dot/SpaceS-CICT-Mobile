@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
@@ -17,14 +18,20 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
 
     ArrayList<RoomModel> list;
     OnReserveClickListener listener;
+    OnViewScheduleListener scheduleListener;
 
     public interface OnReserveClickListener {
         void onReserve(RoomModel room);
     }
 
-    public RoomAdapter(ArrayList<RoomModel> list, OnReserveClickListener listener) {
+    public interface OnViewScheduleListener {
+        void onViewSchedule(RoomModel room);
+    }
+
+    public RoomAdapter(ArrayList<RoomModel> list, OnReserveClickListener listener, OnViewScheduleListener scheduleListener) {
         this.list = list;
         this.listener = listener;
+        this.scheduleListener = scheduleListener;
     }
 
     @NonNull
@@ -38,34 +45,28 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder h, int i) {
         RoomModel room = list.get(i);
-
-        h.roomName.setText(room.roomName);
-        h.image.setImageResource(room.image);
-
-        // Capacity — always shown, this is the fact you need before reserving regardless of status
-        h.capacity.setText(room.capacity > 0 ? room.capacity + " Capacity" : "Capacity N/A");
-
-        // Floor — always shown too, another pre-reservation fact
-        h.floor.setText(room.floor != null && !room.floor.isEmpty() ? room.floor : "Floor N/A");
-
-        // Room type, e.g. "Conference Room", "Computer Lab"
-        h.roomType.setText(room.roomType != null && !room.roomType.isEmpty() ? room.roomType : "");
-
         String status = room.status != null ? room.status : "";
+
+        h.roomName.setText(room.roomName != null ? room.roomName : "");
+        h.capacity.setText(room.capacity + " Capacity");
+        h.floor.setText(room.floor != null ? room.floor : "");
+        h.roomType.setText(room.roomType != null ? room.roomType : "");
         h.status.setText(status.toUpperCase());
 
+        CardView statusCard = (CardView) h.status.getParent();
+
         if (status.equalsIgnoreCase("Available")) {
-            h.status.setTextColor(Color.parseColor("#22C55E"));
-            h.time.setText("Available now");
+            statusCard.setCardBackgroundColor(Color.parseColor("#22C55E"));
+            h.time.setText("Available Now");
         } else if (status.equalsIgnoreCase("Occupied")) {
-            h.status.setTextColor(Color.parseColor("#DC2626"));
+            statusCard.setCardBackgroundColor(Color.parseColor("#EF4444"));
             h.time.setText(room.occupiedUntil != null && !room.occupiedUntil.isEmpty()
                     ? "Occupied until " + room.occupiedUntil : "Currently occupied");
         } else if (status.equalsIgnoreCase("Maintenance")) {
-            h.status.setTextColor(Color.parseColor("#F59E0B"));
+            statusCard.setCardBackgroundColor(Color.parseColor("#F97316"));
             h.time.setText("Under maintenance");
         } else {
-            h.status.setTextColor(Color.parseColor("#64748B"));
+            statusCard.setCardBackgroundColor(Color.parseColor("#64748B"));
             h.time.setText("Status unknown");
         }
 
@@ -73,7 +74,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
             if (listener != null) listener.onReserve(room);
         });
         h.reserveBtn.setEnabled(!status.equalsIgnoreCase("Maintenance"));
-        h.reserveBtn.setAlpha(status.equalsIgnoreCase("Maintenance") ? 0.5f : 1f);
+
+        h.viewScheduleBtn.setOnClickListener(v -> {
+            if (scheduleListener != null) scheduleListener.onViewSchedule(room);
+        });
     }
 
     @Override
@@ -81,10 +85,10 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
         return list.size();
     }
 
-    class ViewHolder extends RecyclerView.ViewHolder {
+    static class ViewHolder extends RecyclerView.ViewHolder {
         TextView roomName, status, capacity, floor, roomType, time;
-        ImageView image;
-        Button reserveBtn;
+        ImageView statusIcon;
+        Button reserveBtn, viewScheduleBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -94,8 +98,9 @@ public class RoomAdapter extends RecyclerView.Adapter<RoomAdapter.ViewHolder> {
             floor = itemView.findViewById(R.id.floorText);
             roomType = itemView.findViewById(R.id.roomTypeText);
             time = itemView.findViewById(R.id.timeText);
-            image = itemView.findViewById(R.id.roomImage);
+            statusIcon = itemView.findViewById(R.id.statusIcon);
             reserveBtn = itemView.findViewById(R.id.reserveBtn);
+            viewScheduleBtn = itemView.findViewById(R.id.viewScheduleBtn);
         }
     }
 }

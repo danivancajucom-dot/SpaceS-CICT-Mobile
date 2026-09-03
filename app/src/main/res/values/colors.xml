@@ -5,5 +5,32 @@
     <color name="whiteorange">#F2E4DD</color>
     <color name="transparent">#00FFFFFF</color>
 
+    <!-- Brand -->
+    <color name="brand_orange">#F97316</color>
+    <color name="brand_orange_dark">#EA580C</color>
+    <color name="brand_orange_soft">#FFF1E6</color>
+    <color name="brand_orange_border">#FDDCBE</color>
+
+    <color name="ink_900">#1C1917</color>
+    <color name="ink_700">#44403C</color>
+    <color name="ink_500">#78716C</color>
+    <color name="ink_300">#D6D3D1</color>
+    <color name="surface">#FFFFFF</color>
+    <color name="surface_alt">#EEF1F5</color>
+    <color name="bg_page">#F5F3F0</color>
+    <color name="divider">#EDE9E4</color>
+
+    <color name="success">#16A34A</color>
+    <color name="success_soft">#EFFDF4</color>
+    <color name="warning">#D97706</color>
+    <color name="warning_soft">#FFFBEB</color>
+    <color name="danger">#DC2626</color>
+    <color name="danger_soft">#FEF2F2</color>
+    <color name="info">#2563EB</color>
+    <color name="info_soft">#EFF6FF</color>
+    <color name="neutral_badge">#6B7280</color>
+    <color name="neutral_badge_soft">#F3F4F6</color>
+
+
 
 </resources>

@@ -52,6 +52,7 @@ public class DashboardActivity extends AppCompatActivity {
                     }
                 });
 
+
         logout.setOnClickListener(v -> {
             ConfirmDialog.show(
                     this, "Logout", " Are you sure you want to log out?",
@@ -86,8 +87,8 @@ public class DashboardActivity extends AppCompatActivity {
             } else if (id == R.id.nav_rooms) {
                 loadRooms();
                 return true;
-            } else if (id == R.id.nav_profile) {
-                loadProfile();
+            } else if (id == R.id.nav_announcement) {
+                startActivity(new Intent(DashboardActivity.this, BroadcastActivity.class));
                 return true;
             }
             return false;
@@ -122,7 +123,8 @@ public class DashboardActivity extends AppCompatActivity {
         new WeeklySchedulePage(this, view);
     }
 
-    private void loadProfile() {
+    // Public so HomePage can call this when the profile picture is tapped
+    public void openProfile() {
         header.setVisibility(View.GONE);
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.activity_profile, contentFrame, true);
@@ -135,7 +137,7 @@ public class DashboardActivity extends AppCompatActivity {
         new Thread(() -> {
             try {
                 InputStream input = getContentResolver().openInputStream(uri);
-                byte[] bytes = input.readAllBytes();
+                byte[] bytes = readAllBytesCompat(input);
                 input.close();
 
                 String boundary = "Boundary-" + System.currentTimeMillis();
@@ -155,7 +157,8 @@ public class DashboardActivity extends AppCompatActivity {
 
                 int code = conn.getResponseCode();
                 InputStream respStream = code == 200 ? conn.getInputStream() : conn.getErrorStream();
-                String response = new String(respStream.readAllBytes());
+                byte[] respBytes = readAllBytesCompat(respStream);
+                String response = new String(respBytes);
 
                 if (code == 200) {
                     JSONObject json = new JSONObject(response);
@@ -168,5 +171,19 @@ public class DashboardActivity extends AppCompatActivity {
                 runOnUiThread(() -> Toast.makeText(this, "Upload error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
             }
         }).start();
+    }
+
+    public void goToWeeklySchedule() {
+        loadWeeklySchedule();
+    }
+
+    byte[] readAllBytesCompat(InputStream input) throws java.io.IOException {
+        java.io.ByteArrayOutputStream buffer = new java.io.ByteArrayOutputStream();
+        byte[] chunk = new byte[8192];
+        int bytesRead;
+        while ((bytesRead = input.read(chunk)) != -1) {
+            buffer.write(chunk, 0, bytesRead);
+        }
+        return buffer.toByteArray();
     }
 }

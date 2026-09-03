@@ -34,11 +34,11 @@
         android:fontFamily="@font/lexend_bold"/>
 
     <item
-        android:id="@+id/nav_profile"
-        android:title="Profile"
+        android:id="@+id/nav_announcement"
+        android:title="Announcements"
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:icon="@drawable/ic_user"
+        android:icon="@drawable/ic_notification"
         android:fontFamily="@font/lexend_bold"/>
 
 </menu>

@@ -278,6 +278,128 @@ public class RoomAvailability {
         });
     }
 
+    public static class RoomSlotStatus {
+        public String id, roomName, floor, roomType, status; // Available / Occupied / Reserved / Maintenance
+        public int capacity;
+        public Map<String, Boolean> equipment;
+    }
+
+    public interface SlotResultCallback {
+        void onResult(List<RoomSlotStatus> rooms);
+    }
+
+    public static void loadAvailabilityForSlot(String date, String startTime, String endTime,
+                                               String currentUid, SlotResultCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("rooms").get().addOnSuccessListener(roomsSnap -> {
+            List<DocumentSnapshot> roomDocs = roomsSnap.getDocuments();
+
+            db.collection("events").whereEqualTo("date", date).get().addOnSuccessListener(eventsSnap -> {
+                db.collection("reservationRequests").whereEqualTo("date", date).get().addOnSuccessListener(resSnap -> {
+                    db.collection("roomReleases").get().addOnSuccessListener(releaseSnap -> {
+
+                        Map<String, Set<String>> releaseMap = new HashMap<>();
+                        for (DocumentSnapshot d : releaseSnap.getDocuments()) {
+                            String relDate = d.getString("date");
+                            if (!date.equals(relDate)) continue;
+                            String roomId = d.getString("roomId");
+                            String key = d.getString("scheduleId") + "_" + relDate;
+                            releaseMap.computeIfAbsent(roomId, k -> new HashSet<>()).add(key);
+                        }
+
+                        List<RoomSlotStatus> results = new ArrayList<>();
+                        processSlotRoomsSequentially(db, roomDocs, 0, results, eventsSnap.getDocuments(),
+                                resSnap.getDocuments(), releaseMap, date, startTime, endTime, currentUid, callback);
+                    });
+                });
+            });
+        });
+    }
+
+    private static void processSlotRoomsSequentially(
+            FirebaseFirestore db, List<DocumentSnapshot> roomDocs, int index, List<RoomSlotStatus> results,
+            List<DocumentSnapshot> events, List<DocumentSnapshot> reservations, Map<String, Set<String>> releaseMap,
+            String date, String startTime, String endTime, String currentUid, SlotResultCallback callback) {
+
+        if (index >= roomDocs.size()) {
+            callback.onResult(results);
+            return;
+        }
+
+        DocumentSnapshot roomDoc = roomDocs.get(index);
+        RoomSlotStatus rs = new RoomSlotStatus();
+        rs.id = roomDoc.getId();
+        rs.roomName = roomDoc.getString("roomName");
+        rs.floor = roomDoc.getString("floor");
+        rs.roomType = roomDoc.getString("roomType");
+        Long cap = roomDoc.getLong("capacity");
+        rs.capacity = cap != null ? cap.intValue() : 0;
+
+        if (isUnderMaintenance(roomDoc, date, startTime, endTime)) {
+            rs.status = "Maintenance";
+            results.add(rs);
+            processSlotRoomsSequentially(db, roomDocs, index + 1, results, events, reservations, releaseMap,
+                    date, startTime, endTime, currentUid, callback);
+            return;
+        }
+
+        db.collection("rooms").document(rs.id).collection("schedules").get()
+                .addOnSuccessListener(schedSnap -> {
+                    boolean occupied = false;
+                    String dayAbbrev = dayAbbrevForDate(date);
+                    Set<String> releasesForRoom = releaseMap.getOrDefault(rs.id, new HashSet<>());
+
+                    for (DocumentSnapshot sched : schedSnap.getDocuments()) {
+                        Boolean initialized = sched.getBoolean("initialized");
+                        if (Boolean.TRUE.equals(initialized)) continue;
+                        if (!dayAbbrev.equals(sched.getString("day"))) continue;
+                        String key = sched.getId() + "_" + date;
+                        if (releasesForRoom.contains(key)) continue;
+                        if (overlap(startTime, endTime, sched.getString("startTime"), sched.getString("endTime"))) {
+                            occupied = true;
+                            break;
+                        }
+                    }
+
+                    if (!occupied) {
+                        for (DocumentSnapshot e : events) {
+                            if (!rs.id.equals(e.getString("roomId"))) continue;
+                            if (overlap(startTime, endTime, e.getString("startTime"), e.getString("endTime"))) {
+                                occupied = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    boolean reservedByUser = false;
+                    if (!occupied) {
+                        for (DocumentSnapshot r : reservations) {
+                            if (!rs.id.equals(r.getString("roomId"))) continue;
+                            String status = r.getString("status");
+                            if (status == null || status.equalsIgnoreCase("Rejected") || status.equalsIgnoreCase("cancelled")) continue;
+                            if (!overlap(startTime, endTime, r.getString("startTime"), r.getString("endTime"))) continue;
+
+                            if (currentUid != null && currentUid.equals(r.getString("userId"))) {
+                                reservedByUser = true;
+                                break;
+                            } else if (status.equalsIgnoreCase("Approved")) {
+                                occupied = true;
+                                break;
+                            }
+                            // other user's pending -> ignored, matches web
+                        }
+                    }
+
+                    rs.status = occupied ? "Occupied" : reservedByUser ? "Reserved" : "Available";
+                    results.add(rs);
+
+                    processSlotRoomsSequentially(db, roomDocs, index + 1, results, events, reservations, releaseMap,
+                            date, startTime, endTime, currentUid, callback);
+                });
+    }
+
+
     static String dayAbbrevForDate(String dateStr) {
         String[] days = {"SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"};
         try {

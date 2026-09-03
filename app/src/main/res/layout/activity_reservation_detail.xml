@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/bg_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,13 +10,13 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="2dp">
+        android:background="@color/surface"
+        android:elevation="1dp">
 
         <ImageView
             android:id="@+id/backBtn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/ic_back"
             android:layout_centerVertical="true"/>
 
@@ -26,8 +27,8 @@
             android:text="Reservation Details"
             android:textStyle="bold"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="#111827"
+            android:textSize="17sp"
+            android:textColor="@color/ink_900"
             android:layout_centerInParent="true"
             android:fontFamily="@font/lexend_bold"/>
 
@@ -36,7 +37,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Edit"
-            android:textColor="#F97316"
+            android:textColor="@color/brand_orange"
             android:textStyle="bold"
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
@@ -55,17 +56,26 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <TextView
-                android:id="@+id/statusBadge"
+            <androidx.cardview.widget.CardView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="PENDING"
-                android:textStyle="bold"
-                android:paddingHorizontal="16dp"
-                android:paddingVertical="8dp"
-                android:background="@drawable/notification_gray_bg"
                 android:layout_marginBottom="16dp"
-                android:fontFamily="@font/lexend_bold"/>
+                app:cardCornerRadius="999dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/warning">
+
+                <TextView
+                    android:id="@+id/statusBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="PENDING"
+                    android:textStyle="bold"
+                    android:paddingHorizontal="18dp"
+                    android:paddingVertical="8dp"
+                    android:textColor="#FFFFFF"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/lexend_bold"/>
+            </androidx.cardview.widget.CardView>
 
             <!-- READ-ONLY VIEW -->
             <LinearLayout
@@ -74,76 +84,170 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <TextView android:text="Requester" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="12dp"/>
-                <TextView android:id="@+id/requesterText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:text="Requester" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/requesterText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <TextView android:text="Course &amp; Purpose" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <TextView android:id="@+id/coursePurposeText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:text="Course &amp; Purpose" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/coursePurposeText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <TextView android:text="Room &amp; Schedule" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <TextView android:id="@+id/roomScheduleText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:text="Room &amp; Schedule" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/roomScheduleText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <TextView android:text="Audience" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <TextView android:id="@+id/audienceText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:text="Audience" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/audienceText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <TextView android:text="Equipment &amp; Capacity" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <TextView android:id="@+id/equipmentCapacityText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:text="Equipment &amp; Capacity" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/equipmentCapacityText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:lineSpacingExtra="4dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <TextView android:id="@+id/denialReasonLabel" android:text="Reason for Denial" android:textStyle="bold" android:textColor="#DC2626" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:visibility="gone"/>
-                <TextView android:id="@+id/denialReasonText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp" android:visibility="gone"/>
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/denialCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="0dp"
+                    app:cardBackgroundColor="@color/danger_soft">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:id="@+id/denialReasonLabel" android:text="Reason for Denial" android:textStyle="bold" android:textColor="@color/danger" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:visibility="gone" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/denialReasonText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:visibility="gone" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
 
-                <TextView android:text="Requested On" android:textStyle="bold" android:textColor="#111827" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <TextView android:id="@+id/requestedOnText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#374151" android:layout_marginTop="4dp"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="18dp"
+                    app:cardElevation="1dp"
+                    app:cardBackgroundColor="@color/surface">
+                    <LinearLayout android:orientation="vertical" android:padding="18dp" android:layout_width="match_parent" android:layout_height="wrap_content">
+                        <TextView android:text="Requested On" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <TextView android:id="@+id/requestedOnText" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/ink_700" android:textSize="14sp" android:layout_marginTop="8dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+
             </LinearLayout>
 
             <!-- EDIT VIEW -->
-            <LinearLayout
+            <androidx.cardview.widget.CardView
                 android:id="@+id/editLayout"
-                android:orientation="vertical"
-                android:visibility="gone"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView android:text="Room" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <Spinner android:id="@+id/editRoomSpinner" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg"/>
-                <TextView android:id="@+id/roomAvailabilityHint" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="#DC2626" android:textSize="13sp" android:layout_marginTop="4dp"/>
-
-                <TextView android:text="Date" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <TextView android:id="@+id/editDateText" android:layout_width="match_parent" android:layout_height="55dp" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/input_bg"/>
-
-                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
-                    <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginEnd="8dp">
-                        <TextView android:text="Start Time" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                        <TextView android:id="@+id/editStartText" android:layout_width="match_parent" android:layout_height="55dp" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/input_bg" android:layout_marginTop="4dp"/>
-                    </LinearLayout>
-                    <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="8dp">
-                        <TextView android:text="End Time" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
-                        <TextView android:id="@+id/editEndText" android:layout_width="match_parent" android:layout_height="55dp" android:gravity="center_vertical" android:padding="16dp" android:background="@drawable/input_bg" android:layout_marginTop="4dp"/>
-                    </LinearLayout>
-                </LinearLayout>
-
-                <TextView android:text="Purpose" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <Spinner android:id="@+id/editPurposeSpinner" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg"/>
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:cardCornerRadius="20dp"
+                app:cardElevation="1dp"
+                app:cardBackgroundColor="@color/surface">
 
                 <LinearLayout
-                    android:id="@+id/editCustomPurposeLayout"
                     android:orientation="vertical"
-                    android:visibility="gone"
+                    android:padding="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView android:text="Specify Activity" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                    <EditText android:id="@+id/editCustomPurposeInput" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg" android:padding="16dp" android:hint="Describe the activity"/>
-                </LinearLayout>
+                    <TextView android:text="Room" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                    <Spinner android:id="@+id/editRoomSpinner" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/input_field_bg" android:paddingHorizontal="14dp"/>
+                    <TextView android:id="@+id/roomAvailabilityHint" android:layout_width="match_parent" android:layout_height="wrap_content" android:textColor="@color/danger" android:textSize="12.5sp" android:layout_marginTop="6dp" android:fontFamily="@font/lexend_regular"/>
 
-                <TextView android:text="Estimated Attendees" android:textStyle="bold" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="16dp"/>
-                <Spinner android:id="@+id/editStudentRangeSpinner" android:layout_width="match_parent" android:layout_height="55dp" android:background="@drawable/input_bg"/>
+                    <TextView android:text="Date" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_marginTop="16dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                    <TextView android:id="@+id/editDateText" android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:padding="14dp" android:background="@drawable/input_field_bg" android:layout_marginTop="6dp" android:textColor="@color/ink_900" android:fontFamily="@font/lexend_regular"/>
 
-                <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp">
-                    <Button android:id="@+id/cancelEditBtn" android:text="Cancel" android:textAllCaps="false" android:layout_width="0dp" android:layout_weight="1" android:layout_height="55dp" android:backgroundTint="#E5E7EB" android:textColor="#111827" android:layout_marginEnd="8dp"/>
-                    <Button android:id="@+id/saveEditBtn" android:text="Save Changes" android:textAllCaps="false" android:layout_width="0dp" android:layout_weight="1" android:layout_height="55dp" android:backgroundTint="#F97316" android:textColor="#FFFFFF" android:layout_marginStart="8dp"/>
+                    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp">
+                        <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginEnd="8dp">
+                            <TextView android:text="Start Time" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                            <TextView android:id="@+id/editStartText" android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:padding="14dp" android:background="@drawable/input_field_bg" android:layout_marginTop="6dp" android:textColor="@color/ink_900" android:fontFamily="@font/lexend_regular"/>
+                        </LinearLayout>
+                        <LinearLayout android:orientation="vertical" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:layout_marginStart="8dp">
+                            <TextView android:text="End Time" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                            <TextView android:id="@+id/editEndText" android:layout_width="match_parent" android:layout_height="52dp" android:gravity="center_vertical" android:padding="14dp" android:background="@drawable/input_field_bg" android:layout_marginTop="6dp" android:textColor="@color/ink_900" android:fontFamily="@font/lexend_regular"/>
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <TextView android:text="Purpose" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_marginTop="16dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                    <Spinner android:id="@+id/editPurposeSpinner" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/input_field_bg" android:paddingHorizontal="14dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/editCustomPurposeLayout"
+                        android:orientation="vertical"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <TextView android:text="Specify Activity" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_marginTop="16dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                        <EditText android:id="@+id/editCustomPurposeInput" android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/input_field_bg" android:padding="14dp" android:hint="Describe the activity" android:textColorHint="@color/ink_500" android:textColor="@color/ink_900" android:layout_marginTop="6dp" android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+
+                    <TextView android:text="Estimated Attendees" android:textStyle="bold" android:textColor="@color/ink_900" android:textSize="13sp" android:layout_marginTop="16dp" android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/lexend_bold"/>
+                    <Spinner android:id="@+id/editStudentRangeSpinner" android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="6dp" android:background="@drawable/input_field_bg" android:paddingHorizontal="14dp"/>
+
+                    <LinearLayout android:orientation="horizontal" android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="24dp">
+                        <androidx.cardview.widget.CardView android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:layout_marginEnd="8dp" app:cardCornerRadius="14dp" app:cardElevation="0dp" app:cardBackgroundColor="@color/surface_alt">
+                            <Button android:id="@+id/cancelEditBtn" android:text="Cancel" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@android:color/transparent" android:textColor="@color/ink_700" android:fontFamily="@font/lexend_bold"/>
+                        </androidx.cardview.widget.CardView>
+                        <androidx.cardview.widget.CardView android:layout_width="0dp" android:layout_weight="1" android:layout_height="52dp" android:layout_marginStart="8dp" app:cardCornerRadius="14dp" app:cardElevation="0dp" app:cardBackgroundColor="@color/brand_orange">
+                            <Button android:id="@+id/saveEditBtn" android:text="Save Changes" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@android:color/transparent" android:textColor="#FFFFFF" android:fontFamily="@font/lexend_bold"/>
+                        </androidx.cardview.widget.CardView>
+                    </LinearLayout>
+
+                    <androidx.cardview.widget.CardView
+                        android:layout_width="match_parent"
+                        android:layout_height="52dp"
+                        android:layout_marginTop="12dp"
+                        app:cardCornerRadius="14dp"
+                        app:cardElevation="0dp"
+                        app:cardBackgroundColor="@color/danger_soft">
+                        <Button android:id="@+id/cancelReservationBtn" android:text="Cancel Reservation" android:textAllCaps="false" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@android:color/transparent" android:textColor="@color/danger" android:textStyle="bold" android:fontFamily="@font/lexend_bold"/>
+                    </androidx.cardview.widget.CardView>
+
                 </LinearLayout>
-            </LinearLayout>
+            </androidx.cardview.widget.CardView>
 
         </LinearLayout>
     </ScrollView>

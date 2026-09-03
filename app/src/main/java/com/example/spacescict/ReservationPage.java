@@ -22,7 +22,7 @@ public class ReservationPage {
     ArrayList<ReservationModel> filteredList = new ArrayList<>();
     ReservationAdapter adapter;
     String currentFilter = "all";
-    TextView tabAll, tabPending, tabApproved, tabDenied;
+    TextView tabAll, tabPending, tabApproved, tabDenied, tabCancelled;
 
     public ReservationPage(Context context, View view) {
         RecyclerView recycler = view.findViewById(R.id.reservationRecycler);
@@ -32,6 +32,9 @@ public class ReservationPage {
         tabPending = view.findViewById(R.id.tabPending);
         tabApproved = view.findViewById(R.id.tabApproved);
         tabDenied = view.findViewById(R.id.tabDenied);
+        tabCancelled = view.findViewById(R.id.tabCancelled);
+
+        View fab = view.findViewById(R.id.fabAddReservation);
 
         adapter = new ReservationAdapter(filteredList);
         recycler.setLayoutManager(new LinearLayoutManager(context));
@@ -47,6 +50,10 @@ public class ReservationPage {
         if (tabPending != null) tabPending.setOnClickListener(v -> setFilter("pending"));
         if (tabApproved != null) tabApproved.setOnClickListener(v -> setFilter("approved"));
         if (tabDenied != null) tabDenied.setOnClickListener(v -> setFilter("denied"));
+        if (tabCancelled != null) tabCancelled.setOnClickListener(v -> setFilter("cancelled"));
+        if (fab != null) {
+            fab.setOnClickListener(v -> context.startActivity(new Intent(context, ReservationActivity.class)));
+        }
 
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
@@ -67,6 +74,12 @@ public class ReservationPage {
                                 R.drawable.room1
                         );
                         m.id = doc.getId();
+                        m.facultyName = doc.getString("facultyName");
+                        m.date = doc.getString("date");
+                        m.startTime = doc.getString("startTime");
+                        m.endTime = doc.getString("endTime");
+                        m.purpose = doc.getString("purpose");
+                        m.denialReason = doc.getString("denialReason");
                         fullList.add(m);
                     }
                     applyFilter();
@@ -79,14 +92,17 @@ public class ReservationPage {
         applyFilter();
     }
 
+
+
     void applyFilter() {
         filteredList.clear();
         for (ReservationModel m : fullList) {
-            String status = m.status != null ? m.status : "";
+            String status = m.status != null ? m.status.toLowerCase().trim() : "";
             switch (currentFilter) {
-                case "pending": if (status.equalsIgnoreCase("Pending")) filteredList.add(m); break;
-                case "approved": if (status.equalsIgnoreCase("Approved")) filteredList.add(m); break;
-                case "denied": if (status.equalsIgnoreCase("Rejected")) filteredList.add(m); break;
+                case "pending": if (status.equals("pending")) filteredList.add(m); break;
+                case "approved": if (status.equals("approved")) filteredList.add(m); break;
+                case "denied": if (status.equals("rejected")) filteredList.add(m); break;
+                case "cancelled": if (status.equals("cancelled")) filteredList.add(m); break;
                 default: filteredList.add(m);
             }
         }
@@ -100,5 +116,6 @@ public class ReservationPage {
         if (tabPending != null) tabPending.setTextColor(currentFilter.equals("pending") ? active : inactive);
         if (tabApproved != null) tabApproved.setTextColor(currentFilter.equals("approved") ? active : inactive);
         if (tabDenied != null) tabDenied.setTextColor(currentFilter.equals("denied") ? active : inactive);
+        if (tabCancelled != null) tabCancelled.setTextColor(currentFilter.equals("cancelled") ? active : inactive);
     }
 }

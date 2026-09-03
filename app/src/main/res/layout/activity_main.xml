@@ -1,201 +1,182 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
+<FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F5F5F5">
+    android:background="#FFFFFF"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- TOP + CONTENT -->
-    <LinearLayout
+    <!-- HERO IMAGE -->
+    <ImageView
+        android:id="@+id/headerImage"
+        android:layout_width="wrap_content"
+        android:layout_height="315dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/backgroundlogin" />
+
+    <!-- DARK OVERLAY -->
+    <View
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="320dp"
+        android:background="#33000000"/>
+
+    <!-- BRANDING -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="80dp"
+        android:gravity="center"
         android:orientation="vertical">
 
-        <!-- Top Background -->
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="223dp"
-            android:background="#FBD8B9" />
-
-        <!-- Card -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="-40dp"
-            android:layout_weight="1"
-            android:background="@drawable/rounded_top"
-            android:clipToOutline="true"
-            android:orientation="vertical"
-            android:padding="24dp">
-
-            <!-- spacing for logo overlap -->
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="75dp" />
-
-            <!-- Title -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:gravity="center"
-                android:text="Welcome Back"
-                android:textColor="#1A1A1A"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <!-- Subtitle -->
-            <TextView
-                android:layout_width="258dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="24dp"
-                android:gravity="center"
-                android:text="View your schedules, request room reservations, and receive updates."
-                android:textColor="#6B7280"
-                android:textSize="14sp"
-                android:fontFamily="@font/lexend_regular"/>
-
-
-            <!-- Email -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="University ID / Email"
-                android:textColor="#374151"
-                android:textStyle="bold"
-                android:fontFamily="@font/lexend_bold"/>
-
-
-            <EditText
-                android:id="@+id/emailInput"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:background="@drawable/input_bg"
-                android:hint="Enter your ID / Email"
-                android:padding="16dp"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <!-- Password -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="8dp"
-                android:text="Password"
-                android:textColor="#374151"
-                android:textStyle="bold"
-                android:fontFamily="@font/lexend_bold"/>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="55dp">
-
-                <!-- EditText -->
-                <EditText
-                    android:id="@+id/passwordInput"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@drawable/input_bg"
-                    android:hint="Enter your password"
-                    android:inputType="textPassword"
-                    android:paddingStart="16dp"
-                    android:paddingEnd="50dp"
-                    android:textColor="#111827"
-                    android:textColorHint="#6B7280"
-                    android:fontFamily="@font/lexend_regular"/>
-
-                <!-- Eye Icon -->
-                <ImageView
-                    android:id="@+id/togglePassword"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="16dp"
-                    android:src="@drawable/ic_eye" />
-
-            </FrameLayout>
-
-            <!-- Forgot Password -->
-            <TextView
-                android:id="@+id/forgotPasswordText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginTop="8dp"
-                android:text="Forgot Password?"
-                android:textColor="#F97316"
-                android:clickable="true"
-                android:focusable="true"
-                android:fontFamily="@font/lexend_regular"/>
-
-            <!-- Login Button -->
-            <Button
-                android:id="@+id/loginButton"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:layout_marginTop="24dp"
-                android:backgroundTint="#F2740D"
-                android:fontFamily="@font/lexend_bold"
-                android:text="Login"
-                android:textAllCaps="false"
-                android:textColor="#FFFFFF" />
-
-            <!-- Terms Text -->
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:gravity="center"
-                android:text="By logging in, you agree to our Terms of Service and Privacy Policy"
-                android:textColor="#9CA3AF"
-                android:textSize="12sp"
-                android:fontFamily="@font/lexend_regular"/>
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <!-- LOGO -->
-    <FrameLayout
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_gravity="top|center_horizontal"
-        android:layout_marginTop="55dp">
-
-        <View
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:background="@drawable/logo_outer_circle" />
-
-        <View
-            android:layout_width="155dp"
-            android:layout_height="155dp"
-            android:layout_gravity="center"
-            android:background="@drawable/logo_inner_circle" />
-
         <ImageView
-            android:layout_width="105dp"
-            android:layout_height="92dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="-18dp"
-            android:scaleType="centerCrop"
-            android:src="@drawable/ic_logo" />
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/ic_logo"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="37dp"
             android:text="SpaceS CICT"
+            android:textColor="#FFFFFF"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:layout_marginTop="12dp"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Smart Classroom Scheduling"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:alpha="0.9"
+            android:fontFamily="@font/lexend_regular"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="260dp"
+        android:background="@drawable/curved_panel"
+        android:orientation="vertical"
+        android:padding="28dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Welcome Back"
             android:textColor="#111827"
-            android:textSize="19sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:fontFamily="@font/lexend_bold"/>
 
-    </FrameLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Access schedules, room reservations, and real-time classroom updates."
+            android:textColor="#6B7280"
+            android:textSize="14sp"
+            android:fontFamily="@font/lexend_regular"/>
+
+        <!-- EMAIL -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="University ID / Email"
+            android:textStyle="bold"
+            android:textColor="#374151"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <EditText
+            android:id="@+id/emailInput"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/input_bg"
+            android:hint="Enter your ID or Email"
+            android:paddingHorizontal="16dp"
+            android:textColor="#111827"
+            android:textColorHint="#9CA3AF"
+            android:fontFamily="@font/lexend_regular"/>
+
+        <!-- PASSWORD -->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password"
+            android:textStyle="bold"
+            android:textColor="#374151"
+            android:layout_marginTop="20dp"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp">
+
+            <EditText
+                android:id="@+id/passwordInput"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/input_bg"
+                android:hint="Enter your password"
+                android:inputType="textPassword"
+                android:paddingStart="16dp"
+                android:paddingEnd="52dp"
+                android:textColor="#111827"
+                android:textColorHint="#9CA3AF"
+                android:fontFamily="@font/lexend_regular"/>
+
+            <ImageView
+                android:id="@+id/togglePassword"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="16dp"
+                android:src="@drawable/ic_eye"/>
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/forgotPasswordText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginTop="12dp"
+            android:text="Forgot Password?"
+            android:textColor="#E86A12"
+            android:textStyle="bold"
+            android:fontFamily="@font/lexend_regular"/>
+
+        <!-- BUTTON -->
+
+        <Button
+            android:id="@+id/loginButton"
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_marginTop="24dp"
+            android:backgroundTint="#E86A12"
+            android:text="Sign In"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <!-- FOOTER -->
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="By continuing, you agree to our Terms of Service and Privacy Policy"
+            android:textColor="#94A3B8"
+            android:textSize="12sp"
+            android:fontFamily="@font/lexend_regular"/>
+
+    </LinearLayout>
+
 
 </FrameLayout>

@@ -3,6 +3,7 @@ package com.example.spacescict;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
@@ -99,17 +100,23 @@ public class ReservationActivity extends AppCompatActivity {
             });
 
             submit.setOnClickListener(v -> {
-                String error = validate();
-                if (error != null) {
-                    Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                ConfirmDialog.show(
-                        this, "Confirmation", " Are you sure you want to reserve?",
-                        "Confirm", "Cancel", this::submitReservation
-                );
-            });
+                LoadingOverlay.show(this, "Checking availability...");
+                checkUserConflict((conflict, message) -> {
+                    LoadingOverlay.hide();
 
+                    if (conflict) {
+                        Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+                        return;
+                    }
+                    String error = validate();
+                    if (error != null) {
+                        Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    ConfirmDialog.show(this, "Confirmation", " Are you sure you want to reserve?",
+                            "Confirm", "Cancel", this::submitReservation);
+                });
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -169,6 +176,7 @@ public class ReservationActivity extends AppCompatActivity {
     }
 
     void submitReservation() {
+        LoadingOverlay.show(this, "Submitting reservation...");
         String uid = FirebaseAuth.getInstance().getUid();
         String audienceType = (String) audienceTypeSpinner.getSelectedItem();
         String purpose = (String) purposeSpinner.getSelectedItem();
@@ -216,6 +224,7 @@ public class ReservationActivity extends AppCompatActivity {
                 .collection("reservationRequests")
                 .add(reservation)
                 .addOnSuccessListener(ref -> {
+                    LoadingOverlay.hide();
                     NotificationHelper.notifyClerkAndDepartmentHead(
                             "New Reservation Request",
                             facultyName + " submitted a reservation request for \"" + courseInput.getText().toString().trim()
@@ -239,26 +248,41 @@ public class ReservationActivity extends AppCompatActivity {
                     ActivityLogger.log("Submitted Reservation Request", "success",
                             selectedRoomName + " | " + courseInput.getText().toString().trim(), "SUCCESS",
                             details, this::finish);
+
                 })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                .addOnFailureListener(e ->{
+                        LoadingOverlay.hide();
+                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+
     }
 
     void setupPickers() {
         datePicker.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
             DatePickerDialog dp = new DatePickerDialog(this,
-                    (view, year, month, day) -> datePicker.setText(
-                            String.format("%04d-%02d-%02d", year, month + 1, day)),
+                    (view, year, month, day) -> {
+                        datePicker.setText(String.format("%04d-%02d-%02d", year, month + 1, day));
+                        refreshRooms();
+                    },
                     c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
             dp.getDatePicker().setMinDate(System.currentTimeMillis());
             dp.show();
         });
 
-        startTime.setOnClickListener(v -> showTime(startTime));
-        endTime.setOnClickListener(v -> showTime(endTime));
+        startTime.setOnClickListener(v -> showTime(startTime, true));
+        endTime.setOnClickListener(v -> showTime(endTime, false));
     }
 
+    void showTime(TextView target, boolean isStart) {
+        TimePickerDialog tp = new TimePickerDialog(this,
+                (view, hour, minute) -> {
+                    target.setText(String.format("%02d:%02d", hour, minute));
+                    refreshRooms();
+                },
+                12, 0, true);
+        tp.show();
+    }
     void showTime(TextView target) {
         TimePickerDialog tp = new TimePickerDialog(this,
                 (view, hour, minute) -> target.setText(String.format("%02d:%02d", hour, minute)),
@@ -320,10 +344,69 @@ public class ReservationActivity extends AppCompatActivity {
 
         floorSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {
-                loadRoomsForFloor(parent.getItemAtPosition(pos).toString());
+                refreshRooms();
             }
             public void onNothingSelected(AdapterView<?> parent) {}
         });
+
+
+    }
+
+    interface ConflictCallback {
+        void onResult(boolean conflict, String message);
+    }
+
+    void checkUserConflict(ConflictCallback callback) {
+        String uid = FirebaseAuth.getInstance().getUid();
+        String date = datePicker.getText().toString();
+
+        FirebaseFirestore.getInstance().collection("reservationRequests")
+                .whereEqualTo("userId", uid)
+                .whereEqualTo("date", date)
+                .get()
+                .addOnSuccessListener(snap -> {
+
+                    for (DocumentSnapshot doc : snap.getDocuments()) {
+                        String status = doc.getString("status");
+                        if (status != null && status.equalsIgnoreCase("Rejected")) continue;
+
+                        String docRoomId = doc.getString("roomId");
+                        if (selectedRoomId != null && selectedRoomId.equals(docRoomId)) continue;
+
+                        if (RoomAvailability.overlap(startTime.getText().toString(), endTime.getText().toString(),
+                                doc.getString("startTime"), doc.getString("endTime"))) {
+                            String msg = "You already have a " + (status != null ? status.toLowerCase() : "")
+                                    + " reservation for \"" + doc.getString("roomName") + "\" on " + doc.getString("date")
+                                    + " from " + doc.getString("startTime") + " to " + doc.getString("endTime")
+                                    + ". Please choose a different time.";
+                            callback.onResult(true, msg);
+                            return;
+                        }
+                    }
+                    callback.onResult(false, null);
+                })
+                .addOnFailureListener(e -> callback.onResult(false, null));
+    }
+    String currentDate = null, currentStart = null, currentEnd = null;
+
+    void refreshRooms() {
+        String floor = (String) floorSpinner.getSelectedItem();
+        if (floor == null) return;
+        currentDate = datePicker.getText().toString();
+        currentStart = startTime.getText().toString();
+        currentEnd = endTime.getText().toString();
+
+        if (currentDate.equals("Select Date") || currentStart.equals("Select Start Time") || currentEnd.equals("Select End Time")) {
+            roomGrid.removeAllViews();
+            TextView hint = new TextView(this);
+            hint.setText("Select a date and time first to see room availability.");
+            hint.setPadding(20, 20, 20, 20);
+            hint.setTextColor(Color.parseColor("#6B7280"));
+            roomGrid.addView(hint);
+            return;
+        }
+
+        loadRoomsForFloor(floor);
     }
 
     void loadRoomsForFloor(String floorFilter) {
@@ -331,45 +414,53 @@ public class ReservationActivity extends AppCompatActivity {
         selectedRoomId = null;
         selectedRoomName = null;
 
-        FirebaseFirestore.getInstance()
-                .collection("rooms")
-                .get()
-                .addOnSuccessListener(snapshots -> {
-                    for (DocumentSnapshot doc : snapshots.getDocuments()) {
-                        String floor = doc.getString("floor");
-                        if (floor == null || !floor.toLowerCase().contains(floorFilter.toLowerCase())) continue;
+        String uid = FirebaseAuth.getInstance().getUid();
 
-                        String roomId = doc.getId();
-                        String roomName = doc.getString("roomName");
-                        String status = doc.getString("status");
-                        boolean available = status == null || status.equalsIgnoreCase("Available");
+        RoomAvailability.loadAvailabilityForSlot(currentDate, currentStart, currentEnd, uid, results -> {
+            for (RoomAvailability.RoomSlotStatus rs : results) {
+                if (rs.floor == null || !rs.floor.toLowerCase().contains(floorFilter.toLowerCase())) continue;
 
-                        TextView btn = new TextView(this);
-                        btn.setText(roomName);
-                        btn.setPadding(20, 20, 20, 20);
-                        btn.setBackgroundResource(available ? R.drawable.room_available : R.drawable.status_denied);
-                        btn.setGravity(Gravity.CENTER);
-                        btn.setEnabled(available);
+                boolean available = rs.status.equals("Available");
+                boolean reserved = rs.status.equals("Reserved");
 
-                        GridLayout.LayoutParams params = new GridLayout.LayoutParams();
-                        params.setMargins(10, 10, 10, 10);
-                        params.width = 0;
-                        params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
-                        btn.setLayoutParams(params);
+                TextView btn = new TextView(this);
+                String label = rs.roomName + (reserved ? " (Reserved)" : rs.status.equals("Occupied") ? " (Occupied)" : rs.status.equals("Maintenance") ? " (Maintenance)" : "");
+                btn.setText(label);
+                btn.setPadding(20, 20, 20, 20);
+                btn.setGravity(Gravity.CENTER);
+                btn.setEnabled(available);
 
-                        btn.setOnClickListener(v -> {
-                            selectedRoomId = roomId;
-                            selectedRoomName = roomName;
-                            for (int i = 0; i < roomGrid.getChildCount(); i++) {
-                                roomGrid.getChildAt(i).setBackgroundResource(R.drawable.room_available);
+                if (available) {
+                    btn.setBackgroundResource(R.drawable.room_available);
+                } else if (reserved) {
+                    btn.setBackgroundColor(Color.parseColor("#FEF3C7"));
+                    btn.setTextColor(Color.parseColor("#92400E"));
+                } else {
+                    btn.setBackgroundResource(R.drawable.status_denied);
+                }
+
+                GridLayout.LayoutParams params = new GridLayout.LayoutParams();
+                params.setMargins(10, 10, 10, 10);
+                params.width = 0;
+                params.columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f);
+                btn.setLayoutParams(params);
+
+                if (available) {
+                    btn.setOnClickListener(v -> {
+                        selectedRoomId = rs.id;
+                        selectedRoomName = rs.roomName;
+                        for (int i = 0; i < roomGrid.getChildCount(); i++) {
+                            View child = roomGrid.getChildAt(i);
+                            if (child instanceof TextView && ((TextView) child).isEnabled()) {
+                                child.setBackgroundResource(R.drawable.room_available);
                             }
-                            btn.setBackgroundResource(R.drawable.room_selected);
-                        });
+                        }
+                        btn.setBackgroundResource(R.drawable.room_selected);
+                    });
+                }
 
-                        roomGrid.addView(btn);
-                    }
-                })
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Failed to load rooms: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                roomGrid.addView(btn);
+            }
+        });
     }
 }
