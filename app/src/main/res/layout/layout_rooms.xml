@@ -30,7 +30,8 @@
 
             <EditText
                 android:id="@+id/searchInput"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
+                android:layout_weight="1"
                 android:layout_height="match_parent"
                 android:hint="Search rooms..."
                 android:textSize="14sp"
@@ -38,6 +39,9 @@
                 android:textColorHint="@color/ink_500"
                 android:background="@android:color/transparent"
                 android:paddingStart="10dp"
+                android:inputType="text"
+                android:imeOptions="actionSearch"
+                android:singleLine="true"
                 android:fontFamily="@font/lexend_regular"/>
         </LinearLayout>
 

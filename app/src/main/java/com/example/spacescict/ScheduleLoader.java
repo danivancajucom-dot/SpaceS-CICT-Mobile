@@ -404,7 +404,16 @@ public class ScheduleLoader {
 
         List<ScheduleItem> upcomingItems = new ArrayList<>();
         for (ScheduleItem item : allItems) {
-            if (item.occurrenceMillis > now.getTimeInMillis()) upcomingItems.add(item);
+            if (item.occurrenceMillis <= now.getTimeInMillis()) continue;
+
+            // Defensive: skip anything dated today whose end time has already passed
+            if (item.date != null && item.date.equals(todayStr)) {
+                int[] eh = parseTimeParts(item.endTime);
+                int endMin = eh[0] * 60 + eh[1];
+                if (currentMinutes >= endMin) continue;
+            }
+
+            upcomingItems.add(item);
             if (upcomingItems.size() >= 5) break;
         }
 

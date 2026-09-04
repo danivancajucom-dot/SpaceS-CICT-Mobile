@@ -96,10 +96,10 @@
                 android:layout_height="wrap_content">
 
                 <LinearLayout
+                    android:layout_marginTop="24dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_vertical">
+                    android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
@@ -116,12 +116,12 @@
                         android:layout_height="wrap_content"
                         app:cardCornerRadius="999dp"
                         app:cardElevation="0dp"
-                        app:cardBackgroundColor="@color/brand_orange_soft">
+                        app:cardBackgroundColor="@color/brand_orange_soft"
+                        xmlns:app="http://schemas.android.com/apk/res-auto">
 
                         <TextView
-                            android:text="See All"
                             android:id="@+id/seeAllText"
-
+                            android:text="See All"
                             android:paddingHorizontal="16dp"
                             android:paddingVertical="8dp"
                             android:textColor="@color/brand_orange"
@@ -129,8 +129,9 @@
                             android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:focusable="true"
                             android:fontFamily="@font/lexend_bold"/>
-
                     </androidx.cardview.widget.CardView>
                 </LinearLayout>
 

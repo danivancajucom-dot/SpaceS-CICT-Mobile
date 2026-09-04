@@ -103,7 +103,6 @@ public class ReservationActivity extends AppCompatActivity {
                 LoadingOverlay.show(this, "Checking availability...");
                 checkUserConflict((conflict, message) -> {
                     LoadingOverlay.hide();
-
                     if (conflict) {
                         Toast.makeText(this, message, Toast.LENGTH_LONG).show();
                         return;
@@ -414,6 +413,8 @@ public class ReservationActivity extends AppCompatActivity {
         selectedRoomId = null;
         selectedRoomName = null;
 
+
+        LoadingOverlay.show(this, "Checking room availability...");
         String uid = FirebaseAuth.getInstance().getUid();
 
         RoomAvailability.loadAvailabilityForSlot(currentDate, currentStart, currentEnd, uid, results -> {

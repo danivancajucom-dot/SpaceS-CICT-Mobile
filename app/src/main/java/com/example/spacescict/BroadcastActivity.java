@@ -29,6 +29,7 @@ public class BroadcastActivity extends AppCompatActivity {
     List<BroadcastModel> visibleList = new ArrayList<>();
     TextView noBroadcastText;
     String myRole = "";
+    boolean firstLoadDone = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,14 +62,20 @@ public class BroadcastActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(adapter);
 
+        LoadingOverlay.show(this, "Loading announcements...");
+
         String uid = FirebaseAuth.getInstance().getUid();
-        if (uid == null) return;
+        if (uid == null) {
+            LoadingOverlay.hide();
+            return;
+        }
 
         FirebaseFirestore.getInstance().collection("users").document(uid).get()
                 .addOnSuccessListener(userDoc -> {
                     myRole = userDoc.getString("role") != null ? userDoc.getString("role") : "";
                     loadMessages(uid);
-                });
+                })
+                .addOnFailureListener(e -> LoadingOverlay.hide());
     }
 
     void openUrl(String url) {
@@ -84,6 +91,11 @@ public class BroadcastActivity extends AppCompatActivity {
         FirebaseFirestore.getInstance().collection("broadcastChannels")
                 .orderBy("createdAt", Query.Direction.ASCENDING)
                 .addSnapshotListener((snapshots, error) -> {
+                    if (!firstLoadDone) {
+                        LoadingOverlay.hide();
+                        firstLoadDone = true;
+                    }
+
                     if (error != null || snapshots == null) return;
 
                     fullList.clear();

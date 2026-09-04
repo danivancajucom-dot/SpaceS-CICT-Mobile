@@ -1,86 +1,353 @@
 package com.example.spacescict;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 public class RoomsPage {
 
-    ArrayList<RoomModel> fullList = new ArrayList<>();
-    ArrayList<RoomModel> filteredList = new ArrayList<>();
-    RoomAdapter adapter;
-    String currentFilter = "All";
-    TextView tabAll, tabAvailable, tabOccupied, tabMaintenance;
+    private Context context;
+
+    private final ArrayList<RoomModel> fullList = new ArrayList<>();
+    private final ArrayList<RoomModel> filteredList = new ArrayList<>();
+
+    private RoomAdapter adapter;
+
+    private String currentFilter = "All";
+    private String currentSearchQuery = "";
+
+    private TextView tabAll;
+    private TextView tabAvailable;
+    private TextView tabOccupied;
+    private TextView tabMaintenance;
 
     public RoomsPage(Context context, View view) {
-        RecyclerView recyclerView = view.findViewById(R.id.roomsRecycler);
-        if (recyclerView == null) return;
+
+        this.context = context;
+
+        RecyclerView recyclerView =
+                view.findViewById(R.id.roomsRecycler);
+
+        if (recyclerView == null) {
+            return;
+        }
 
         tabAll = view.findViewById(R.id.tabAll);
         tabAvailable = view.findViewById(R.id.tabAvailable);
         tabOccupied = view.findViewById(R.id.tabOccupied);
         tabMaintenance = view.findViewById(R.id.tabMaintenance);
 
-        adapter = new RoomAdapter(filteredList,
-                room -> context.startActivity(new Intent(context, ReservationActivity.class)),
-                room -> {
-                    Intent intent = new Intent(context, RoomScheduleActivity.class);
-                    intent.putExtra(RoomScheduleActivity.EXTRA_ROOM_ID, room.roomId);
-                    intent.putExtra(RoomScheduleActivity.EXTRA_ROOM_NAME, room.roomName);
-                    context.startActivity(intent);
-                });
+        EditText searchInput =
+                view.findViewById(R.id.searchInput);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        // =========================
+        // ADAPTER
+        // =========================
+
+        adapter = new RoomAdapter(
+                filteredList,
+
+                room -> {
+
+                    if (!(context instanceof Activity)) {
+                        return;
+                    }
+
+                    NavigationHelper.goTo(
+                            (Activity) context,
+                            ReservationActivity.class,
+                            "Opening reservation form..."
+                    );
+                },
+
+                room -> {
+
+                    if (!(context instanceof Activity)) {
+                        return;
+                    }
+
+                    Intent intent =
+                            new Intent(
+                                    context,
+                                    RoomScheduleActivity.class
+                            );
+
+                    intent.putExtra(
+                            RoomScheduleActivity.EXTRA_ROOM_ID,
+                            room.roomId
+                    );
+
+                    intent.putExtra(
+                            RoomScheduleActivity.EXTRA_ROOM_NAME,
+                            room.roomName
+                    );
+
+                    NavigationHelper.goTo(
+                            (Activity) context,
+                            intent,
+                            "Loading room schedule..."
+                    );
+                }
+        );
+
+        recyclerView.setLayoutManager(
+                new LinearLayoutManager(context)
+        );
+
         recyclerView.setAdapter(adapter);
 
-        if (tabAll != null) tabAll.setOnClickListener(v -> setFilter("All"));
-        if (tabAvailable != null) tabAvailable.setOnClickListener(v -> setFilter("Available"));
-        if (tabOccupied != null) tabOccupied.setOnClickListener(v -> setFilter("Occupied"));
-        if (tabMaintenance != null) tabMaintenance.setOnClickListener(v -> setFilter("Maintenance"));
+        // =========================
+        // FILTERS
+        // =========================
 
+        if (tabAll != null) {
+            tabAll.setOnClickListener(
+                    v -> setFilter("All")
+            );
+        }
+
+        if (tabAvailable != null) {
+            tabAvailable.setOnClickListener(
+                    v -> setFilter("Available")
+            );
+        }
+
+        if (tabOccupied != null) {
+            tabOccupied.setOnClickListener(
+                    v -> setFilter("Occupied")
+            );
+        }
+
+        if (tabMaintenance != null) {
+            tabMaintenance.setOnClickListener(
+                    v -> setFilter("Maintenance")
+            );
+        }
+
+        // =========================
+        // SEARCH
+        // =========================
+
+        if (searchInput != null) {
+
+            searchInput.addTextChangedListener(
+                    new TextWatcher() {
+
+                        @Override
+                        public void beforeTextChanged(
+                                CharSequence s,
+                                int start,
+                                int count,
+                                int after) {
+                        }
+
+                        @Override
+                        public void onTextChanged(
+                                CharSequence s,
+                                int start,
+                                int before,
+                                int count) {
+
+                            currentSearchQuery =
+                                    s.toString()
+                                            .toLowerCase(Locale.US)
+                                            .trim();
+
+                            applyFilter();
+                        }
+
+                        @Override
+                        public void afterTextChanged(
+                                Editable s) {
+                        }
+                    }
+            );
+        }
+
+        updateTabStyles();
         loadRooms();
     }
 
-    void loadRooms() {
-        RoomAvailability.loadCurrentStatus(results -> {
-            fullList.clear();
-            for (RoomAvailability.RoomStatus rs : results) {
-                fullList.add(new RoomModel(rs.id, rs.roomName, rs.floor, rs.roomType,
-                        rs.status, rs.occupiedUntil, rs.capacity, R.drawable.room1));
-            }
-            applyFilter();
-        });
+    // =========================
+    // LOAD ROOMS
+    // =========================
+
+    private void loadRooms() {
+
+        if (context instanceof Activity) {
+            LoadingOverlay.show(
+                    (Activity) context,
+                    "Loading rooms..."
+            );
+        }
+
+        RoomAvailability.loadCurrentStatus(
+                results -> {
+
+                    fullList.clear();
+
+                    if (results != null) {
+
+                        for (
+                                RoomAvailability.RoomStatus rs
+                                : results
+                        ) {
+
+                            if (rs == null) {
+                                continue;
+                            }
+
+                            fullList.add(
+                                    new RoomModel(
+                                            rs.id,
+                                            rs.roomName,
+                                            rs.floor,
+                                            rs.roomType,
+                                            rs.status,
+                                            rs.occupiedUntil,
+                                            rs.capacity,
+                                            R.drawable.room1
+                                    )
+                            );
+                        }
+                    }
+
+                    applyFilter();
+
+                    if (context instanceof Activity) {
+                        LoadingOverlay.hide();
+                    }
+                }
+        );
     }
 
-    void setFilter(String filter) {
-        currentFilter = filter;
+    // =========================
+    // FILTER
+    // =========================
+
+    private void setFilter(String filter) {
+
+        currentFilter =
+                filter != null
+                        ? filter
+                        : "All";
+
         updateTabStyles();
         applyFilter();
     }
 
-    void applyFilter() {
+    // =========================
+    // APPLY FILTER
+    // =========================
+
+    private void applyFilter() {
+
         filteredList.clear();
+
         for (RoomModel r : fullList) {
-            if (currentFilter.equals("All") || currentFilter.equalsIgnoreCase(r.status)) {
+
+            if (r == null) {
+                continue;
+            }
+
+            String roomStatus =
+                    r.status != null
+                            ? r.status
+                            : "";
+
+            String roomName =
+                    r.roomName != null
+                            ? r.roomName
+                            : "";
+
+            String roomType =
+                    r.roomType != null
+                            ? r.roomType
+                            : "";
+
+            boolean matchesTab =
+                    currentFilter.equalsIgnoreCase("All")
+                            || currentFilter.equalsIgnoreCase(
+                            roomStatus
+                    );
+
+            boolean matchesSearch =
+                    currentSearchQuery.isEmpty()
+                            || roomName
+                            .toLowerCase(Locale.US)
+                            .contains(currentSearchQuery)
+                            || roomType
+                            .toLowerCase(Locale.US)
+                            .contains(currentSearchQuery);
+
+            if (matchesTab && matchesSearch) {
                 filteredList.add(r);
             }
         }
-        adapter.notifyDataSetChanged();
+
+        if (adapter != null) {
+            adapter.notifyDataSetChanged();
+        }
     }
 
-    void updateTabStyles() {
-        int active = Color.parseColor("#F97316");
-        int inactive = Color.parseColor("#64748B");
-        if (tabAll != null) tabAll.setTextColor(currentFilter.equals("All") ? active : inactive);
-        if (tabAvailable != null) tabAvailable.setTextColor(currentFilter.equals("Available") ? active : inactive);
-        if (tabOccupied != null) tabOccupied.setTextColor(currentFilter.equals("Occupied") ? active : inactive);
-        if (tabMaintenance != null) tabMaintenance.setTextColor(currentFilter.equals("Maintenance") ? active : inactive);
+    // =========================
+    // TAB STYLES
+    // =========================
+
+    private void updateTabStyles() {
+
+        int active =
+                Color.parseColor("#F97316");
+
+        int inactive =
+                Color.parseColor("#64748B");
+
+        if (tabAll != null) {
+
+            tabAll.setTextColor(
+                    currentFilter.equalsIgnoreCase("All")
+                            ? active
+                            : inactive
+            );
+        }
+
+        if (tabAvailable != null) {
+
+            tabAvailable.setTextColor(
+                    currentFilter.equalsIgnoreCase("Available")
+                            ? active
+                            : inactive
+            );
+        }
+
+        if (tabOccupied != null) {
+
+            tabOccupied.setTextColor(
+                    currentFilter.equalsIgnoreCase("Occupied")
+                            ? active
+                            : inactive
+            );
+        }
+
+        if (tabMaintenance != null) {
+
+            tabMaintenance.setTextColor(
+                    currentFilter.equalsIgnoreCase("Maintenance")
+                            ? active
+                            : inactive
+            );
+        }
     }
 }

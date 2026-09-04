@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
@@ -32,25 +33,35 @@ public class ActivityLogAdapter extends RecyclerView.Adapter<ActivityLogAdapter.
     public void onBindViewHolder(@NonNull ViewHolder h, int i) {
         ActivityLogModel log = list.get(i);
 
-        h.action.setText(log.action != null ? log.action : "");
+        h.action.setText(log.action != null ? log.action : "Activity");
         h.target.setText(log.target != null ? log.target : "");
         h.time.setText(formatTime(log.timestamp));
 
-        boolean failed = "Failed".equalsIgnoreCase(log.status);
-        h.status.setText(log.status != null ? log.status : "");
-        h.status.setTextColor(failed ? Color.parseColor("#DC2626") : Color.parseColor("#16A34A"));
+        String status = log.status != null ? log.status.toLowerCase(Locale.US) : "";
+        boolean failed = status.contains("fail") || status.contains("denied") || status.contains("reject");
+        h.status.setText(log.status != null ? log.status.toUpperCase() : "");
+        h.status.setTextColor(failed ? Color.parseColor("#EF4444") : Color.parseColor("#22C55E"));
 
         h.icon.setImageResource(iconFor(log.actionType));
+
+        CardView iconCard = (CardView) h.icon.getParent();
+        iconCard.setCardBackgroundColor(Color.parseColor("#FFF1E6"));
     }
 
     int iconFor(String actionType) {
         if (actionType == null) return R.drawable.ic_edit;
         switch (actionType.toLowerCase(Locale.US)) {
-            case "edit": return R.drawable.ic_edit;
-            case "cancel": return R.drawable.ic_back;
-            case "success": return R.drawable.ic_check;
-            case "denied": return R.drawable.ic_back;
-            default: return R.drawable.ic_edit;
+            case "edit":
+            case "update":
+                return R.drawable.ic_edit;
+            case "cancel":
+                return R.drawable.ic_back;
+            case "success":
+                return R.drawable.ic_check;
+            case "denied":
+                return R.drawable.ic_back;
+            default:
+                return R.drawable.ic_edit;
         }
     }
 
@@ -58,6 +69,7 @@ public class ActivityLogAdapter extends RecyclerView.Adapter<ActivityLogAdapter.
         if (ts == null) return "";
         long diffMs = System.currentTimeMillis() - ts.toDate().getTime();
         long diffSec = diffMs / 1000;
+        if (diffSec < 0) return "just now";
         if (diffSec < 60) return diffSec + "s ago";
         long diffMin = diffSec / 60;
         if (diffMin < 60) return diffMin + "m ago";

@@ -1,5 +1,6 @@
 package com.example.spacescict;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
@@ -88,13 +89,9 @@ public class HomePage {
 
         if (reserveButton != null) {
             reserveButton.setOnClickListener(v -> {
-
-                context.startActivity(
-                        new Intent(
-                                context,
-                                ReservationActivity.class
-                        )
-                );
+                if (context instanceof Activity) {
+                    NavigationHelper.goTo((Activity) context, ReservationActivity.class, "Opening reservation form...");
+                }
             });
         }
 
@@ -102,14 +99,12 @@ public class HomePage {
         // PROFILE IMAGE
         // =========================
 
+
         if (homeProfileImage != null) {
-
             homeProfileImage.setOnClickListener(v -> {
-
                 if (context instanceof DashboardActivity) {
-
-                    ((DashboardActivity) context)
-                            .openProfile();
+                    NavigationHelper.inlineSwap((Activity) context, "Loading profile...",
+                            () -> ((DashboardActivity) context).openProfile());
                 }
             });
         }
@@ -117,11 +112,11 @@ public class HomePage {
         if (seeAllText != null) {
             seeAllText.setOnClickListener(v -> {
                 if (context instanceof DashboardActivity) {
-                    ((DashboardActivity) context).goToWeeklySchedule();
+                    DashboardActivity dash = (DashboardActivity) context;
+                    NavigationHelper.inlineSwap(dash, "Loading schedule...", dash::loadWeeklySchedule);
                 }
             });
         }
-
         // =========================
         // LOAD DATA
         // =========================

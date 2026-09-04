@@ -58,11 +58,14 @@ public class DashboardActivity extends AppCompatActivity {
                     this, "Logout", " Are you sure you want to log out?",
                     "Confirm", "Cancel",
                     () -> {
+                        LoadingOverlay.show(this, "Signing out...");
                         FirebaseAuth.getInstance().signOut();
-                        Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
+                        new android.os.Handler(android.os.Looper.getMainLooper()).postDelayed(() -> {
+                            Intent intent = new Intent(DashboardActivity.this, MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(intent);
+                            finish();
+                        }, 400);
                     }
             );
         });
@@ -88,7 +91,7 @@ public class DashboardActivity extends AppCompatActivity {
                 loadRooms();
                 return true;
             } else if (id == R.id.nav_announcement) {
-                startActivity(new Intent(DashboardActivity.this, BroadcastActivity.class));
+                NavigationHelper.goTo(this, BroadcastActivity.class, "Loading announcements...")    ;
                 return true;
             }
             return false;
@@ -116,7 +119,7 @@ public class DashboardActivity extends AppCompatActivity {
         new ReservationPage(this, view);
     }
 
-    private void loadWeeklySchedule() {
+    public void loadWeeklySchedule() {
         header.setVisibility(View.VISIBLE);
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.activity_weekly_schedule, contentFrame, true);

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:background="#F5F5F5"
+    android:background="@color/bg_page"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,13 +9,13 @@
         android:layout_width="match_parent"
         android:layout_height="70dp"
         android:paddingHorizontal="16dp"
-        android:background="#FFFFFF"
-        android:elevation="2dp">
+        android:background="@color/surface"
+        android:elevation="1dp">
 
         <ImageView
             android:id="@+id/backBtn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:src="@drawable/ic_back"
             android:layout_centerVertical="true"/>
 
@@ -25,8 +25,8 @@
             android:layout_height="match_parent"
             android:textStyle="bold"
             android:gravity="center"
-            android:textSize="18sp"
-            android:textColor="#111827"
+            android:textSize="17sp"
+            android:textColor="@color/ink_900"
             android:layout_centerInParent="true"
             android:fontFamily="@font/lexend_bold"/>
     </RelativeLayout>
@@ -37,51 +37,81 @@
         android:orientation="horizontal"
         android:gravity="center_vertical"
         android:padding="16dp"
-        android:background="#FFFFFF">
+        android:background="@color/surface">
 
-        <ImageView android:id="@+id/weekPrevBtn" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_back" android:clickable="true" android:focusable="true"/>
-        <TextView android:id="@+id/weekLabelText" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:gravity="center" android:textStyle="bold" android:textSize="15sp" android:textColor="#111827" android:fontFamily="@font/lexend_bold"/>
-        <ImageView android:id="@+id/weekNextBtn" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_back" android:scaleX="-1" android:clickable="true" android:focusable="true"/>
+        <ImageView android:id="@+id/weekPrevBtn" android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_back" app:tint="@color/ink_700" android:clickable="true" android:focusable="true" xmlns:app="http://schemas.android.com/apk/res-auto"/>
+        <TextView android:id="@+id/weekLabelText" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:gravity="center" android:textStyle="bold" android:textSize="15sp" android:textColor="@color/ink_900" android:fontFamily="@font/lexend_bold"/>
+        <ImageView android:id="@+id/weekNextBtn" android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/ic_back" android:scaleX="-1" android:clickable="true" android:focusable="true"/>
     </LinearLayout>
 
+    <!-- HEADER ROW: fixed left corner + scrollable day labels, synced with grid below -->
     <LinearLayout
-        android:id="@+id/dayHeaderRow"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="#FFFFFF"
-        android:paddingStart="44dp"
-        android:paddingVertical="8dp"/>
+        android:background="@color/surface">
 
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        <View
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:background="@color/surface_alt"/>
 
-        <ScrollView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+        <HorizontalScrollView
+            android:id="@+id/headerScroll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
 
             <LinearLayout
-                android:orientation="horizontal"
+                android:id="@+id/dayHeaderRow"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="10dp"/>
+        </HorizontalScrollView>
+    </LinearLayout>
 
-                <LinearLayout
-                    android:id="@+id/timeColumn"
-                    android:orientation="vertical"
-                    android:layout_width="44dp"
-                    android:layout_height="wrap_content"
-                    android:background="#F5F5F5"/>
+    <!-- CONTENT: time column (fixed) + grid (scrolls both directions, synced with header) -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+
+        <ScrollView
+            android:id="@+id/timeColumnScroll"
+            android:layout_width="44dp"
+            android:layout_height="match_parent"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/timeColumn"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/surface_alt"/>
+        </ScrollView>
+
+        <HorizontalScrollView
+            android:id="@+id/contentHScroll"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent">
+
+            <ScrollView
+                android:id="@+id/contentVScroll"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent">
 
                 <FrameLayout
                     android:id="@+id/gridCanvas"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:background="#FFFFFF"/>
+                    android:background="@color/bg_page"/>
+            </ScrollView>
+        </HorizontalScrollView>
 
-            </LinearLayout>
-        </ScrollView>
-    </HorizontalScrollView>
+    </LinearLayout>
 
 </LinearLayout>

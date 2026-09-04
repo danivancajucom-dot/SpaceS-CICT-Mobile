@@ -40,7 +40,7 @@ public class ProfilePage {
 
     View tabDetails, tabActivityLog, detailsTabContent, activityTabContent;
     RecyclerView activityRecycler;
-    TextView noActivityText;
+    View noActivityContainer;
     List<ActivityLogModel> activityList = new ArrayList<>();
 
     public interface PhotoPickerHandler {
@@ -65,7 +65,7 @@ public class ProfilePage {
         detailsTabContent = view.findViewById(R.id.detailsTabContent);
         activityTabContent = view.findViewById(R.id.activityTabContent);
         activityRecycler = view.findViewById(R.id.activityRecycler);
-        noActivityText = view.findViewById(R.id.noActivityText);
+        noActivityContainer = view.findViewById(R.id.noActivityContainer);
 
         if (tabDetails != null && tabActivityLog != null) {
             tabDetails.setOnClickListener(v -> switchTab(true));
@@ -120,12 +120,14 @@ public class ProfilePage {
         }
     }
     void loadActivityLog() {
-        if (activityRecycler == null) return;
-        if (uid == null) return;
+        if (activityRecycler == null || uid == null) return;
+
+        activityRecycler.setVisibility(View.GONE);
+        noActivityContainer.setVisibility(View.GONE);
 
         db.collection("activityLogs")
                 .whereEqualTo("userId", uid)
-                .orderBy("timestamp", Query.Direction.DESCENDING)
+                .orderBy("timestamp", com.google.firebase.firestore.Query.Direction.DESCENDING)
                 .limit(50)
                 .get()
                 .addOnSuccessListener(snap -> {
@@ -140,19 +142,15 @@ public class ProfilePage {
                                 doc.getTimestamp("timestamp")
                         ));
                     }
-
-                    activityRecycler.setLayoutManager(new LinearLayoutManager(context));
+                    activityRecycler.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(context));
                     activityRecycler.setAdapter(new ActivityLogAdapter(activityList));
 
-                    if (noActivityText != null) {
-                        noActivityText.setVisibility(activityList.isEmpty() ? View.VISIBLE : View.GONE);
-                    }
+                    boolean empty = activityList.isEmpty();
+                    activityRecycler.setVisibility(empty ? View.GONE : View.VISIBLE);
+                    noActivityContainer.setVisibility(empty ? View.VISIBLE : View.GONE);
                 })
                 .addOnFailureListener(e -> {
-                    if (noActivityText != null) {
-                        noActivityText.setText("Failed to load activity: " + e.getMessage());
-                        noActivityText.setVisibility(View.VISIBLE);
-                    }
+                    noActivityContainer.setVisibility(View.VISIBLE);
                 });
     }
     void loadProfile() {
