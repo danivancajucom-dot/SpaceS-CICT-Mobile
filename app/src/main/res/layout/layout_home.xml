@@ -5,11 +5,13 @@
     android:layout_height="match_parent"
     android:background="@color/bg_page">
 
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="20dp">
+
 
         <!-- GREETING ROW -->
         <LinearLayout
@@ -236,6 +238,7 @@
                     <TextView
                         android:text="Enjoy the free day, or check your upcoming classes below."
                         android:textColor="@color/ink_500"
+                        android:layout_marginStart="8dp"
                         android:textSize="12sp"
                         android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"

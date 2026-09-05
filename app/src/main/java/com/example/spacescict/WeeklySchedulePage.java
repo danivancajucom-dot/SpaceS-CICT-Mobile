@@ -10,11 +10,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.HorizontalScrollView;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.GradientDrawable;
+import android.view.Window;
+import android.widget.FrameLayout;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -376,32 +382,136 @@ public class WeeklySchedulePage {
     }
 
     void showReleaseDialog(ScheduleLoader.ScheduleItem item) {
-        LinearLayout body = new LinearLayout(context);
-        body.setOrientation(LinearLayout.VERTICAL);
-        body.setPadding(dp(24), dp(16), dp(24), dp(16));
+        LinearLayout root = new LinearLayout(context);
+        root.setOrientation(LinearLayout.VERTICAL);
+        root.setPadding(dp(24), dp(20), dp(24), dp(20));
+
+        androidx.cardview.widget.CardView iconCard = new androidx.cardview.widget.CardView(context);
+        iconCard.setRadius(dp(16));
+        iconCard.setCardElevation(0);
+        iconCard.setCardBackgroundColor(Color.parseColor("#FFF1E6"));
+        LinearLayout.LayoutParams iconParams = new LinearLayout.LayoutParams(dp(56), dp(56));
+        iconParams.gravity = Gravity.CENTER_HORIZONTAL;
+        iconCard.setLayoutParams(iconParams);
+        ImageView icon = new ImageView(context);
+        icon.setImageResource(R.drawable.ic_back);
+        icon.setColorFilter(Color.parseColor("#F97316"));
+        icon.setPadding(dp(14), dp(14), dp(14), dp(14));
+        iconCard.addView(icon);
+        root.addView(iconCard);
+
+        TextView title = new TextView(context);
+        title.setText("Release Room");
+        title.setTextColor(Color.parseColor("#1C1917"));
+        title.setTypeface(null, Typeface.BOLD);
+        title.setTextSize(18);
+        title.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        titleParams.topMargin = dp(14);
+        title.setLayoutParams(titleParams);
+        root.addView(title);
+
+        TextView subtitle = new TextView(context);
+        subtitle.setText(item.subject + " • " + item.roomName + "\n" + formatTime(item.startTime) + " - " + formatTime(item.endTime));
+        subtitle.setTextColor(Color.parseColor("#78716C"));
+        subtitle.setTextSize(12.5f);
+        subtitle.setGravity(Gravity.CENTER);
+        LinearLayout.LayoutParams subParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        subParams.topMargin = dp(6);
+        subtitle.setLayoutParams(subParams);
+        root.addView(subtitle);
 
         TextView label = new TextView(context);
         label.setText("Reason for releasing this room");
-        label.setTextColor(Color.parseColor("#111827"));
-        body.addView(label);
+        label.setTextColor(Color.parseColor("#1C1917"));
+        label.setTypeface(null, Typeface.BOLD);
+        label.setTextSize(12);
+        LinearLayout.LayoutParams labelParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        labelParams.topMargin = dp(20);
+        label.setLayoutParams(labelParams);
+        root.addView(label);
 
         EditText reasonInput = new EditText(context);
         reasonInput.setHint("e.g. Class cancelled, moved online, etc.");
-        body.addView(reasonInput);
+        reasonInput.setBackgroundResource(R.drawable.input_field_bg);
+        reasonInput.setPadding(dp(14), dp(14), dp(14), dp(14));
+        reasonInput.setTextSize(14);
+        LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(90));
+        inputParams.topMargin = dp(8);
+        reasonInput.setLayoutParams(inputParams);
+        reasonInput.setGravity(Gravity.TOP | Gravity.START);
+        root.addView(reasonInput);
 
-        new AlertDialog.Builder(context)
-                .setTitle("Release Room")
-                .setView(body)
-                .setNegativeButton("Cancel", null)
-                .setPositiveButton("Confirm Release", (d, w) -> {
-                    String reason = reasonInput.getText().toString().trim();
-                    if (reason.isEmpty()) {
-                        Toast.makeText(context, "Please provide a reason", Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    submitRelease(item, reason);
-                })
-                .show();
+        LinearLayout buttonRow = new LinearLayout(context);
+        buttonRow.setOrientation(LinearLayout.HORIZONTAL);
+        LinearLayout.LayoutParams rowParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        rowParams.topMargin = dp(20);
+        buttonRow.setLayoutParams(rowParams);
+
+        androidx.cardview.widget.CardView cancelCard = new androidx.cardview.widget.CardView(context);
+        cancelCard.setRadius(dp(14));
+        cancelCard.setCardElevation(0);
+        cancelCard.setCardBackgroundColor(Color.parseColor("#EEF1F5"));
+        LinearLayout.LayoutParams cancelParams = new LinearLayout.LayoutParams(0, dp(50), 1f);
+        cancelParams.rightMargin = dp(8);
+        cancelCard.setLayoutParams(cancelParams);
+        TextView cancelText = new TextView(context);
+        cancelText.setText("Cancel");
+        cancelText.setTextColor(Color.parseColor("#44403C"));
+        cancelText.setTypeface(null, Typeface.BOLD);
+        cancelText.setGravity(Gravity.CENTER);
+        cancelText.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        cancelCard.addView(cancelText);
+        buttonRow.addView(cancelCard);
+
+        androidx.cardview.widget.CardView confirmCard = new androidx.cardview.widget.CardView(context);
+        confirmCard.setRadius(dp(14));
+        confirmCard.setCardElevation(0);
+        confirmCard.setCardBackgroundColor(Color.parseColor("#F97316"));
+        LinearLayout.LayoutParams confirmParams = new LinearLayout.LayoutParams(0, dp(50), 1f);
+        confirmParams.leftMargin = dp(8);
+        confirmCard.setLayoutParams(confirmParams);
+        TextView confirmText = new TextView(context);
+        confirmText.setText("Confirm Release");
+        confirmText.setTextColor(Color.WHITE);
+        confirmText.setTypeface(null, Typeface.BOLD);
+        confirmText.setGravity(Gravity.CENTER);
+        confirmText.setLayoutParams(new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
+        confirmCard.addView(confirmText);
+        buttonRow.addView(confirmCard);
+
+        root.addView(buttonRow);
+
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(Color.WHITE);
+        bg.setCornerRadius(dp(20));
+        root.setBackground(bg);
+
+        Dialog dialog = new Dialog(context);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setContentView(root);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        dialog.setCancelable(false);
+
+        cancelCard.setOnClickListener(v -> dialog.dismiss());
+        confirmCard.setOnClickListener(v -> {
+            String reason = reasonInput.getText().toString().trim();
+            if (reason.isEmpty()) {
+                Toast.makeText(context, "Please provide a reason", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            dialog.dismiss();
+            submitRelease(item, reason);
+        });
+
+        dialog.show();
+        int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
+        dialog.getWindow().setLayout((int) (screenWidth * 0.88), android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
     void submitRelease(ScheduleLoader.ScheduleItem item, String reason) {

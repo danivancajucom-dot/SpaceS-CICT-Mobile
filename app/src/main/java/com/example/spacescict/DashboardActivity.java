@@ -76,6 +76,8 @@ public class DashboardActivity extends AppCompatActivity {
         loadHome();
 
         bottomNav.setOnItemSelectedListener(item -> {
+            if (syncingNav) return true; // this selection came from syncBottomNav, don't reload
+
             int id = item.getItemId();
 
             if (id == R.id.nav_home) {
@@ -90,19 +92,39 @@ public class DashboardActivity extends AppCompatActivity {
             } else if (id == R.id.nav_rooms) {
                 loadRooms();
                 return true;
-            } else if (id == R.id.nav_announcement) {
-                NavigationHelper.goTo(this, BroadcastActivity.class, "Loading announcements...")    ;
+            }
+            else if (id == R.id.nav_announcement) {
+                loadAnnouncements();
                 return true;
             }
             return false;
         });
     }
 
+    boolean syncingNav = false;
+
     private void loadHome() {
         header.setVisibility(View.VISIBLE);
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.layout_home, contentFrame, true);
         new HomePage(this, view);
+        syncBottomNav(R.id.nav_home);
+    }
+    private void loadAnnouncements() {
+
+        header.setVisibility(View.VISIBLE);
+
+        contentFrame.removeAllViews();
+
+        View view = LayoutInflater.from(this).inflate(
+                R.layout.activity_broadcast,
+                contentFrame,
+                true
+        );
+
+        new BroadcastActivity(this, view);
+
+        syncBottomNav(R.id.nav_announcement);
     }
 
     private void loadRooms() {
@@ -110,6 +132,7 @@ public class DashboardActivity extends AppCompatActivity {
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.layout_rooms, contentFrame, true);
         new RoomsPage(this, view);
+        syncBottomNav(R.id.nav_rooms);
     }
 
     private void loadReservation() {
@@ -117,6 +140,7 @@ public class DashboardActivity extends AppCompatActivity {
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.activity_reservation_page, contentFrame, true);
         new ReservationPage(this, view);
+        syncBottomNav(R.id.nav_reservations);
     }
 
     public void loadWeeklySchedule() {
@@ -124,15 +148,24 @@ public class DashboardActivity extends AppCompatActivity {
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.activity_weekly_schedule, contentFrame, true);
         new WeeklySchedulePage(this, view);
+        syncBottomNav(R.id.nav_schedule);
     }
 
-    // Public so HomePage can call this when the profile picture is tapped
     public void openProfile() {
         header.setVisibility(View.GONE);
         contentFrame.removeAllViews();
         View view = LayoutInflater.from(this).inflate(R.layout.activity_profile, contentFrame, true);
         currentProfilePage = new ProfilePage(this, view, this::loadHome,
                 () -> photoPickerLauncher.launch("image/*"));
+        // Profile has no bottom-nav tab of its own — deselecting all matches web's behavior
+        // (bottom nav still shows previous tab highlighted, since there's nothing better to show)
+    }
+
+    void syncBottomNav(int itemId) {
+        if (bottomNav.getSelectedItemId() == itemId) return; // already correct, avoid re-trigger
+        syncingNav = true;
+        bottomNav.setSelectedItemId(itemId);
+        syncingNav = false;
     }
 
     void uploadToCloudinary(Uri uri) {

@@ -114,12 +114,112 @@ public class ReservationDetailActivity extends AppCompatActivity {
     }
 
     void showCancelConfirmation() {
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Cancel Reservation")
-                .setMessage("Are you sure you want to cancel this reservation? This action cannot be undone.")
-                .setNegativeButton("No, Go Back", null)
-                .setPositiveButton("Yes, Cancel", (d, w) -> cancelReservation())
-                .show();
+        android.widget.LinearLayout root = new android.widget.LinearLayout(this);
+        root.setOrientation(android.widget.LinearLayout.VERTICAL);
+        int pad = dpToPx(24);
+        root.setPadding(pad, dpToPx(20), pad, dpToPx(20));
+
+        androidx.cardview.widget.CardView iconCard = new androidx.cardview.widget.CardView(this);
+        iconCard.setRadius(dpToPx(16));
+        iconCard.setCardElevation(0);
+        iconCard.setCardBackgroundColor(android.graphics.Color.parseColor("#FEF2F2"));
+        android.widget.LinearLayout.LayoutParams iconParams = new android.widget.LinearLayout.LayoutParams(dpToPx(56), dpToPx(56));
+        iconParams.gravity = android.view.Gravity.CENTER_HORIZONTAL;
+        iconCard.setLayoutParams(iconParams);
+        ImageView icon = new ImageView(this);
+        icon.setImageResource(R.drawable.ic_warning);
+        icon.setColorFilter(android.graphics.Color.parseColor("#DC2626"));
+        icon.setPadding(dpToPx(14), dpToPx(14), dpToPx(14), dpToPx(14));
+        iconCard.addView(icon);
+        root.addView(iconCard);
+
+        TextView title = new TextView(this);
+        title.setText("Cancel Reservation");
+        title.setTextColor(android.graphics.Color.parseColor("#1C1917"));
+        title.setTypeface(null, android.graphics.Typeface.BOLD);
+        title.setTextSize(18);
+        title.setGravity(android.view.Gravity.CENTER);
+        android.widget.LinearLayout.LayoutParams titleParams = new android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        titleParams.topMargin = dpToPx(14);
+        title.setLayoutParams(titleParams);
+        root.addView(title);
+
+        TextView message = new TextView(this);
+        message.setText("Are you sure you want to cancel this reservation? This action cannot be undone.");
+        message.setTextColor(android.graphics.Color.parseColor("#78716C"));
+        message.setTextSize(13);
+        message.setGravity(android.view.Gravity.CENTER);
+        android.widget.LinearLayout.LayoutParams msgParams = new android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        msgParams.topMargin = dpToPx(8);
+        message.setLayoutParams(msgParams);
+        root.addView(message);
+
+        android.widget.LinearLayout buttonRow = new android.widget.LinearLayout(this);
+        buttonRow.setOrientation(android.widget.LinearLayout.HORIZONTAL);
+        android.widget.LinearLayout.LayoutParams rowParams = new android.widget.LinearLayout.LayoutParams(
+                android.widget.LinearLayout.LayoutParams.MATCH_PARENT, android.widget.LinearLayout.LayoutParams.WRAP_CONTENT);
+        rowParams.topMargin = dpToPx(24);
+        buttonRow.setLayoutParams(rowParams);
+
+        androidx.cardview.widget.CardView noCard = new androidx.cardview.widget.CardView(this);
+        noCard.setRadius(dpToPx(14));
+        noCard.setCardElevation(0);
+        noCard.setCardBackgroundColor(android.graphics.Color.parseColor("#EEF1F5"));
+        android.widget.LinearLayout.LayoutParams noParams = new android.widget.LinearLayout.LayoutParams(0, dpToPx(50), 1f);
+        noParams.rightMargin = dpToPx(8);
+        noCard.setLayoutParams(noParams);
+        TextView noText = new TextView(this);
+        noText.setText("No, Go Back");
+        noText.setTextColor(android.graphics.Color.parseColor("#44403C"));
+        noText.setTypeface(null, android.graphics.Typeface.BOLD);
+        noText.setGravity(android.view.Gravity.CENTER);
+        noText.setLayoutParams(new android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT));
+        noCard.addView(noText);
+        buttonRow.addView(noCard);
+
+        androidx.cardview.widget.CardView yesCard = new androidx.cardview.widget.CardView(this);
+        yesCard.setRadius(dpToPx(14));
+        yesCard.setCardElevation(0);
+        yesCard.setCardBackgroundColor(android.graphics.Color.parseColor("#DC2626"));
+        android.widget.LinearLayout.LayoutParams yesParams = new android.widget.LinearLayout.LayoutParams(0, dpToPx(50), 1f);
+        yesParams.leftMargin = dpToPx(8);
+        yesCard.setLayoutParams(yesParams);
+        TextView yesText = new TextView(this);
+        yesText.setText("Yes, Cancel");
+        yesText.setTextColor(android.graphics.Color.WHITE);
+        yesText.setTypeface(null, android.graphics.Typeface.BOLD);
+        yesText.setGravity(android.view.Gravity.CENTER);
+        yesText.setLayoutParams(new android.widget.FrameLayout.LayoutParams(android.widget.FrameLayout.LayoutParams.MATCH_PARENT, android.widget.FrameLayout.LayoutParams.MATCH_PARENT));
+        yesCard.addView(yesText);
+        buttonRow.addView(yesCard);
+
+        root.addView(buttonRow);
+
+        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
+        bg.setColor(android.graphics.Color.WHITE);
+        bg.setCornerRadius(dpToPx(20));
+        root.setBackground(bg);
+
+        android.app.Dialog dialog = new android.app.Dialog(this);
+        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        dialog.setContentView(root);
+        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+
+        noCard.setOnClickListener(v -> dialog.dismiss());
+        yesCard.setOnClickListener(v -> {
+            dialog.dismiss();
+            cancelReservation();
+        });
+
+        dialog.show();
+        int screenWidth = getResources().getDisplayMetrics().widthPixels;
+        dialog.getWindow().setLayout((int) (screenWidth * 0.88), android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
+    }
+
+    int dpToPx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
     void cancelReservation() {

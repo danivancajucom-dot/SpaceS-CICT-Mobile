@@ -3,7 +3,7 @@
 
     <item
         android:id="@+id/nav_home"
-        android:title="Home"
+        android:title=""
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:icon="@drawable/ic_home"
@@ -11,7 +11,7 @@
 
     <item
         android:id="@+id/nav_schedule"
-        android:title="Schedule"
+        android:title=""
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:icon="@drawable/ic_calendar"
@@ -19,7 +19,7 @@
 
     <item
         android:id="@+id/nav_reservations"
-        android:title="Reservations"
+        android:title=""
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:icon="@drawable/ic_check"
@@ -27,7 +27,7 @@
 
     <item
         android:id="@+id/nav_rooms"
-        android:title="Rooms"
+        android:title=""
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:icon="@drawable/ic_room"
@@ -35,7 +35,7 @@
 
     <item
         android:id="@+id/nav_announcement"
-        android:title="Announcements"
+        android:title=""
         android:layout_height="wrap_content"
         android:layout_width="match_parent"
         android:icon="@drawable/ic_notification"
