@@ -1,5 +1,6 @@
 package com.example.spacescict;
 
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.graphics.Color;
@@ -19,20 +20,26 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+
 import androidx.appcompat.app.AppCompatActivity;
+
 
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+
 public class RoomScheduleActivity extends AppCompatActivity {
+
 
     public static final String EXTRA_ROOM_ID = "roomId";
     public static final String EXTRA_ROOM_NAME = "roomName";
 
+
     String roomId, roomName;
     int weekOffset = 0;
+
 
     LinearLayout dayHeaderRow, timeColumn;
     FrameLayout gridCanvas;
@@ -40,8 +47,10 @@ public class RoomScheduleActivity extends AppCompatActivity {
     HorizontalScrollView headerScroll, contentHScroll;
     ScrollView timeColumnScroll, contentVScroll;
 
+
     static final int START_HOUR = 7, END_HOUR = 21;
     int hourHeightPx, colWidthPx;
+
 
     static final int[][] FACULTY_PALETTE = {
             {0xFFEEF2FF, 0xFF3651D4},
@@ -53,10 +62,12 @@ public class RoomScheduleActivity extends AppCompatActivity {
             {0xFFFEFCE8, 0xFF854D0E},
     };
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_room_schedule);
+
 
         roomId = getIntent().getStringExtra(EXTRA_ROOM_ID);
         roomName = getIntent().getStringExtra(EXTRA_ROOM_NAME);
@@ -65,11 +76,14 @@ public class RoomScheduleActivity extends AppCompatActivity {
             return;
         }
 
+
         ImageView backBtn = findViewById(R.id.backBtn);
         backBtn.setOnClickListener(v -> finish());
 
+
         roomNameHeader = findViewById(R.id.roomNameHeader);
         roomNameHeader.setText(roomName != null ? roomName : "Room Schedule");
+
 
         dayHeaderRow = findViewById(R.id.dayHeaderRow);
         timeColumn = findViewById(R.id.timeColumn);
@@ -80,31 +94,40 @@ public class RoomScheduleActivity extends AppCompatActivity {
         timeColumnScroll = findViewById(R.id.timeColumnScroll);
         contentVScroll = findViewById(R.id.contentVScroll);
 
+
         View prevBtn = findViewById(R.id.weekPrevBtn);
         View nextBtn = findViewById(R.id.weekNextBtn);
+
 
         hourHeightPx = dp(56);
         colWidthPx = dp(110);
 
+
         headerScroll.setOnTouchListener((v, event) -> true);
         timeColumnScroll.setOnTouchListener((v, event) -> true);
+
 
         contentHScroll.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) ->
                 headerScroll.scrollTo(scrollX, 0));
 
+
         contentVScroll.setOnScrollChangeListener((v, scrollX, scrollY, oldScrollX, oldScrollY) ->
                 timeColumnScroll.scrollTo(0, scrollY));
 
+
         prevBtn.setOnClickListener(v -> { weekOffset--; load(); });
         nextBtn.setOnClickListener(v -> { weekOffset++; load(); });
+
 
         buildTimeColumn();
         load();
     }
 
+
     int dp(int v) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, v, getResources().getDisplayMetrics());
     }
+
 
     void buildTimeColumn() {
         timeColumn.removeAllViews();
@@ -120,20 +143,24 @@ public class RoomScheduleActivity extends AppCompatActivity {
         }
     }
 
+
     String fmtHour(int h) {
         if (h < 12) return h + " AM";
         if (h == 12) return "12 PM";
         return (h - 12) + " PM";
     }
 
+
     void load() {
         contentHScroll.post(() -> contentHScroll.scrollTo(0, 0));
         headerScroll.post(() -> headerScroll.scrollTo(0, 0));
+
 
         Calendar monday = ScheduleLoader.getStartOfWeek(Calendar.getInstance());
         monday.add(Calendar.DAY_OF_MONTH, weekOffset * 7);
         Calendar sunday = (Calendar) monday.clone();
         sunday.add(Calendar.DAY_OF_MONTH, 6);
+
 
         String[] weekDates = new String[7];
         Calendar cursor = (Calendar) monday.clone();
@@ -144,11 +171,13 @@ public class RoomScheduleActivity extends AppCompatActivity {
         weekLabelText.setText(ScheduleLoader.formatWeekLabel(monday, sunday));
         renderHeaders(monday);
 
+
         RoomScheduleLoader.loadWeek(roomId, weekDates, new RoomScheduleLoader.Callback() {
             @Override
             public void onResult(Map<String, List<RoomScheduleLoader.RoomItem>> byDay) {
                 renderGrid(byDay);
             }
+
 
             @Override
             public void onError(String message) {
@@ -157,10 +186,12 @@ public class RoomScheduleActivity extends AppCompatActivity {
         });
     }
 
+
     void renderHeaders(Calendar monday) {
         dayHeaderRow.removeAllViews();
         String[] labels = ScheduleLoader.MON_FIRST;
         Calendar cursor = (Calendar) monday.clone();
+
 
         for (int i = 0; i < 7; i++) {
             LinearLayout col = new LinearLayout(this);
@@ -169,12 +200,14 @@ public class RoomScheduleActivity extends AppCompatActivity {
             LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(colWidthPx, LinearLayout.LayoutParams.WRAP_CONTENT);
             col.setLayoutParams(lp);
 
+
             TextView dayName = new TextView(this);
             dayName.setText(labels[i]);
             dayName.setTextSize(11);
             dayName.setTextColor(Color.parseColor("#6B7280"));
             dayName.setGravity(Gravity.CENTER);
             col.addView(dayName);
+
 
             TextView dayNum = new TextView(this);
             dayNum.setText(String.valueOf(cursor.get(Calendar.DAY_OF_MONTH)));
@@ -183,18 +216,22 @@ public class RoomScheduleActivity extends AppCompatActivity {
             dayNum.setGravity(Gravity.CENTER);
             col.addView(dayNum);
 
+
             dayHeaderRow.addView(col);
             cursor.add(Calendar.DAY_OF_MONTH, 1);
         }
     }
+
 
     void renderGrid(Map<String, List<RoomScheduleLoader.RoomItem>> byDay) {
         gridCanvas.removeAllViews();
         int totalHeight = (END_HOUR - START_HOUR) * hourHeightPx;
         int totalWidth = colWidthPx * 7;
 
+
         ScrollView.LayoutParams canvasParams = new ScrollView.LayoutParams(totalWidth, totalHeight);
         gridCanvas.setLayoutParams(canvasParams);
+
 
         for (int h = 0; h <= (END_HOUR - START_HOUR); h++) {
             View line = new View(this);
@@ -211,6 +248,7 @@ public class RoomScheduleActivity extends AppCompatActivity {
             gridCanvas.addView(line, lp);
         }
 
+
         String[] dayOrder = ScheduleLoader.MON_FIRST;
         for (int i = 0; i < dayOrder.length; i++) {
             List<RoomScheduleLoader.RoomItem> items = byDay.get(dayOrder[i]);
@@ -221,21 +259,26 @@ public class RoomScheduleActivity extends AppCompatActivity {
         }
     }
 
+
     View buildEventBlock(RoomScheduleLoader.RoomItem item, int dayIndex) {
         int[] start = ScheduleLoader.parseTimeParts(item.startTime);
         int[] end = ScheduleLoader.parseTimeParts(item.endTime);
 
+
         float startOffsetHrs = (start[0] - START_HOUR) + start[1] / 60f;
         float durationHrs = (end[0] - start[0]) + (end[1] - start[1]) / 60f;
 
+
         int top = Math.round(startOffsetHrs * hourHeightPx);
         int height = Math.max(Math.round(durationHrs * hourHeightPx) - dp(2), dp(24));
+
 
         LinearLayout block = new LinearLayout(this);
         block.setOrientation(LinearLayout.VERTICAL);
         block.setPadding(dp(6), dp(4), dp(6), dp(4));
         Colors c = colorFor(item.kind, item.faculty);
         block.setBackgroundColor(c.bg);
+
 
         TextView title = new TextView(this);
         title.setText(item.subject != null ? item.subject : "");
@@ -245,23 +288,29 @@ public class RoomScheduleActivity extends AppCompatActivity {
         title.setMaxLines(2);
         block.addView(title);
 
+
         TextView faculty = new TextView(this);
         faculty.setText(item.faculty != null ? item.faculty : "");
         faculty.setTextColor(c.text);
         faculty.setTextSize(10);
         block.addView(faculty);
 
+
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(colWidthPx - dp(4), height);
         lp.leftMargin = dayIndex * colWidthPx + dp(2);
         lp.topMargin = top + dp(1);
         block.setLayoutParams(lp);
 
+
         block.setOnClickListener(v -> showDetailsDialog(item));
+
 
         return block;
     }
 
+
     static class Colors { int bg, text; Colors(int bg, int text) { this.bg = bg; this.text = text; } }
+
 
     Colors colorFor(String kind, String faculty) {
         if ("reassignment".equals(kind)) {
@@ -275,64 +324,43 @@ public class RoomScheduleActivity extends AppCompatActivity {
         return new Colors(pair[0], pair[1]);
     }
 
+
     void showDetailsDialog(RoomScheduleLoader.RoomItem item) {
-        LinearLayout root = new LinearLayout(this);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(24), dp(20), dp(24), dp(20));
-
-        TextView title = new TextView(this);
-        title.setText(titleFor(item.kind));
-        title.setTextColor(Color.parseColor("#1C1917"));
-        title.setTypeface(null, Typeface.BOLD);
-        title.setTextSize(18);
-        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleParams.bottomMargin = dp(16);
-        title.setLayoutParams(titleParams);
-        root.addView(title);
-
-        addRow(root, "Subject", item.subject);
-        addRow(root, "Faculty", item.faculty);
-        addRow(root, "Time", formatTime(item.startTime) + " - " + formatTime(item.endTime));
-        if (item.kind.equals("reassignment") && item.originalRoom != null) {
-            addRow(root, "Moved from", item.originalRoom);
-        }
-
-        androidx.cardview.widget.CardView closeCard = new androidx.cardview.widget.CardView(this);
-        closeCard.setRadius(dp(14));
-        closeCard.setCardElevation(0);
-        closeCard.setCardBackgroundColor(Color.parseColor("#F97316"));
-        LinearLayout.LayoutParams closeCardParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
-        closeCardParams.topMargin = dp(20);
-        closeCard.setLayoutParams(closeCardParams);
-
-        TextView closeBtn = new TextView(this);
-        closeBtn.setText("Close");
-        closeBtn.setTextColor(Color.WHITE);
-        closeBtn.setTypeface(null, Typeface.BOLD);
-        closeBtn.setGravity(Gravity.CENTER);
-        closeBtn.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        closeCard.addView(closeBtn);
-        root.addView(closeCard);
-
-        GradientDrawable bg = new GradientDrawable();
-        bg.setColor(Color.WHITE);
-        bg.setCornerRadius(dp(20));
-        root.setBackground(bg);
-
         Dialog dialog = new Dialog(this);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.setContentView(root);
+        View dv = android.view.LayoutInflater.from(this).inflate(R.layout.dialog_schedule_details, null);
+        dialog.setContentView(dv);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        closeBtn.setOnClickListener(v -> dialog.dismiss());
+        TextView bannerRoom = dv.findViewById(R.id.bannerRoom);
+        TextView bannerSubtitle = dv.findViewById(R.id.bannerSubtitle);
+        TextView detailType = dv.findViewById(R.id.detailType);
+        TextView detailFaculty = dv.findViewById(R.id.detailFaculty);
+        TextView detailRoom = dv.findViewById(R.id.detailRoom);
+        TextView detailSubject = dv.findViewById(R.id.detailSubject);
+        TextView detailDate = dv.findViewById(R.id.detailDate);
+        TextView detailTime = dv.findViewById(R.id.detailTime);
+        TextView detailStatus = dv.findViewById(R.id.detailStatus);
+        View closeBtn = dv.findViewById(R.id.dialogCloseBtn);
+
+        if (bannerRoom != null) bannerRoom.setText(roomName != null ? roomName : "Classroom");
+        String fullSub = (item.subject != null ? item.subject : "");
+        if (bannerSubtitle != null) bannerSubtitle.setText(fullSub);
+        if (detailType != null) detailType.setText(titleFor(item.kind));
+        if (detailFaculty != null) detailFaculty.setText(item.faculty != null && !item.faculty.isEmpty() ? item.faculty : "N/A");
+        if (detailRoom != null) detailRoom.setText(roomName != null ? roomName : "N/A");
+        if (detailSubject != null) detailSubject.setText(fullSub);
+        if (detailDate != null) detailDate.setText("N/A");
+        if (detailTime != null) detailTime.setText(formatTime(item.startTime) + " — " + formatTime(item.endTime));
+        if (detailStatus != null) detailStatus.setText("Scheduled");
+
+        if (closeBtn != null) closeBtn.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
         int screenWidth = getResources().getDisplayMetrics().widthPixels;
         dialog.getWindow().setLayout((int) (screenWidth * 0.88), android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
+
 
     void addRow(LinearLayout parent, String label, String value) {
         LinearLayout row = new LinearLayout(this);
@@ -342,11 +370,13 @@ public class RoomScheduleActivity extends AppCompatActivity {
         rowParams.bottomMargin = dp(12);
         row.setLayoutParams(rowParams);
 
+
         TextView labelView = new TextView(this);
         labelView.setText(label);
         labelView.setTextColor(Color.parseColor("#78716C"));
         labelView.setTextSize(11);
         row.addView(labelView);
+
 
         TextView valueView = new TextView(this);
         valueView.setText(value != null && !value.isEmpty() ? value : "N/A");
@@ -359,8 +389,10 @@ public class RoomScheduleActivity extends AppCompatActivity {
         valueView.setLayoutParams(valueParams);
         row.addView(valueView);
 
+
         parent.addView(row);
     }
+
 
     String titleFor(String kind) {
         switch (kind) {
@@ -371,6 +403,7 @@ public class RoomScheduleActivity extends AppCompatActivity {
             default: return "Details";
         }
     }
+
 
     String formatTime(String time) {
         if (time == null) return "";

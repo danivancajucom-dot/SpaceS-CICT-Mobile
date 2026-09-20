@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:padding="14dp"
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/input_field_bg"
+    android:clickable="true"
+    android:focusable="true">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <View
+            android:id="@+id/swatchMain"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:background="@drawable/circle_orange"/>
+
+        <View
+            android:id="@+id/swatchSoft"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginStart="-8dp"
+            android:background="@drawable/circle_orange"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_weight="1"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginStart="16dp">
+
+        <TextView
+            android:id="@+id/themeName"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:textColor="@color/ink_900"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lexend_bold"/>
+
+        <TextView
+            android:id="@+id/themeDesc"
+            android:textSize="12sp"
+            android:textColor="@color/ink_500"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/lexend_regular"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/themeCheck"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:src="@drawable/ic_check"
+        android:visibility="gone"/>
+
+</LinearLayout>

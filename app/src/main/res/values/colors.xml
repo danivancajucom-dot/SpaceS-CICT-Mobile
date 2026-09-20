@@ -13,7 +13,9 @@
 
     <color name="ink_900">#1C1917</color>
     <color name="ink_700">#44403C</color>
+    <color name="ink_600">#57534E</color>
     <color name="ink_500">#78716C</color>
+    <color name="ink_400">#A8A29E</color>
     <color name="ink_300">#D6D3D1</color>
     <color name="surface">#FFFFFF</color>
     <color name="surface_alt">#EEF1F5</color>

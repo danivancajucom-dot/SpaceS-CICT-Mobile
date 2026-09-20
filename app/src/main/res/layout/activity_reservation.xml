@@ -409,15 +409,17 @@
                         app:cardElevation="0dp"
                         app:cardBackgroundColor="@color/brand_orange">
 
-                        <Button
+                        <TextView
                             android:id="@+id/submitBtn"
                             android:text="Submit Request"
-                            android:textAllCaps="false"
                             android:textSize="15sp"
                             android:textColor="#FFFFFF"
+                            android:textStyle="bold"
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="@android:color/transparent"
+                            android:gravity="center"
+                            android:clickable="true"
+                            android:focusable="true"
                             android:fontFamily="@font/lexend_bold"/>
                     </androidx.cardview.widget.CardView>
 

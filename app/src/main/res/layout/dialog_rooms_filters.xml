@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
+    android:padding="24dp">
+
+    <!-- HEADER -->
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Filters"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/ink_900"
+            android:fontFamily="@font/lexend_bold" />
+
+        <ImageView
+            android:id="@+id/filtersCloseBtn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:background="@color/surface_alt"
+            android:padding="8dp"
+            android:src="@android:drawable/ic_menu_close_clear_cancel"
+            app:tint="@color/ink_700" />
+
+    </RelativeLayout>
+
+    <!-- DATE -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="DATE"
+        android:textColor="@color/ink_500"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/lexend_bold" />
+
+    <TextView
+        android:id="@+id/filterDateText"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/input_field_bg"
+        android:gravity="center_vertical"
+        android:paddingHorizontal="14dp"
+        android:textColor="@color/ink_900"
+        android:textSize="14sp"
+        android:fontFamily="@font/lexend_regular" />
+
+    <!-- TIME -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="START TIME"
+                android:textColor="@color/ink_500"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold" />
+
+            <TextView
+                android:id="@+id/filterStartTimeText"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_field_bg"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="14dp"
+                android:textColor="@color/ink_900"
+                android:textSize="14sp"
+                android:fontFamily="@font/lexend_regular" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="END TIME"
+                android:textColor="@color/ink_500"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold" />
+
+            <TextView
+                android:id="@+id/filterEndTimeText"
+                android:layout_width="match_parent"
+                android:layout_height="52dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/input_field_bg"
+                android:gravity="center_vertical"
+                android:paddingHorizontal="14dp"
+                android:textColor="@color/ink_900"
+                android:textSize="14sp"
+                android:fontFamily="@font/lexend_regular" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!-- STATUS -->
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:text="STATUS"
+        android:textColor="@color/ink_500"
+        android:textSize="11sp"
+        android:textStyle="bold"
+        android:fontFamily="@font/lexend_bold" />
+
+    <com.google.android.flexbox.FlexboxLayout
+        android:id="@+id/filterStatusChips"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        app:flexWrap="wrap"
+        app:justifyContent="flex_start"
+        app:alignItems="center" />
+
+    <!-- BUTTONS -->
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginEnd="8dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/surface_alt">
+
+            <Button
+                android:id="@+id/filterClearBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:text="Clear"
+                android:textAllCaps="false"
+                android:textColor="@color/ink_700"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:layout_marginStart="8dp"
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp"
+            app:cardBackgroundColor="@color/brand_orange">
+
+            <Button
+                android:id="@+id/filterApplyBtn"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/transparent"
+                android:text="Apply Filters"
+                android:textAllCaps="false"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold" />
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+</LinearLayout>

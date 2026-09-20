@@ -1,275 +1,312 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="#F3F4F6"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_page"
+    android:orientation="vertical">
 
-    <!-- HEADER -->
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:background="#FFFFFF"
-        android:padding="16dp"
-        android:elevation="2dp">
-
-        <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_back"
-            android:layout_centerVertical="true"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:gravity="center"
-            android:text="Profile"
-            android:textColor="@color/black"
-            android:textSize="18sp"
-            android:textStyle="bold" />
-
-        <ImageView
-            android:id="@+id/editBtn"
-            android:layout_width="56dp"
-            android:layout_height="56dp"
-            android:padding="12dp"
-            android:src="@drawable/ic_edit"
-            android:clickable="true"
-            android:focusable="true"
-            android:background="@drawable/edit_btn_bg"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:contentDescription="Edit Profile"/>
-    </RelativeLayout>
-
+    <!-- TABS -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:background="@color/bg_page"
         android:padding="16dp">
 
         <androidx.cardview.widget.CardView
             android:id="@+id/tabDetails"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="46dp"
-            app:cardCornerRadius="14dp"
-            app:cardElevation="0dp"
+            android:layout_weight="1"
             app:cardBackgroundColor="@color/brand_orange"
-            xmlns:app="http://schemas.android.com/apk/res-auto">
+            app:cardCornerRadius="14dp"
+            app:cardElevation="0dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/lexend_bold"
                 android:gravity="center"
                 android:text="Details"
                 android:textColor="#FFFFFF"
-                android:textStyle="bold"
                 android:textSize="13sp"
-                android:fontFamily="@font/lexend_bold"/>
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
 
         <androidx.cardview.widget.CardView
             android:id="@+id/tabActivityLog"
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="46dp"
-            android:layout_marginStart="10dp"
+            android:layout_marginStart="12dp"
+            android:layout_weight="1"
+            app:cardBackgroundColor="@color/surface"
             app:cardCornerRadius="14dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/surface">
+            app:cardElevation="0dp">
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:fontFamily="@font/lexend_bold"
                 android:gravity="center"
                 android:text="Activity Log"
-                android:textColor="@color/ink_700"
-                android:textStyle="bold"
+                android:textColor="@color/ink_600"
                 android:textSize="13sp"
-                android:fontFamily="@font/lexend_bold"/>
+                android:textStyle="bold" />
         </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EFE7DF"/>
-
     <FrameLayout
-        android:id="@+id/detailsTabContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <!-- CONTENT -->
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp">
-
-        <LinearLayout
-            android:padding="20dp"
-            android:orientation="vertical"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <!-- PROFILE IMAGE -->
-            <FrameLayout
-                android:layout_width="230dp"
-                android:layout_height="230dp"
-                android:layout_gravity="center">
-
-                <ImageView
-                    android:id="@+id/profilePhoto"
-                    android:layout_width="210dp"
-                    android:layout_height="210dp"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user"
-                    android:background="@drawable/circle_bg"/>
-
-                <ImageView
-                    android:id="@+id/cameraBtn"
-                    android:layout_width="52dp"
-                    android:layout_height="52dp"
-                    android:layout_gravity="bottom|end"
-                    android:src="@drawable/ic_edit"
-                    android:background="@drawable/edit_btn_bg"
-                    android:padding="12dp"
-                    android:clickable="true"
-                    android:focusable="true"/>
-            </FrameLayout>
-
-
-
-            <!-- FULL NAME -->
-            <TextView
-                android:text="Full Name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginTop="30dp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-
-            <EditText
-                android:id="@+id/nameInput"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="Full Name"
-                android:focusable="false"
-                android:clickable="false"
-                android:background="@drawable/input_bg"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:padding="16dp"/>
-
-            <!-- EMAIL -->
-            <TextView
-                android:text="University ID / Email"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-
-            <EditText
-                android:id="@+id/emailInput"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="j.delacruz@university.edu"
-                android:focusable="false"
-                android:clickable="false"
-                android:background="@drawable/input_bg"
-                android:textColor="#111827"
-                android:textColorHint="#6B7280"
-                android:padding="16dp"/>
-            <!-- Replace the PASSWORD section entirely with: -->
-            <TextView
-                android:text="Password"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textStyle="bold"
-                android:layout_marginTop="16dp"
-                android:textColor="@color/black"
-                android:layout_marginBottom="10dp"/>
-
-            <Button
-                android:id="@+id/resetPasswordBtn"
-                android:layout_width="match_parent"
-                android:layout_height="55dp"
-                android:text="Send Password Reset Email"
-                android:textAllCaps="false"
-                android:backgroundTint="#F97316"
-                android:textColor="#FFFFFF"/>
-        </LinearLayout>
-    </ScrollView>
-    </FrameLayout>
-
-    <LinearLayout
-        android:id="@+id/activityTabContent"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/activityRecycler"
+        <!-- DETAILS CONTENT -->
+        <ScrollView
+            android:id="@+id/detailsTabContent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingHorizontal="16dp"
-            android:paddingTop="12dp"
-            android:clipToPadding="false"/>
+            android:overScrollMode="never">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:cardBackgroundColor="@color/surface"
+                    app:cardCornerRadius="24dp"
+                    app:cardElevation="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="24dp">
+
+                        <!-- HEADER IN CARD WITH EDIT BUTTON SIDE BY SIDE -->
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <LinearLayout
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentStart="true"
+                                android:layout_toStartOf="@id/editBtn"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/lexend_bold"
+                                    android:text="Faculty Profile"
+                                    android:textColor="@color/ink_900"
+                                    android:textSize="18sp"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginTop="4dp"
+                                    android:fontFamily="@font/lexend_regular"
+                                    android:text="Update your profile information and picture here."
+                                    android:textColor="@color/ink_500"
+                                    android:textSize="12sp" />
+                            </LinearLayout>
+
+                            <ImageView
+                                android:id="@+id/editBtn"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:layout_alignParentEnd="true"
+                                android:layout_centerVertical="true"
+                                android:background="@drawable/stat_card"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:padding="10dp"
+                                android:src="@drawable/ic_edit"
+                                app:tint="@color/ink_700" />
+                        </RelativeLayout>
+
+                        <!-- PHOTO -->
+                        <FrameLayout
+                            android:layout_width="140dp"
+                            android:layout_height="140dp"
+                            android:layout_gravity="center_horizontal"
+                            android:layout_marginTop="28dp">
+
+                            <androidx.cardview.widget.CardView
+                                android:layout_width="140dp"
+                                android:layout_height="140dp"
+                                app:cardBackgroundColor="@color/surface_alt"
+                                app:cardCornerRadius="999dp"
+                                app:cardElevation="0dp">
+
+                                <ImageView
+                                    android:id="@+id/profilePhoto"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:scaleType="centerCrop"
+                                    android:src="@drawable/ic_user" />
+                            </androidx.cardview.widget.CardView>
+
+                            <androidx.cardview.widget.CardView
+                                android:id="@+id/cameraBtn"
+                                android:layout_width="38dp"
+                                android:layout_height="38dp"
+                                android:layout_gravity="bottom|end"
+                                android:layout_margin="4dp"
+                                app:cardBackgroundColor="@color/brand_orange"
+                                app:cardCornerRadius="999dp"
+                                app:cardElevation="2dp">
+
+                                <ImageView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:padding="10dp"
+                                    android:src="@drawable/ic_edit"
+                                    app:tint="#FFFFFF" />
+                            </androidx.cardview.widget.CardView>
+                        </FrameLayout>
+
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/uploadPictureBtn"
+                            android:layout_width="wrap_content"
+                            android:layout_height="42dp"
+                            android:layout_marginTop="24dp"
+                            app:cardBackgroundColor="@color/brand_orange_soft"
+                            app:cardCornerRadius="12dp"
+                            app:cardElevation="0dp">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:fontFamily="@font/lexend_bold"
+                                android:gravity="center"
+                                android:paddingHorizontal="20dp"
+                                android:text="↑ Upload Picture"
+                                android:textColor="@color/brand_orange"
+                                android:textSize="13sp"
+                                android:textStyle="bold" />
+                        </androidx.cardview.widget.CardView>
+
+                        <!-- INPUTS -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="32dp"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/lexend_bold"
+                                android:text="Full Name"
+                                android:textColor="@color/ink_700"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/nameInput"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:layout_marginTop="8dp"
+                                android:background="@drawable/input_field_bg"
+                                android:fontFamily="@font/lexend_regular"
+                                android:hint="Full Name"
+                                android:paddingHorizontal="16dp"
+                                android:textColor="@color/ink_900"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="18dp"
+                                android:fontFamily="@font/lexend_bold"
+                                android:text="University Email"
+                                android:textColor="@color/ink_700"
+                                android:textSize="12sp"
+                                android:textStyle="bold" />
+
+                            <EditText
+                                android:id="@+id/emailInput"
+                                android:layout_width="match_parent"
+                                android:layout_height="52dp"
+                                android:layout_marginTop="8dp"
+                                android:background="@drawable/input_field_bg"
+                                android:enabled="false"
+                                android:fontFamily="@font/lexend_regular"
+                                android:hint="email@bulsu.edu.ph"
+                                android:paddingHorizontal="16dp"
+                                android:textColor="@color/ink_500"
+                                android:textSize="14sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </ScrollView>
+
+        <!-- ACTIVITY CONTENT -->
         <LinearLayout
-            android:id="@+id/noActivityContainer"
+            android:id="@+id/activityTabContent"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
-            android:gravity="center"
-            android:paddingVertical="60dp"
             android:visibility="gone">
 
-            <androidx.cardview.widget.CardView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                app:cardCornerRadius="999dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/brand_orange_soft"
-                xmlns:app="http://schemas.android.com/apk/res-auto">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/activityRecycler"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="12dp" />
 
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="20dp"
-                    android:src="@drawable/ic_edit"
-                    app:tint="@color/brand_orange"/>
-            </androidx.cardview.widget.CardView>
-
-            <TextView
-                android:text="No activity yet"
-                android:textStyle="bold"
-                android:textSize="16sp"
-                android:textColor="@color/ink_900"
-                android:layout_marginTop="16dp"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/noActivityContainer"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/lexend_bold"/>
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingVertical="80dp"
+                android:visibility="gone">
 
-            <TextView
-                android:text="Actions you take will show up here."
-                android:textColor="@color/ink_500"
-                android:textSize="13sp"
-                android:layout_marginTop="4dp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/lexend_regular"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    app:cardBackgroundColor="@color/brand_orange_soft"
+                    app:cardCornerRadius="999dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="20dp"
+                        android:src="@drawable/ic_eye"
+                        app:tint="@color/brand_orange" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="20dp"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="No activity yet"
+                    android:textColor="@color/ink_900"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="@font/lexend_regular"
+                    android:text="Your recent logs will appear here."
+                    android:textColor="@color/ink_500"
+                    android:textSize="13.5sp" />
+            </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
-
+    </FrameLayout>
 </LinearLayout>

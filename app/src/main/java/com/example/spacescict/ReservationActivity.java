@@ -88,7 +88,7 @@ public class ReservationActivity extends AppCompatActivity {
             eqSmartBoard = findViewById(R.id.eqSmartBoard);
             eqTvDisplay = findViewById(R.id.eqTvDisplay);
 
-            Button submit = findViewById(R.id.submitBtn);
+            View submit = findViewById(R.id.submitBtn);
 
             loadFacultyName();
             setupSpinners();
@@ -112,8 +112,14 @@ public class ReservationActivity extends AppCompatActivity {
                         Toast.makeText(this, error, Toast.LENGTH_SHORT).show();
                         return;
                     }
-                    ConfirmDialog.show(this, "Confirmation", " Are you sure you want to reserve?",
-                            "Confirm", "Cancel", this::submitReservation);
+                    String purpose = (String) purposeSpinner.getSelectedItem();
+                    String summary = "\u2022 Room: " + selectedRoomName + "\n" +
+                                     "\u2022 Date: " + datePicker.getText().toString() + "\n" +
+                                     "\u2022 Time: " + startTime.getText().toString() + " - " + endTime.getText().toString() + "\n" +
+                                     "\u2022 Course: " + courseInput.getText().toString().trim() + "\n" +
+                                     "\u2022 Purpose: " + purpose;
+                    ConfirmDialog.show(this, "Review Reservation", summary,
+                            "Confirm & Submit", "Edit Details", this::submitReservation);
                 });
             });
         } catch (Exception e) {

@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,63 +9,171 @@
         android:id="@+id/topSection"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:background="@color/surface"
+        android:orientation="vertical"
         android:paddingBottom="4dp"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
             android:background="@color/surface"
-            android:padding="16dp">
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp"
+            android:paddingTop="20dp"
+            android:paddingBottom="12dp">
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_weight="1"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/lexend_bold"
                 android:text="My Reservations"
-                android:textStyle="bold"
-                android:textSize="25sp"
                 android:textColor="@color/ink_900"
-                android:layout_marginStart="12dp"
-                android:fontFamily="@font/lexend_bold"/>
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/lexend_regular"
+                android:text="View and track all your room reservation requests."
+                android:textColor="@color/ink_500"
+                android:textSize="12sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="10dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:background="@drawable/input_field_bg"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="14dp">
+
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:contentDescription="@string/search_hint"
+                    android:src="@drawable/ic_search"
+                    app:tint="@color/ink_400" />
+
+                <EditText
+                    android:id="@+id/reservationSearchInput"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:fontFamily="@font/lexend_regular"
+                    android:hint="Search your reservations..."
+                    android:imeOptions="actionSearch"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:paddingHorizontal="10dp"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/reservationSortBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="48dp"
+                android:layout_marginStart="8dp"
+                android:background="@drawable/input_field_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="Filter ⬚"
+                android:textColor="@color/ink_700"
+                android:textSize="12sp" />
         </LinearLayout>
 
         <HorizontalScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:scrollbars="none">
+
             <LinearLayout
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
                 android:orientation="horizontal"
                 android:paddingHorizontal="20dp"
-                android:paddingBottom="12dp">
+                android:paddingVertical="12dp">
 
-                <TextView android:id="@+id/tabAll" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="All" android:textColor="@color/brand_orange" android:textSize="14sp" android:textStyle="bold"
-                    android:layout_marginEnd="24dp" android:clickable="true" android:focusable="true" android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabAll"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="All"
+                    android:textColor="@color/brand_orange"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <TextView android:id="@+id/tabPending" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Pending" android:textColor="@color/ink_500" android:textSize="14sp" android:textStyle="bold"
-                    android:layout_marginEnd="24dp" android:clickable="true" android:focusable="true" android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabPending"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Pending"
+                    android:textColor="@color/ink_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <TextView android:id="@+id/tabApproved" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Approved" android:textColor="@color/ink_500" android:textSize="14sp" android:textStyle="bold"
-                    android:layout_marginEnd="24dp" android:clickable="true" android:focusable="true" android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabApproved"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Approved"
+                    android:textColor="@color/ink_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <TextView android:id="@+id/tabDenied" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Denied" android:textColor="@color/ink_500" android:textSize="14sp" android:textStyle="bold"
-                    android:layout_marginEnd="24dp" android:clickable="true" android:focusable="true" android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabDenied"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="24dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Denied"
+                    android:textColor="@color/ink_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
-                <TextView android:id="@+id/tabCancelled" android:layout_width="wrap_content" android:layout_height="wrap_content"
-                    android:text="Cancelled" android:textColor="@color/ink_500" android:textSize="14sp" android:textStyle="bold"
-                    android:clickable="true" android:focusable="true" android:fontFamily="@font/lexend_bold"/>
+                <TextView
+                    android:id="@+id/tabCancelled"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Cancelled"
+                    android:textColor="@color/ink_500"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
             </LinearLayout>
         </HorizontalScrollView>
     </LinearLayout>
@@ -75,21 +182,89 @@
         android:id="@+id/reservationRecycler"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:padding="20dp"
         android:clipToPadding="false"
-        app:layout_constraintTop_toBottomOf="@id/topSection"
+        android:padding="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
+        app:layout_constraintTop_toBottomOf="@id/topSection" />
+
+    <!-- Rich Empty State matching the web app screenshot -->
+    <LinearLayout
+        android:id="@+id/reservationsEmptyState"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="32dp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topSection">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="64dp"
+            android:layout_height="64dp"
+            app:cardBackgroundColor="@color/brand_orange_soft"
+            app:cardCornerRadius="32dp"
+            app:cardElevation="0dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="No reservations icon"
+                android:padding="18dp"
+                android:src="@drawable/ic_calendar"
+                app:tint="@color/brand_orange" />
+        </androidx.cardview.widget.CardView>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:fontFamily="@font/lexend_bold"
+            android:text="No Reservations Yet"
+            android:textColor="@color/ink_900"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/lexend_regular"
+            android:gravity="center"
+            android:text="You haven't submitted any reservation requests yet. Click the button below to reserve a room."
+            android:textColor="@color/ink_500"
+            android:textSize="13sp" />
+
+        <TextView
+            android:id="@+id/emptyStateCreateBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/orange_button_bg"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lexend_bold"
+            android:gravity="center"
+            android:paddingHorizontal="24dp"
+            android:text="+ Create Reservation"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <androidx.cardview.widget.CardView
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="20dp"
+        app:cardBackgroundColor="@color/brand_orange"
         app:cardCornerRadius="999dp"
         app:cardElevation="4dp"
-        app:cardBackgroundColor="@color/brand_orange"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
@@ -97,11 +272,12 @@
             android:id="@+id/fabAddReservation"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:clickable="true"
+            android:contentDescription="Add reservation"
+            android:focusable="true"
             android:padding="18dp"
             android:src="@drawable/ic_add"
-            app:tint="#FFFFFF"
-            android:clickable="true"
-            android:focusable="true"/>
+            app:tint="#FFFFFF" />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

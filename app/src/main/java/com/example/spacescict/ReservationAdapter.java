@@ -1,9 +1,11 @@
 package com.example.spacescict;
 
 import android.graphics.Color;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -12,10 +14,17 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
-public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.ViewHolder> {
+public class ReservationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private static final int TYPE_ITEM = 0;
+    private static final int TYPE_FOOTER = 1;
 
     ArrayList<ReservationModel> list;
     OnItemClickListener listener;
+
+    /** Set when more results exist beyond what's currently shown; draws a "Load more" row. */
+    private boolean hasMore = false;
+    private Runnable onLoadMore;
 
     public interface OnItemClickListener {
         void onClick(ReservationModel model);
@@ -25,20 +34,46 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         this.listener = listener;
     }
 
+    public void setOnLoadMore(Runnable onLoadMore) {
+        this.onLoadMore = onLoadMore;
+    }
+
+    public void setHasMore(boolean hasMore) {
+        if (this.hasMore != hasMore) {
+            this.hasMore = hasMore;
+        }
+    }
+
     public ReservationAdapter(ArrayList<ReservationModel> list) {
         this.list = list;
     }
 
+    @Override
+    public int getItemViewType(int position) {
+        return position == list.size() ? TYPE_FOOTER : TYPE_ITEM;
+    }
+
+    @Override
+    public int getItemCount() {
+        return list.size() + (hasMore ? 1 : 0);
+    }
+
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_FOOTER) {
+            return new FooterViewHolder(buildFooterView(parent));
+        }
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.recycler_reservation, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder h, int i) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int i) {
+        if (holder instanceof FooterViewHolder) return; // footer is fully built at creation
+
+        ViewHolder h = (ViewHolder) holder;
         ReservationModel model = list.get(i);
         String status = model.status != null ? model.status.toLowerCase().trim() : "";
 
@@ -72,9 +107,27 @@ public class ReservationAdapter extends RecyclerView.Adapter<ReservationAdapter.
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return list.size();
+    private View buildFooterView(ViewGroup parent) {
+        TextView footer = new TextView(parent.getContext());
+        footer.setText("Load more reservations");
+        footer.setGravity(Gravity.CENTER);
+        footer.setTextColor(Color.parseColor("#F97316"));
+        footer.setTypeface(null, android.graphics.Typeface.BOLD);
+        footer.setTextSize(13);
+        int padV = (int) (16 * parent.getResources().getDisplayMetrics().density);
+        footer.setPadding(0, padV, 0, padV);
+        footer.setLayoutParams(new RecyclerView.LayoutParams(
+                RecyclerView.LayoutParams.MATCH_PARENT, RecyclerView.LayoutParams.WRAP_CONTENT));
+        footer.setOnClickListener(v -> {
+            if (onLoadMore != null) onLoadMore.run();
+        });
+        return footer;
+    }
+
+    static class FooterViewHolder extends RecyclerView.ViewHolder {
+        FooterViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
     }
 
     class ViewHolder extends RecyclerView.ViewHolder {

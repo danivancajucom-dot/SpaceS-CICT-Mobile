@@ -29,6 +29,7 @@
         <activity android:name=".RoomReassignmentActivity" android:exported="false" />
         <activity android:name=".NotificationsActivity" android:exported="false" />
         <activity android:name=".RoomScheduleActivity" android:exported="false"/>
+        <activity android:name=".SettingsActivity" android:exported="false"/>
         <!-- Only keep this if ProfileActivity.java still exists in your project -->
         <activity android:name=".ProfileActivity" android:exported="false" />
 

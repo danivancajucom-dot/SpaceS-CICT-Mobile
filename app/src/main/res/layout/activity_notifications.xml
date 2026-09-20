@@ -1,60 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/bg_page">
+    android:background="@color/bg_page"
+    android:orientation="vertical">
 
-    <RelativeLayout
+    <!-- Header Toolbar -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="95dp"
+        android:layout_height="64dp"
         android:background="@color/surface"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="18dp">
+        android:paddingHorizontal="16dp">
 
-        <ImageView
+        <ImageButton
             android:id="@+id/backBtn"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_centerVertical="true"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/back_icon"
             android:src="@drawable/ic_back"
-            app:tint="@color/ink_900"/>
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/ink_900" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Notifications"
-            android:textStyle="bold"
-            android:textSize="19sp"
-            android:textColor="@color/ink_900"
             android:fontFamily="@font/lexend_bold"
-            android:layout_centerInParent="true"/>
+            android:text="@string/notifications_title"
+            android:textColor="@color/ink_900"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/filterBtn"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_alignParentEnd="true"
-            android:layout_centerVertical="true"
-            android:src="@drawable/ic_filter"
-            app:tint="@color/ink_900"/>
-    </RelativeLayout>
+        <TextView
+            android:id="@+id/markAllReadBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:fontFamily="@font/lexend_bold"
+            android:text="@string/mark_all_read"
+            android:textColor="@color/brand_orange"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <!-- Tabs -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:orientation="horizontal"
+        android:layout_height="48dp"
+        android:background="@color/surface"
         android:gravity="center_vertical"
-        android:paddingHorizontal="20dp"
-        android:background="@color/surface">
+        android:orientation="horizontal"
+        android:paddingHorizontal="20dp">
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/tabAll"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:clickable="true"
             android:focusable="true">
 
@@ -62,19 +74,19 @@
                 android:id="@+id/tabAllText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="All"
-                android:textStyle="bold"
-                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lexend_bold"
+                android:text="@string/tab_all"
                 android:textColor="@color/brand_orange"
-                android:fontFamily="@font/lexend_bold"/>
-        </LinearLayout>
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </FrameLayout>
 
-        <LinearLayout
+        <FrameLayout
             android:id="@+id/tabUnread"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginStart="28dp"
-            android:gravity="center_vertical"
+            android:layout_marginStart="24dp"
             android:clickable="true"
             android:focusable="true">
 
@@ -82,38 +94,40 @@
                 android:id="@+id/tabUnreadText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Unread"
-                android:textStyle="bold"
-                android:textSize="14sp"
+                android:layout_gravity="center"
+                android:fontFamily="@font/lexend_bold"
+                android:text="@string/tab_unread"
                 android:textColor="@color/ink_500"
-                android:fontFamily="@font/lexend_bold"/>
-        </LinearLayout>
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </FrameLayout>
 
         <TextView
             android:id="@+id/tabArchivedText"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Archived"
-            android:textStyle="bold"
-            android:textSize="14sp"
-            android:textColor="@color/ink_500"
-            android:layout_marginStart="28dp"
+            android:layout_height="match_parent"
+            android:layout_marginStart="24dp"
             android:clickable="true"
             android:focusable="true"
-            android:fontFamily="@font/lexend_bold"/>
+            android:fontFamily="@font/lexend_bold"
+            android:gravity="center"
+            android:text="@string/tab_archived"
+            android:textColor="@color/ink_500"
+            android:textSize="14sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/divider"/>
+        android:background="@color/divider" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingHorizontal="20dp"
-        android:paddingTop="16dp"
-        android:clipToPadding="false"/>
+        android:clipToPadding="false"
+        android:paddingHorizontal="16dp"
+        android:paddingTop="12dp" />
 
 </LinearLayout>

@@ -1,12 +1,10 @@
 package com.example.spacescict;
 
 import android.os.Bundle;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -20,8 +18,7 @@ public class ProfileActivity extends AppCompatActivity {
 
     EditText name, email;
 
-    ImageView editBtn, backBtn;
-    Button resetPasswordBtn;
+    ImageView editBtn;
 
     boolean isEditing = false;
 
@@ -38,9 +35,6 @@ public class ProfileActivity extends AppCompatActivity {
         email = findViewById(R.id.emailInput);
 
         editBtn = findViewById(R.id.editBtn);
-        backBtn = findViewById(R.id.backBtn);
-
-        resetPasswordBtn = findViewById(R.id.resetPasswordBtn);
 
         auth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
@@ -54,10 +48,6 @@ public class ProfileActivity extends AppCompatActivity {
         setFieldsEnabled(false);
 
         editBtn.setOnClickListener(v -> toggleEdit());
-
-        backBtn.setOnClickListener(v -> handleBack());
-
-        resetPasswordBtn.setOnClickListener(v -> sendResetPasswordEmail());
     }
 
     // ================= LOAD PROFILE =================
@@ -155,59 +145,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 Toast.LENGTH_SHORT
                         ).show()
                 );
-    }
-
-    // ================= RESET PASSWORD =================
-
-    private void sendResetPasswordEmail() {
-
-        String userEmail = email.getText().toString().trim();
-
-        if (userEmail.isEmpty()) {
-
-            Toast.makeText(
-                    this,
-                    "Email not found",
-                    Toast.LENGTH_SHORT
-            ).show();
-
-            return;
-        }
-
-        auth.sendPasswordResetEmail(userEmail)
-                .addOnSuccessListener(unused ->
-                        Toast.makeText(
-                                this,
-                                "Password reset email sent",
-                                Toast.LENGTH_LONG
-                        ).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(
-                                this,
-                                e.getMessage(),
-                                Toast.LENGTH_SHORT
-                        ).show()
-                );
-    }
-
-    // ================= BACK =================
-
-    private void handleBack() {
-
-        if (isEditing) {
-
-            new AlertDialog.Builder(this)
-                    .setTitle("Discard Changes?")
-                    .setMessage("You have unsaved changes.")
-                    .setPositiveButton("Discard",
-                            (dialog, which) -> finish())
-                    .setNegativeButton("Stay", null)
-                    .show();
-
-        } else {
-            finish();
-        }
     }
 
     // ================= ENABLE/DISABLE =================

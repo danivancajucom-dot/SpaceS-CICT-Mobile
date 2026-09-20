@@ -74,7 +74,7 @@ public class NotificationAdapter extends RecyclerView.Adapter<NotificationAdapte
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView title, desc, time, status;
         ImageView icon, archiveBtn;
-        Button viewActionBtn;
+        View viewActionBtn;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);

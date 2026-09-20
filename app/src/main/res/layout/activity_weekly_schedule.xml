@@ -1,112 +1,227 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:background="#F5F5F5"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/bg_page"
+    android:orientation="vertical">
 
+    <!-- Header / Toolbar -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
         android:background="@color/surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
         android:padding="16dp">
 
         <TextView
             android:layout_width="0dp"
-            android:layout_weight="1"
             android:layout_height="wrap_content"
-            android:text="Weekly Schedule"
-            android:textStyle="bold"
-            android:textSize="25sp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/lexend_bold"
+            android:text="@string/weekly_schedule"
             android:textColor="@color/ink_900"
-            android:layout_marginStart="12dp"
-            android:fontFamily="@font/lexend_bold"/>
-    </LinearLayout>
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        android:background="#FFFFFF">
+            android:textSize="22sp"
+            android:textStyle="bold" />
 
-        <ImageView android:id="@+id/weekPrevBtn" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_back" android:clickable="true" android:focusable="true"/>
-        <TextView android:id="@+id/weekLabelText" android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content" android:gravity="center" android:textStyle="bold" android:textSize="15sp" android:textColor="#111827" android:fontFamily="@font/lexend_bold"/>
-        <ImageView android:id="@+id/weekNextBtn" android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/ic_back" android:scaleX="-1" android:clickable="true" android:focusable="true"/>
-    </LinearLayout>
+        <androidx.cardview.widget.CardView
+            android:layout_width="wrap_content"
+            android:layout_height="36dp"
+            app:cardBackgroundColor="@color/brand_orange_soft"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="0dp">
 
-    <TextView android:id="@+id/termLabelText" android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center" android:paddingVertical="6dp" android:textColor="#6B7280" android:textSize="12sp" android:background="#FFFFFF" android:fontFamily="@font/lexend_regular"/>
-
-    <!-- HEADER ROW: fixed left corner + scrollable day labels, synced with grid below -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:background="#FFFFFF">
-
-        <View
-            android:layout_width="44dp"
-            android:layout_height="match_parent"
-            android:background="#F5F5F5"/>
-
-        <HorizontalScrollView
-            android:id="@+id/headerScroll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:scrollbars="none">
-
-            <LinearLayout
-                android:id="@+id/dayHeaderRow"
+            <TextView
+                android:id="@+id/scheduleImportBtn"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingVertical="8dp"/>
-        </HorizontalScrollView>
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/import_str"
+                android:textColor="@color/brand_orange_dark"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
     </LinearLayout>
 
-    <!-- CONTENT: time column (fixed) + grid (scrolls both directions) -->
+    <TextView
+        android:id="@+id/termLabelText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:fontFamily="@font/lexend_regular"
+        android:gravity="center"
+        android:paddingBottom="8dp"
+        android:textColor="@color/ink_500"
+        android:textSize="12sp"
+        tools:text="1st Semester 2024-2025" />
+
+    <!-- Week Navigation -->
     <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/surface"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="16dp"
+        android:paddingVertical="8dp">
+
+        <ImageButton
+            android:id="@+id/weekPrevBtn"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/previous_week"
+            android:scaleX="-1"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/ink_700" />
+
+        <TextView
+            android:id="@+id/weekLabelText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:fontFamily="@font/lexend_bold"
+            android:gravity="center"
+            android:textColor="@color/ink_900"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Oct 21 - Oct 27, 2024" />
+
+        <ImageButton
+            android:id="@+id/weekNextBtn"
+            android:layout_width="44dp"
+            android:layout_height="44dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="@string/next_week"
+            android:src="@drawable/ic_chevron_right"
+            app:tint="@color/ink_700" />
+    </LinearLayout>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:orientation="horizontal">
+        android:layout_weight="1">
 
-        <ScrollView
-            android:layout_width="44dp"
+        <!-- EMPTY STATE CONTAINER (Shown when byDay is completely empty) -->
+        <LinearLayout
+            android:id="@+id/emptyScheduleState"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="none"
-            android:id="@+id/timeColumnScroll">
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:background="@color/surface"
+            android:visibility="gone">
 
+            <ImageView
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:src="@drawable/ic_info"
+                app:tint="@color/ink_400" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/lexend_bold"
+                android:text="No events found for this week."
+                android:textColor="@color/ink_700"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:fontFamily="@font/lexend_regular"
+                android:text="Click Import Schedule to upload your class schedule."
+                android:textColor="@color/ink_400"
+                android:textSize="13sp"
+                android:gravity="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/scheduleGridContainer"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <!-- GRID HEADER -->
             <LinearLayout
-                android:id="@+id/timeColumn"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#F5F5F5"/>
-        </ScrollView>
+                android:background="@color/surface"
+                android:orientation="horizontal">
 
-        <HorizontalScrollView
-            android:id="@+id/contentHScroll"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent">
+                <View
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/surface_alt" />
 
-            <ScrollView
-                android:id="@+id/contentVScroll"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent">
-
-                <FrameLayout
-                    android:id="@+id/gridCanvas"
-                    android:layout_width="wrap_content"
+                <HorizontalScrollView
+                    android:id="@+id/headerScroll"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:background="#FFFFFF"/>
-            </ScrollView>
-        </HorizontalScrollView>
+                    android:layout_weight="1"
+                    android:scrollbars="none">
 
-    </LinearLayout>
+                    <LinearLayout
+                        android:id="@+id/dayHeaderRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingVertical="10dp" />
+                </HorizontalScrollView>
+            </LinearLayout>
+
+            <!-- GRID CONTENT -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <ScrollView
+                    android:id="@+id/timeColumnScroll"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:background="@color/surface_alt"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/timeColumn"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
+                </ScrollView>
+
+                <HorizontalScrollView
+                    android:id="@+id/contentHScroll"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
+                    <ScrollView
+                        android:id="@+id/contentVScroll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent">
+
+                        <FrameLayout
+                            android:id="@+id/gridCanvas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@color/surface" />
+                    </ScrollView>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
 
 </LinearLayout>

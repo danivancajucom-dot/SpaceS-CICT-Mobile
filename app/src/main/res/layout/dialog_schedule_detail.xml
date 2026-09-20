@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg">
+
+    <!-- HEADER -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="20dp">
+
+        <TextView
+            android:text="Schedule Details"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/ink_900"
+            android:fontFamily="@font/lexend_bold"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"/>
+
+        <ImageView
+            android:id="@+id/detailCloseBtn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:padding="8dp"
+            android:src="@drawable/ic_close"
+            android:layout_alignParentEnd="true"
+            android:background="@drawable/neutral_badge_soft"
+            app:tint="@color/ink_500"/>
+    </RelativeLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="24dp">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="20dp">
+
+            <!-- HERO CARD -->
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp">
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/detailRoomImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/room1"/>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:background="#66000000"/>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="bottom"
+                        android:padding="16dp"
+                        android:orientation="vertical">
+                        <TextView
+                            android:id="@+id/detailRoomName"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#FFFFFF"
+                            android:textSize="18sp"
+                            android:textStyle="bold"
+                            android:fontFamily="@font/lexend_bold"/>
+                        <TextView
+                            android:id="@+id/detailRoomSub"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="#CCFFFFFF"
+                            android:textSize="12sp"
+                            android:fontFamily="@font/lexend_regular"/>
+                    </LinearLayout>
+                </FrameLayout>
+            </androidx.cardview.widget.CardView>
+
+            <!-- METADATA LIST -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="20dp">
+
+                <!-- TYPE -->
+                <LinearLayout style="@style/DetailRow">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_type"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="TYPE"/>
+                        <TextView android:id="@+id/detailType" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- FACULTY -->
+                <LinearLayout style="@style/DetailRow">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_user"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="FACULTY"/>
+                        <TextView android:id="@+id/detailFaculty" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- ROOM -->
+                <LinearLayout style="@style/DetailRow">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_room"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="ROOM"/>
+                        <TextView android:id="@+id/detailRoomId" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- SUBJECT -->
+                <LinearLayout style="@style/DetailRow">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_subject"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="SUBJECT / SECTION"/>
+                        <TextView android:id="@+id/detailSubject" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- DATE -->
+                <LinearLayout style="@style/DetailRow">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_calendar"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="DATE"/>
+                        <TextView android:id="@+id/detailDate" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- TIME -->
+                <LinearLayout style="@style/DetailRow">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_clock"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="SCHEDULED"/>
+                        <TextView android:id="@+id/detailTime" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <!-- STATUS -->
+                <LinearLayout style="@style/DetailRow" android:layout_marginBottom="0dp">
+                    <ImageView style="@style/DetailIcon" android:src="@drawable/ic_info"/>
+                    <LinearLayout style="@style/DetailContent">
+                        <TextView style="@style/DetailLabel" android:text="STATUS"/>
+                        <TextView android:id="@+id/detailStatus" style="@style/DetailValue"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

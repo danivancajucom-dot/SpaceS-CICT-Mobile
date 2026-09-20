@@ -1,143 +1,272 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/bg_page">
+    android:background="@color/bg_page"
+    android:fillViewport="true">
 
-
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:padding="20dp">
 
-
-        <!-- GREETING ROW -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/brand_orange_soft">
-
-                <ImageView
-                    android:id="@+id/homeProfileImage"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:scaleType="centerCrop"
-                    android:src="@drawable/ic_user"/>
-            </androidx.cardview.widget.CardView>
-
-            <LinearLayout
-                android:layout_marginStart="12dp"
-                android:orientation="vertical"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/greetingName"
-                    android:text="Loading..."
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:textStyle="bold"
-                    android:textSize="20sp"
-                    android:textColor="@color/ink_900"
-                    android:fontFamily="@font/lexend_bold"/>
-
-                <TextView
-                    android:id="@+id/greetingDateText"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent"
-                    android:textColor="@color/ink_500"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/lexend_regular"/>
-            </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                app:cardCornerRadius="14dp"
-                app:cardElevation="0dp"
-                app:cardBackgroundColor="@color/brand_orange">
-
-                <Button
-                    android:id="@+id/reserveButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/transparent"
-                    android:text="+ Reserve Room"
-                    android:paddingHorizontal="16dp"
-                    android:textAllCaps="false"
-                    android:textColor="#FFFFFF"
-                    android:textSize="13sp"
-                    android:fontFamily="@font/lexend_bold"/>
-            </androidx.cardview.widget.CardView>
-        </LinearLayout>
-
-        <!-- TODAY'S SCHEDULE CARD -->
+        <!-- Announcement Card -->
         <androidx.cardview.widget.CardView
+            android:id="@+id/announcementCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            app:cardCornerRadius="20dp"
+            android:layout_marginBottom="20dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/brand_orange_soft"
+            app:cardCornerRadius="18dp"
             app:cardElevation="1dp"
-            app:cardBackgroundColor="@color/surface">
+            app:layout_constraintTop_toTopOf="parent">
 
             <LinearLayout
-                android:orientation="vertical"
-                android:padding="20dp"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
 
                 <LinearLayout
-                    android:layout_marginTop="24dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
                     android:orientation="horizontal">
 
                     <TextView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Today's Schedule"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:textColor="@color/ink_900"
-                        android:fontFamily="@font/lexend_bold"/>
+                        android:fontFamily="@font/lexend_bold"
+                        android:text="@string/announcement_header"
+                        android:textColor="@color/brand_orange"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
-                    <androidx.cardview.widget.CardView
+                    <TextView
+                        android:id="@+id/announcementTimeText"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        app:cardCornerRadius="999dp"
-                        app:cardElevation="0dp"
+                        android:fontFamily="@font/lexend_regular"
+                        android:textColor="@color/ink_500"
+                        android:textSize="12sp" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/announcementSenderText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:fontFamily="@font/lexend_bold"
+                    android:textColor="@color/ink_900"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/announcementContentText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:fontFamily="@font/lexend_regular"
+                    android:maxLines="2"
+                    android:textColor="@color/ink_700"
+                    android:textSize="13sp" />
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    android:layout_height="38dp"
+                    android:layout_gravity="end"
+                    android:layout_marginTop="12dp"
+                    app:cardBackgroundColor="@color/brand_orange"
+                    app:cardCornerRadius="12dp"
+                    app:cardElevation="0dp">
+
+                    <TextView
+                        android:id="@+id/announcementViewBtn"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:fontFamily="@font/lexend_bold"
+                        android:gravity="center"
+                        android:paddingHorizontal="18dp"
+                        android:text="@string/view_more"
+                        android:textColor="#FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Greeting Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/profileCard"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginTop="8dp"
+            app:cardBackgroundColor="@color/brand_orange_soft"
+            app:cardCornerRadius="16dp"
+            app:cardElevation="0dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/announcementCard">
+
+            <ImageView
+                android:id="@+id/homeProfileImage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:contentDescription="@string/profile_image"
+                android:scaleType="centerCrop"
+                android:src="@drawable/ic_user" />
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:id="@+id/greetingLayout"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="14dp"
+            android:orientation="vertical"
+            app:layout_constraintBottom_toBottomOf="@+id/profileCard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profileCard"
+            app:layout_constraintTop_toTopOf="@+id/profileCard">
+
+            <TextView
+                android:id="@+id/greetingName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:fontFamily="@font/lexend_bold"
+                android:maxLines="1"
+                android:text="Loading..."
+                android:textColor="@color/ink_900"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/greetingDateText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/lexend_regular"
+                android:textColor="@color/ink_500"
+                android:textSize="12sp"
+                tools:text="Monday, Oct 21" />
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/reserveBtnCard"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_marginTop="16dp"
+            app:cardBackgroundColor="@color/brand_orange"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/profileCard">
+
+            <TextView
+                android:id="@+id/reserveButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"
+                android:gravity="center"
+                android:paddingHorizontal="16dp"
+                android:text="@string/reserve_action"
+                android:textColor="#FFFFFF"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+        </androidx.cardview.widget.CardView>
+
+        <!-- Stats Section -->
+        <LinearLayout
+            android:id="@+id/statsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:orientation="vertical"
+            android:visibility="gone"
+            app:layout_constraintTop_toBottomOf="@+id/reserveBtnCard">
+
+            <LinearLayout
+                android:id="@+id/statsRow1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="12dp"
+                android:orientation="horizontal" />
+
+            <LinearLayout
+                android:id="@+id/statsRow2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </LinearLayout>
+
+        <!-- Today's Schedule -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/todayScheduleCardContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="gone"
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="1dp"
+            app:layout_constraintTop_toBottomOf="@+id/statsContainer">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/todayLabel"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/lexend_bold"
+                        android:text="@string/todays_schedule"
+                        android:textColor="@color/ink_900"
+                        android:textSize="18sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/seeAllBtnCard"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/seeAllBtnCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         app:cardBackgroundColor="@color/brand_orange_soft"
-                        xmlns:app="http://schemas.android.com/apk/res-auto">
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <TextView
                             android:id="@+id/seeAllText"
-                            android:text="See All"
-                            android:paddingHorizontal="16dp"
-                            android:paddingVertical="8dp"
-                            android:textColor="@color/brand_orange"
-                            android:textSize="12sp"
-                            android:textStyle="bold"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:clickable="true"
                             android:focusable="true"
-                            android:fontFamily="@font/lexend_bold"/>
+                            android:fontFamily="@font/lexend_bold"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:text="@string/see_all"
+                            android:textColor="@color/brand_orange"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
                     </androidx.cardview.widget.CardView>
-                </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <!-- SCHEDULE CARD (photo card, shown when today has an item) -->
+                <!-- Schedule Item Card -->
                 <androidx.cardview.widget.CardView
                     android:id="@+id/scheduleCard"
                     android:layout_width="match_parent"
@@ -153,14 +282,14 @@
                         <ImageView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
+                            android:background="@color/ink_300"
                             android:scaleType="centerCrop"
-                            android:src="@drawable/room2"
-                            android:background="@color/ink_300"/>
+                            android:src="@drawable/room2" />
 
                         <View
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:background="#59000000"/>
+                            android:background="#59000000" />
 
                         <TextView
                             android:id="@+id/scheduleStatusBadge"
@@ -169,114 +298,166 @@
                             android:layout_gravity="top|start"
                             android:layout_margin="12dp"
                             android:background="@color/brand_orange"
-                            android:paddingHorizontal="12dp"
-                            android:paddingVertical="6dp"
-                            android:text="ONGOING"
+                            android:fontFamily="@font/lexend_bold"
+                            android:paddingHorizontal="10dp"
+                            android:paddingVertical="4dp"
+                            android:text="@string/ongoing"
                             android:textColor="#FFFFFF"
-                            android:textSize="10sp"
-                            android:textStyle="bold"
-                            android:fontFamily="@font/lexend_bold"/>
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
 
                         <LinearLayout
-                            android:layout_gravity="bottom"
-                            android:padding="16dp"
-                            android:orientation="vertical"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content">
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom"
+                            android:orientation="vertical"
+                            android:padding="16dp">
 
                             <TextView
                                 android:id="@+id/scheduleRoomText"
-                                android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/lexend_bold"
                                 android:textColor="#FFFFFF"
                                 android:textSize="16sp"
-                                android:textStyle="bold"
-                                android:fontFamily="@font/lexend_bold"/>
+                                android:textStyle="bold" />
 
                             <TextView
                                 android:id="@+id/scheduleSubjectText"
-                                android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
-                                android:textColor="#FFFFFF"
-                                android:textSize="13sp"
+                                android:layout_height="wrap_content"
                                 android:alpha="0.9"
-                                android:fontFamily="@font/lexend_regular"/>
+                                android:fontFamily="@font/lexend_regular"
+                                android:textColor="#FFFFFF"
+                                android:textSize="13sp" />
 
                             <TextView
                                 android:id="@+id/scheduleTimeText"
-                                android:layout_height="wrap_content"
                                 android:layout_width="match_parent"
-                                android:textColor="#FFFFFF"
-                                android:textSize="11sp"
-                                android:alpha="0.8"
+                                android:layout_height="wrap_content"
                                 android:layout_marginTop="4dp"
-                                android:fontFamily="@font/lexend_regular"/>
+                                android:alpha="0.8"
+                                android:fontFamily="@font/lexend_regular"
+                                android:textColor="#FFFFFF"
+                                android:textSize="12sp" />
                         </LinearLayout>
                     </FrameLayout>
                 </androidx.cardview.widget.CardView>
 
-                <!-- EMPTY STATE, matching web's gray placeholder -->
+                <!-- Empty State -->
                 <LinearLayout
                     android:id="@+id/noScheduleText"
                     android:layout_width="match_parent"
-                    android:layout_height="220dp"
+                    android:layout_height="180dp"
                     android:layout_marginTop="16dp"
                     android:background="@color/surface_alt"
-                    android:orientation="vertical"
                     android:gravity="center"
+                    android:orientation="vertical"
                     android:visibility="gone">
 
                     <TextView
-                        android:text="No classes scheduled for today."
-                        android:textColor="@color/ink_900"
-                        android:textStyle="bold"
-                        android:textSize="14sp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/lexend_bold"/>
+                        android:fontFamily="@font/lexend_bold"
+                        android:text="@string/no_schedule_today"
+                        android:textColor="@color/ink_900"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                     <TextView
-                        android:text="Enjoy the free day, or check your upcoming classes below."
-                        android:textColor="@color/ink_500"
-                        android:layout_marginStart="8dp"
-                        android:textSize="12sp"
-                        android:layout_marginTop="4dp"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/lexend_regular"/>
+                        android:layout_marginTop="4dp"
+                        android:fontFamily="@font/lexend_regular"
+                        android:gravity="center"
+                        android:paddingHorizontal="16dp"
+                        android:text="@string/no_schedule_subtitle"
+                        android:textColor="@color/ink_500"
+                        android:textSize="12sp" />
                 </LinearLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
 
-        <!-- UPCOMING -->
-        <TextView
-            android:text="Upcoming Classes"
-            android:layout_height="wrap_content"
+        <!-- Upcoming Section -->
+        <androidx.cardview.widget.CardView
+            android:id="@+id/upcomingCardContainer"
             android:layout_width="match_parent"
-            android:textStyle="bold"
-            android:textSize="17sp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:textColor="@color/ink_900"
-            android:fontFamily="@font/lexend_bold"/>
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/upcomingRecycler"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:layout_marginTop="12dp"/>
-
-        <TextView
-            android:id="@+id/noUpcomingText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="24dp"
-            android:gravity="center"
-            android:text="No upcoming classes found."
-            android:textColor="@color/ink_500"
             android:visibility="gone"
-            android:fontFamily="@font/lexend_regular"/>
+            app:cardBackgroundColor="@color/surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="1dp"
+            app:layout_constraintTop_toBottomOf="@+id/todayScheduleCardContainer">
 
-    </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:id="@+id/upcomingTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:fontFamily="@font/lexend_bold"
+                        android:text="@string/upcoming_classes"
+                        android:textColor="@color/ink_900"
+                        android:textSize="17sp"
+                        android:textStyle="bold" />
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/allUpcomingBtnCard"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_centerVertical="true"
+                        app:cardBackgroundColor="@color/brand_orange_soft"
+                        app:cardCornerRadius="20dp"
+                        app:cardElevation="0dp">
+
+                        <TextView
+                            android:id="@+id/allUpcomingText"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="true"
+                            android:focusable="true"
+                            android:fontFamily="@font/lexend_bold"
+                            android:paddingHorizontal="12dp"
+                            android:paddingVertical="6dp"
+                            android:text="All \u2192"
+                            android:textColor="@color/brand_orange"
+                            android:textSize="12sp"
+                            android:textStyle="bold" />
+                    </androidx.cardview.widget.CardView>
+                </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/upcomingRecycler"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:nestedScrollingEnabled="false" />
+
+                <TextView
+                    android:id="@+id/noUpcomingText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lexend_regular"
+                    android:gravity="center"
+                    android:padding="24dp"
+                    android:text="@string/no_upcoming"
+                    android:textColor="@color/ink_500"
+                    android:visibility="gone" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

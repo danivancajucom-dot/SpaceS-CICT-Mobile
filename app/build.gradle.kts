@@ -47,8 +47,12 @@ dependencies {
         implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
         implementation("com.google.firebase:firebase-auth")
         implementation("com.google.firebase:firebase-firestore")
+        implementation("com.google.firebase:firebase-functions")
+        implementation("com.google.firebase:firebase-messaging")
         implementation("com.github.bumptech.glide:glide:4.16.0")
+        implementation("androidx.gridlayout:gridlayout:1.0.0")
+        implementation("com.tom-roush:pdfbox-android:2.0.27.0")
+        implementation("com.google.android.flexbox:flexbox:3.0.0")
 
     }
 }
-

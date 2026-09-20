@@ -15,6 +15,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.Button;
+
 
 import android.app.Dialog;
 import android.graphics.drawable.ColorDrawable;
@@ -37,6 +39,7 @@ public class WeeklySchedulePage {
     FrameLayout gridCanvas;
     TextView weekLabelText, termLabelText;
     View prevBtn, nextBtn;
+    View emptyScheduleState, scheduleGridContainer;
     HorizontalScrollView headerScroll, contentHScroll;
     ScrollView timeColumnScroll, contentVScroll;
     int weekOffset = 0;
@@ -53,10 +56,17 @@ public class WeeklySchedulePage {
         termLabelText = view.findViewById(R.id.termLabelText);
         prevBtn = view.findViewById(R.id.weekPrevBtn);
         nextBtn = view.findViewById(R.id.weekNextBtn);
+        emptyScheduleState = view.findViewById(R.id.emptyScheduleState);
+        scheduleGridContainer = view.findViewById(R.id.scheduleGridContainer);
         headerScroll = view.findViewById(R.id.headerScroll);
         contentHScroll = view.findViewById(R.id.contentHScroll);
         timeColumnScroll = view.findViewById(R.id.timeColumnScroll);
         contentVScroll = view.findViewById(R.id.contentVScroll);
+        View importButton = view.findViewById(R.id.scheduleImportBtn);
+        if (importButton != null && context instanceof DashboardActivity) {
+            importButton.setOnClickListener(v ->
+                    ((DashboardActivity) context).openScheduleImport());
+        }
 
         hourHeightPx = dp(56);
         colWidthPx = dp(110);
@@ -116,6 +126,28 @@ public class WeeklySchedulePage {
             public void onResult(Map<String, List<ScheduleLoader.ScheduleItem>> byDay, String weekLabel, String termLabel) {
                 weekLabelText.setText(weekLabel);
                 termLabelText.setText(termLabel != null ? termLabel : "");
+
+                // Check if all lists are empty or null
+                boolean isEmpty = true;
+                if (byDay != null) {
+                    for (List<ScheduleLoader.ScheduleItem> list : byDay.values()) {
+                        if (list != null && !list.isEmpty()) {
+                            isEmpty = false;
+                            break;
+                        }
+                    }
+                }
+
+                if (emptyScheduleState != null && scheduleGridContainer != null) {
+                    if (isEmpty) {
+                        emptyScheduleState.setVisibility(View.VISIBLE);
+                        scheduleGridContainer.setVisibility(View.GONE);
+                    } else {
+                        emptyScheduleState.setVisibility(View.GONE);
+                        scheduleGridContainer.setVisibility(View.VISIBLE);
+                    }
+                }
+
                 renderHeaders();
                 renderGrid(byDay);
             }
@@ -228,10 +260,22 @@ public class WeeklySchedulePage {
         lp.topMargin = top + dp(1);
         block.setLayoutParams(lp);
 
+        if (item.released) {
+            TextView releasedBadge = new TextView(context);
+            releasedBadge.setText("Released " + formatTime(item.releasedAtTime));
+            releasedBadge.setTextColor(Color.parseColor("#B91C1C"));
+            releasedBadge.setTextSize(9);
+            releasedBadge.setTypeface(null, Typeface.BOLD);
+            block.addView(releasedBadge);
+            block.setAlpha(0.72f);
+        }
+
         block.setOnClickListener(v -> {
             String status = computeStatus(item);
-            if (item.kind.equals("schedule") && !status.equals("COMPLETED")) {
-                showReleaseDialog(item); // matches web: schedule tap goes straight to release, no details step
+            // Already released -> view only. Otherwise a schedule tap goes straight
+            // to the release sheet, matching the web's behaviour.
+            if (item.kind.equals("schedule") && !item.released && !status.equals("COMPLETED")) {
+                showReleaseDialog(item);
             } else {
                 showDetailsDialog(item);
             }
@@ -254,67 +298,40 @@ public class WeeklySchedulePage {
     }
 
     void showDetailsDialog(ScheduleLoader.ScheduleItem item) {
-        LinearLayout root = new LinearLayout(context);
-        root.setOrientation(LinearLayout.VERTICAL);
-        root.setPadding(dp(24), dp(20), dp(24), dp(20));
-        root.setBackgroundColor(Color.WHITE);
-
-        TextView title = new TextView(context);
-        title.setText(titleFor(item.kind));
-        title.setTextColor(Color.parseColor("#1C1917"));
-        title.setTypeface(null, Typeface.BOLD);
-        title.setTextSize(18);
-        LinearLayout.LayoutParams titleParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        titleParams.bottomMargin = dp(16);
-        title.setLayoutParams(titleParams);
-        root.addView(title);
-
-        addDetailRow(root, "Subject", item.subject);
-        addDetailRow(root, "Room", item.roomName);
-        addDetailRow(root, "Date", item.date);
-        addDetailRow(root, "Time", formatTime(item.startTime) + " - " + formatTime(item.endTime));
-        if (item.section != null && !item.section.isEmpty()) addDetailRow(root, "Section", item.section);
-        if (item.faculty != null && !item.faculty.isEmpty()) addDetailRow(root, "Faculty", item.faculty);
-        if (item.kind.equals("reassignment") && item.originalRoom != null) {
-            addDetailRow(root, "Moved from", item.originalRoom);
-        }
-
-        androidx.cardview.widget.CardView closeCard = new androidx.cardview.widget.CardView(context);
-        closeCard.setRadius(dp(14));
-        closeCard.setCardElevation(0);
-        closeCard.setCardBackgroundColor(Color.parseColor("#F97316"));
-        LinearLayout.LayoutParams closeCardParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(48));
-        closeCardParams.topMargin = dp(20);
-        closeCard.setLayoutParams(closeCardParams);
-
-        TextView closeBtn = new TextView(context);
-        closeBtn.setText("Close");
-        closeBtn.setTextColor(Color.WHITE);
-        closeBtn.setTypeface(null, Typeface.BOLD);
-        closeBtn.setGravity(Gravity.CENTER);
-        closeBtn.setLayoutParams(new FrameLayout.LayoutParams(
-                FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        closeCard.addView(closeBtn);
-        root.addView(closeCard);
-
         android.app.Dialog dialog = new android.app.Dialog(context);
         dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
-        dialog.setContentView(root);
+        View dv = android.view.LayoutInflater.from(context).inflate(R.layout.dialog_schedule_details, null);
+        dialog.setContentView(dv);
         dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(Color.TRANSPARENT));
 
-        closeBtn.setOnClickListener(v -> dialog.dismiss());
+        TextView bannerRoom = dv.findViewById(R.id.bannerRoom);
+        TextView bannerSubtitle = dv.findViewById(R.id.bannerSubtitle);
+        TextView detailType = dv.findViewById(R.id.detailType);
+        TextView detailFaculty = dv.findViewById(R.id.detailFaculty);
+        TextView detailRoom = dv.findViewById(R.id.detailRoom);
+        TextView detailSubject = dv.findViewById(R.id.detailSubject);
+        TextView detailDate = dv.findViewById(R.id.detailDate);
+        TextView detailTime = dv.findViewById(R.id.detailTime);
+        TextView detailStatus = dv.findViewById(R.id.detailStatus);
+        View closeBtn = dv.findViewById(R.id.dialogCloseBtn);
+
+        if (bannerRoom != null) bannerRoom.setText(item.roomName != null ? item.roomName : "Classroom");
+        String fullSub = (item.subject != null ? item.subject : "");
+        if (item.section != null && !item.section.isEmpty()) fullSub += " • " + item.section;
+        if (bannerSubtitle != null) bannerSubtitle.setText(fullSub);
+        if (detailType != null) detailType.setText(titleFor(item.kind));
+        if (detailFaculty != null) detailFaculty.setText(item.faculty != null && !item.faculty.isEmpty() ? item.faculty : "N/A");
+        if (detailRoom != null) detailRoom.setText(item.roomName != null ? item.roomName : "N/A");
+        if (detailSubject != null) detailSubject.setText(fullSub);
+        if (detailDate != null) detailDate.setText(item.date != null ? item.date : "N/A");
+        if (detailTime != null) detailTime.setText(formatTime(item.startTime) + " — " + formatTime(item.endTime));
+        if (detailStatus != null) detailStatus.setText(computeStatus(item));
+
+        if (closeBtn != null) closeBtn.setOnClickListener(v -> dialog.dismiss());
 
         dialog.show();
         int screenWidth = context.getResources().getDisplayMetrics().widthPixels;
         dialog.getWindow().setLayout((int) (screenWidth * 0.88), android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
-
-        // Rounded corners for the dialog itself
-        android.graphics.drawable.GradientDrawable bg = new android.graphics.drawable.GradientDrawable();
-        bg.setColor(Color.WHITE);
-        bg.setCornerRadius(dp(20));
-        root.setBackground(bg);
     }
 
     void addDetailRow(LinearLayout parent, String label, String value) {
@@ -434,17 +451,93 @@ public class WeeklySchedulePage {
         label.setLayoutParams(labelParams);
         root.addView(label);
 
+        // Preset reasons, mirroring the web's ReleaseRoomModal
+        final String[] chosenReason = {""};
+        final String[] REASONS = {
+                "Class cancelled",
+                "Moved online",
+                "Faculty unavailable",
+                "Room not needed",
+                "Other"
+        };
+
+        com.google.android.flexbox.FlexboxLayout reasonChips =
+                new com.google.android.flexbox.FlexboxLayout(context);
+        reasonChips.setFlexWrap(com.google.android.flexbox.FlexWrap.WRAP);
+        LinearLayout.LayoutParams chipsParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        chipsParams.topMargin = dp(10);
+        reasonChips.setLayoutParams(chipsParams);
+
+        final TextView[] chipViews = new TextView[REASONS.length];
+        for (int i = 0; i < REASONS.length; i++) {
+            final String reason = REASONS[i];
+            TextView chip = new TextView(context);
+            chip.setText(reason);
+            chip.setTextSize(12);
+            chip.setPadding(dp(14), dp(9), dp(14), dp(9));
+            chip.setBackgroundResource(R.drawable.input_field_bg);
+            chip.setTextColor(Color.parseColor("#44403C"));
+            com.google.android.flexbox.FlexboxLayout.LayoutParams chipParams =
+                    new com.google.android.flexbox.FlexboxLayout.LayoutParams(
+                            com.google.android.flexbox.FlexboxLayout.LayoutParams.WRAP_CONTENT,
+                            com.google.android.flexbox.FlexboxLayout.LayoutParams.WRAP_CONTENT);
+            chipParams.setMargins(0, 0, dp(8), dp(8));
+            chip.setLayoutParams(chipParams);
+            chipViews[i] = chip;
+            chip.setOnClickListener(v -> {
+                chosenReason[0] = reason;
+                for (TextView other : chipViews) {
+                    boolean selected = other.getText().toString().equals(reason);
+                    if (selected) {
+                        other.setBackgroundColor(Color.parseColor("#F97316"));
+                        other.setTextColor(Color.WHITE);
+                    } else {
+                        other.setBackgroundResource(R.drawable.input_field_bg);
+                        other.setTextColor(Color.parseColor("#44403C"));
+                    }
+                }
+            });
+            reasonChips.addView(chip);
+        }
+        root.addView(reasonChips);
+
+        TextView detailsLabel = new TextView(context);
+        detailsLabel.setText("Additional details (optional)");
+        detailsLabel.setTextColor(Color.parseColor("#78716C"));
+        detailsLabel.setTextSize(11.5f);
+        LinearLayout.LayoutParams detailsLabelParams = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        detailsLabelParams.topMargin = dp(8);
+        detailsLabel.setLayoutParams(detailsLabelParams);
+        root.addView(detailsLabel);
+
         EditText reasonInput = new EditText(context);
-        reasonInput.setHint("e.g. Class cancelled, moved online, etc.");
+        reasonInput.setHint("Anything the clerk should know");
         reasonInput.setBackgroundResource(R.drawable.input_field_bg);
         reasonInput.setPadding(dp(14), dp(14), dp(14), dp(14));
         reasonInput.setTextSize(14);
         LinearLayout.LayoutParams inputParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT, dp(90));
+                LinearLayout.LayoutParams.MATCH_PARENT, dp(80));
         inputParams.topMargin = dp(8);
         reasonInput.setLayoutParams(inputParams);
         reasonInput.setGravity(Gravity.TOP | Gravity.START);
         root.addView(reasonInput);
+
+        // Tell the user up-front that releasing mid-class keeps the elapsed time
+        String releaseStatus = computeStatus(item);
+        if ("ONGOING".equals(releaseStatus)) {
+            TextView notice = new TextView(context);
+            notice.setText("This class is ongoing. The time already used will be kept, "
+                    + "and the room is freed from now onwards.");
+            notice.setTextColor(Color.parseColor("#B45309"));
+            notice.setTextSize(11.5f);
+            LinearLayout.LayoutParams noticeParams = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            noticeParams.topMargin = dp(10);
+            notice.setLayoutParams(noticeParams);
+            root.addView(notice);
+        }
 
         LinearLayout buttonRow = new LinearLayout(context);
         buttonRow.setOrientation(LinearLayout.HORIZONTAL);
@@ -500,13 +593,18 @@ public class WeeklySchedulePage {
 
         cancelCard.setOnClickListener(v -> dialog.dismiss());
         confirmCard.setOnClickListener(v -> {
-            String reason = reasonInput.getText().toString().trim();
+            String details = reasonInput.getText().toString().trim();
+            String reason = chosenReason[0];
             if (reason.isEmpty()) {
-                Toast.makeText(context, "Please provide a reason", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, "Please choose a reason", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            if ("Other".equals(reason) && details.isEmpty()) {
+                Toast.makeText(context, "Please describe the reason", Toast.LENGTH_SHORT).show();
                 return;
             }
             dialog.dismiss();
-            submitRelease(item, reason);
+            submitRelease(item, reason, details);
         });
 
         dialog.show();
@@ -514,18 +612,43 @@ public class WeeklySchedulePage {
         dialog.getWindow().setLayout((int) (screenWidth * 0.88), android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
 
-    void submitRelease(ScheduleLoader.ScheduleItem item, String reason) {
+    void submitRelease(ScheduleLoader.ScheduleItem item, String reason, String detailsText) {
         String uid = FirebaseAuth.getInstance().getUid();
         if (uid == null) return;
+
+        if (context instanceof android.app.Activity) {
+            LoadingOverlay.show((android.app.Activity) context, "Releasing room...");
+        }
+
+        // If the class is running right now, record the moment we handed the room
+        // back so the elapsed time is preserved. An upcoming release leaves this
+        // null, which hides the occurrence entirely - same rule as the web.
+        String effectiveEndTime = null;
+        java.util.Calendar now = java.util.Calendar.getInstance();
+        int nowMinutes = now.get(java.util.Calendar.HOUR_OF_DAY) * 60
+                + now.get(java.util.Calendar.MINUTE);
+        int startMinutes = ScheduleLoader.minutesOf(item.startTime);
+        int endMinutes = ScheduleLoader.minutesOf(item.endTime);
+        String todayStr = ScheduleLoader.toDateStr(now);
+        if (todayStr.equals(item.date) && nowMinutes > startMinutes && nowMinutes < endMinutes) {
+            effectiveEndTime = String.format(Locale.US, "%02d:%02d",
+                    now.get(java.util.Calendar.HOUR_OF_DAY), now.get(java.util.Calendar.MINUTE));
+        }
+        final String finalEffectiveEnd = effectiveEndTime;
 
         FirebaseFirestore.getInstance().collection("users").document(uid).get()
                 .addOnSuccessListener(userDoc -> {
                     String first = userDoc.getString("firstName");
                     String last = userDoc.getString("lastName");
                     String fullName = ((first != null ? first : "") + " " + (last != null ? last : "")).trim();
+                    if (fullName.isEmpty()) fullName = "Faculty";
+                    final String finalFullName = fullName;
 
                     Map<String, Object> release = new HashMap<>();
                     release.put("scheduleId", item.id);
+                    // roomId was missing before, so releases never freed the right
+                    // room in availability checks.
+                    release.put("roomId", item.roomId);
                     release.put("roomName", item.roomName);
                     release.put("date", item.date);
                     release.put("day", ScheduleLoader.dayAbbrevForDate(item.date));
@@ -533,27 +656,46 @@ public class WeeklySchedulePage {
                     release.put("section", item.section != null ? item.section : "");
                     release.put("startTime", item.startTime);
                     release.put("endTime", item.endTime);
+                    release.put("effectiveEndTime", finalEffectiveEnd);
                     release.put("faculty", fullName);
                     release.put("releasedBy", uid);
                     release.put("releasedByName", fullName);
                     release.put("reason", reason);
+                    release.put("details", detailsText == null ? "" : detailsText);
                     release.put("status", "released");
                     release.put("releasedAt", Timestamp.now());
 
                     FirebaseFirestore.getInstance().collection("roomReleases").add(release)
                             .addOnSuccessListener(ref -> {
-                                notifyRelease(uid, fullName, item.roomName, item.subject, item.date, item.startTime, item.endTime);
+                                notifyRelease(uid, finalFullName, item.roomName, item.subject,
+                                        item.date, item.startTime, item.endTime);
 
                                 Map<String, Object> details = new HashMap<>();
                                 details.put("reason", reason);
+                                details.put("details", detailsText == null ? "" : detailsText);
+                                details.put("effectiveEndTime", finalEffectiveEnd);
+                                details.put("partiallyReleased", finalEffectiveEnd != null);
+
                                 ActivityLogger.log("Released Room", "UPDATE",
                                         item.roomName + " | " + item.subject, "SUCCESS", details, () -> {
-                                            Toast.makeText(context, "Room released successfully!", Toast.LENGTH_SHORT).show();
+                                            LoadingOverlay.hide();
+                                            Toast.makeText(context, finalEffectiveEnd != null
+                                                            ? "Room released. Time used up to "
+                                                            + finalEffectiveEnd + " was kept."
+                                                            : "Room released successfully!",
+                                                    Toast.LENGTH_LONG).show();
                                             load();
                                         });
                             })
-                            .addOnFailureListener(e ->
-                                    Toast.makeText(context, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+                            .addOnFailureListener(e -> {
+                                LoadingOverlay.hide();
+                                Toast.makeText(context, "Failed: " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show();
+                            });
+                })
+                .addOnFailureListener(e -> {
+                    LoadingOverlay.hide();
+                    Toast.makeText(context, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
     }
 
@@ -561,21 +703,12 @@ public class WeeklySchedulePage {
 
     void notifyRelease(String facultyId, String facultyName, String roomName, String subject,
                        String date, String startTime, String endTime) {
-        FirebaseFirestore.getInstance().collection("users").get().addOnSuccessListener(snap -> {
-            for (com.google.firebase.firestore.DocumentSnapshot userDoc : snap.getDocuments()) {
-                String role = userDoc.getString("role");
-                if (role == null) continue;
-                String r = role.toLowerCase(Locale.US);
-                String ownerType = r.equals("clerk") ? "clerk"
-                        : (r.contains("department") && r.contains("head")) ? "department-head" : null;
-                if (ownerType == null) continue;
-
-                NotificationHelper.send(userDoc.getId(), ownerType, "Room Released",
-                        facultyName + " released " + roomName + " for " + subject + " on " + date
-                                + " (" + startTime + " - " + endTime + ").",
-                        "room-release", "NEW");
-            }
-        });
+        // The web notifies Clerk and Admin. Sending to "department-head" meant
+        // Admins never saw releases raised from the phone.
+        NotificationHelper.notifyClerkAndAdmin("Room Released",
+                facultyName + " released " + roomName + " for " + subject + " on " + date
+                        + " (" + startTime + " - " + endTime + ").",
+                "room-release", "NEW", null);
 
         NotificationHelper.send(facultyId, "faculty", "Room Released",
                 "You successfully released " + roomName + " (" + subject + ") on " + date

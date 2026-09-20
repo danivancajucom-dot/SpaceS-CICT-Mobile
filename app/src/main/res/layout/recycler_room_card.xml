@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="16dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="1dp"
+    app:cardBackgroundColor="@color/surface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="16dp">
+
+            <!-- ICON BOX -->
+            <androidx.cardview.widget.CardView
+                android:id="@+id/roomIconCard"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                app:cardCornerRadius="14dp"
+                app:cardElevation="0dp"
+                app:cardBackgroundColor="@color/surface_alt">
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="16dp"
+                    android:src="@drawable/ic_room"
+                    app:tint="@color/brand_orange"/>
+            </androidx.cardview.widget.CardView>
+
+            <!-- STATUS BADGE -->
+            <TextView
+                android:id="@+id/roomStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/neutral_badge_soft"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="4dp"
+                android:text="Available"
+                android:textColor="@color/success"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <!-- INFO -->
+            <LinearLayout
+                android:layout_toEndOf="@id/roomIconCard"
+                android:layout_toStartOf="@id/roomStatusBadge"
+                android:layout_marginStart="16dp"
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:id="@+id/roomName"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:textColor="@color/ink_900"
+                    android:fontFamily="@font/lexend_bold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+                <TextView
+                    android:id="@+id/roomType"
+                    android:textSize="12sp"
+                    android:textColor="@color/ink_500"
+                    android:fontFamily="@font/lexend_regular"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp"
+                    android:gravity="center_vertical">
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_capacity"
+                        app:tint="@color/ink_400"/>
+                    <TextView
+                        android:id="@+id/roomCapacity"
+                        android:textSize="12sp"
+                        android:textColor="@color/ink_700"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="@font/lexend_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                    <ImageView
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:layout_marginStart="14dp"
+                        android:src="@drawable/ic_room"
+                        app:tint="@color/ink_400"/>
+                    <TextView
+                        android:id="@+id/roomFloor"
+                        android:textSize="12sp"
+                        android:textColor="@color/ink_700"
+                        android:layout_marginStart="6dp"
+                        android:fontFamily="@font/lexend_bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+                <!-- FEATURE TAGS -->
+                <com.google.android.flexbox.FlexboxLayout
+                    android:id="@+id/featureTags"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    app:flexWrap="wrap"/>
+            </LinearLayout>
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider"
+            android:layout_marginHorizontal="16dp"/>
+
+        <!-- BOTTOM ACTION -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+            <TextView
+                android:id="@+id/roomStatusSummary"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:text="Available Now"
+                android:textColor="@color/ink_700"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:fontFamily="@font/lexend_bold"
+                app:drawableStartCompat="@drawable/ic_check"
+                app:drawableTint="@color/brand_orange"
+                android:drawablePadding="8dp"/>
+
+            <TextView
+                android:id="@+id/viewScheduleButton"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:paddingHorizontal="16dp"
+                android:gravity="center"
+                android:text="Schedule"
+                android:textColor="@color/ink_600"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="@drawable/input_field_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <TextView
+                android:id="@+id/reserveButton"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:layout_marginStart="8dp"
+                android:paddingHorizontal="20dp"
+                android:gravity="center"
+                android:text="Reserve"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="@drawable/orange_button_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"/>
+
+            <TextView
+                android:id="@+id/watchButton"
+                android:layout_width="wrap_content"
+                android:layout_height="38dp"
+                android:layout_marginStart="8dp"
+                android:paddingHorizontal="16dp"
+                android:gravity="center"
+                android:text="Watch"
+                android:textColor="@color/brand_orange"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="@drawable/orange_chip_bg"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"
+                android:visibility="gone"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

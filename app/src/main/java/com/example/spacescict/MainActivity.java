@@ -1,35 +1,38 @@
 package com.example.spacescict;
 
+import android.app.AlertDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.InputType;
+import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Locale;
+
 public class MainActivity extends AppCompatActivity {
 
-    FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
         mAuth = FirebaseAuth.getInstance();
 
-        Button loginButton = findViewById(R.id.loginButton);
+        View loginButton = findViewById(R.id.loginButton);
         EditText passwordInput = findViewById(R.id.passwordInput);
         EditText emailInput = findViewById(R.id.emailInput);
         ImageView togglePassword = findViewById(R.id.togglePassword);
@@ -55,103 +58,78 @@ public class MainActivity extends AppCompatActivity {
             String password = passwordInput.getText().toString().trim();
 
             if (email.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, "Enter email and password", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Fill all fields", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            loginButton.setEnabled(false);
             LoadingOverlay.show(this, "Signing in...");
+            loginButton.setEnabled(false);
 
             mAuth.signInWithEmailAndPassword(email, password)
-                    .addOnSuccessListener(result -> {
-                        String uid = mAuth.getUid();
-                        FirebaseFirestore.getInstance()
-                                .collection("users").document(uid).get()
-                                .addOnSuccessListener(doc -> {
-                                    loginButton.setEnabled(true);
-
-                                    if (!doc.exists()) {
-                                        LoadingOverlay.hide();
-                                        mAuth.signOut();
-                                        Toast.makeText(this, "Account not found", Toast.LENGTH_LONG).show();
-                                        return;
-                                    }
-
-                                    String role = doc.getString("role");
-                                    String status = doc.getString("status");
-
-                                    boolean isFaculty = "Faculty".equalsIgnoreCase(role);
-                                    boolean isActive = status == null || "Active".equalsIgnoreCase(status);
-
-                                    if (isFaculty && isActive) {
-                                        LoadingOverlay.show(this, "Getting things ready...");
-                                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
-                                        finish();
-                                    } else if (!isFaculty) {
-                                        LoadingOverlay.hide();
-                                        mAuth.signOut();
-                                        Toast.makeText(this, "This app is for faculty accounts only", Toast.LENGTH_LONG).show();
-                                    } else {
-                                        LoadingOverlay.hide();
-                                        mAuth.signOut();
-                                        Toast.makeText(this, "Your account is inactive. Contact admin.", Toast.LENGTH_LONG).show();
-                                    }
-                                })
-                                .addOnFailureListener(e -> {
-                                    loginButton.setEnabled(true);
-                                    LoadingOverlay.hide();
-                                    mAuth.signOut();
-                                    Toast.makeText(this, "Could not verify account: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                });
-                    })
-                    .addOnFailureListener(e -> {
-                        loginButton.setEnabled(true);
-                        LoadingOverlay.hide();
-                        Toast.makeText(this, "Login failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    .addOnCompleteListener(this, task -> {
+                        if (task.isSuccessful()) {
+                            checkRoleAndProceed();
+                        } else {
+                            LoadingOverlay.hide();
+                            loginButton.setEnabled(true);
+                            Toast.makeText(MainActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
                     });
         });
     }
 
-    void showForgotPasswordDialog(String prefillEmail) {
-        android.view.View dialogView = getLayoutInflater().inflate(R.layout.dialog_forgot_password, null);
+    private void checkRoleAndProceed() {
+        String uid = mAuth.getUid();
+        if (uid == null) {
+            LoadingOverlay.hide();
+            return;
+        }
 
-        android.app.Dialog dialog = new android.app.Dialog(this);
-        dialog.requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
-        dialog.setContentView(dialogView);
-        dialog.getWindow().setBackgroundDrawable(new android.graphics.drawable.ColorDrawable(android.graphics.Color.TRANSPARENT));
+        FirebaseFirestore.getInstance().collection("users").document(uid).get()
+                .addOnSuccessListener(doc -> {
+                    LoadingOverlay.hide();
+                    if (!doc.exists()) {
+                        Toast.makeText(this, "Profile not found.", Toast.LENGTH_LONG).show();
+                        mAuth.signOut();
+                        return;
+                    }
 
-        EditText resetEmailInput = dialogView.findViewById(R.id.resetEmailInput);
-        if (!prefillEmail.isEmpty()) resetEmailInput.setText(prefillEmail);
+                    String role = doc.getString("role");
+                    if (role != null && role.equalsIgnoreCase("faculty")) {
+                        startActivity(new Intent(MainActivity.this, DashboardActivity.class));
+                        finish();
+                    } else {
+                        Toast.makeText(this, "Only faculty can access the mobile app.", Toast.LENGTH_LONG).show();
+                        mAuth.signOut();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    LoadingOverlay.hide();
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                });
+    }
 
-        dialogView.findViewById(R.id.resetCancelBtn).setOnClickListener(v -> dialog.dismiss());
+    private void showForgotPasswordDialog(String initialEmail) {
+        View dv = LayoutInflater.from(this).inflate(R.layout.dialog_forgot_password, null);
+        AlertDialog dialog = new AlertDialog.Builder(this).setView(dv).create();
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
 
-        dialogView.findViewById(R.id.resetSendBtn).setOnClickListener(v -> {
-            String email = resetEmailInput.getText().toString().trim();
-            if (email.isEmpty()) {
-                Toast.makeText(this, "Enter your email first", Toast.LENGTH_SHORT).show();
-                return;
-            }
+        EditText emailIn = dv.findViewById(R.id.forgotEmailInput);
+        if (initialEmail != null) emailIn.setText(initialEmail);
 
-            LoadingOverlay.show(this, "Sending reset link...");
+        dv.findViewById(R.id.forgotCancelBtn).setOnClickListener(v -> dialog.dismiss());
+        dv.findViewById(R.id.forgotSubmitBtn).setOnClickListener(v -> {
+            String email = emailIn.getText().toString().trim();
+            if (email.isEmpty()) return;
 
-            mAuth.sendPasswordResetEmail(email)
-                    .addOnSuccessListener(unused -> {
-                        LoadingOverlay.hide();
+            FirebaseAuth.getInstance().sendPasswordResetEmail(email)
+                    .addOnSuccessListener(u -> {
+                        Toast.makeText(this, "Reset email sent.", Toast.LENGTH_SHORT).show();
                         dialog.dismiss();
-                        Toast.makeText(this, "Reset email sent. Check your inbox.", Toast.LENGTH_LONG).show();
                     })
-                    .addOnFailureListener(e -> {
-                        LoadingOverlay.hide();
-                        Toast.makeText(this, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                    });
+                    .addOnFailureListener(e -> Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show());
         });
 
         dialog.show();
-
-        // Fixed sizing: force the dialog to 88% of screen width, not WRAP_CONTENT
-        // This is what was rendering as a thin strip before.
-        int screenWidth = getResources().getDisplayMetrics().widthPixels;
-        int dialogWidth = (int) (screenWidth * 0.88);
-        dialog.getWindow().setLayout(dialogWidth, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
     }
-    }
+}

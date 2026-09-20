@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
+    android:padding="20dp">
+
+    <!-- Header Row -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:id="@+id/dialogTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Schedule Details"
+            android:textColor="@color/ink_900"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:fontFamily="@font/lexend_bold" />
+
+        <ImageView
+            android:id="@+id/dialogCloseBtn"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_close"
+            android:clickable="true"
+            android:focusable="true"
+            android:tint="@color/ink_500"
+            android:contentDescription="Close" />
+    </RelativeLayout>
+
+    <!-- Card Image Banner -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp"
+        android:layout_marginBottom="16dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:src="@drawable/room1"
+                android:scaleType="centerCrop"
+                android:contentDescription="Room image" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#66000000" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/bannerRoom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Room"
+                    android:textColor="#FFFFFF"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:fontFamily="@font/lexend_bold" />
+
+                <TextView
+                    android:id="@+id/bannerSubtitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Subject Detail"
+                    android:textColor="#E2E8F0"
+                    android:textSize="12sp"
+                    android:fontFamily="@font/lexend_regular" />
+            </LinearLayout>
+        </FrameLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Details Metadata List -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <!-- Type -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_type"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Type icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="TYPE"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Academic Class"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+
+            <!-- Faculty -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_profile"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Faculty icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="FACULTY"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailFaculty"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+
+            <!-- Room -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_room"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Room icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="ROOM"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailRoom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+
+            <!-- Subject / Section -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_subject"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Subject icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SUBJECT / SECTION"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailSubject"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+
+            <!-- Date -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_calendar"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Date icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="DATE"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+
+            <!-- Scheduled Time -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_clock"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Time icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="SCHEDULED"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailTime"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="N/A"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <View android:layout_width="match_parent" android:layout_height="1dp" android:background="@color/divider" />
+
+            <!-- Status -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingVertical="8dp"
+                android:gravity="center_vertical">
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_info"
+                    android:tint="@color/brand_orange"
+                    android:contentDescription="Status icon" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginStart="14dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="STATUS"
+                        android:textColor="@color/ink_400"
+                        android:textSize="11sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                    <TextView
+                        android:id="@+id/detailStatus"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Scheduled"
+                        android:textColor="@color/ink_900"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        android:fontFamily="@font/lexend_bold" />
+                </LinearLayout>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

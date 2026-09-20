@@ -18,7 +18,7 @@
             android:layout_width="34dp"
             android:layout_height="34dp"
             android:layout_gravity="center"
-            android:src="@drawable/ic_warning"
+            android:src="@drawable/ic_info"
             app:tint="@color/brand_orange" />
     </FrameLayout>
 
@@ -54,17 +54,16 @@
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/surface_alt">
 
-        <com.google.android.material.button.MaterialButton
+        <TextView
             android:id="@+id/btnCancel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
-            app:backgroundTint="@null"
-            app:rippleColor="@color/brand_orange_soft"
+            android:gravity="center"
             android:text="Cancel"
-            android:textAllCaps="false"
             android:textColor="@color/ink_700"
             android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
             android:fontFamily="@font/lexend_bold"/>
     </androidx.cardview.widget.CardView>
 
@@ -76,16 +75,17 @@
         app:cardElevation="0dp"
         app:cardBackgroundColor="@color/brand_orange">
 
-        <Button
+        <TextView
             android:id="@+id/btnConfirm"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/transparent"
+            android:gravity="center"
             android:text="Confirm"
-            android:textAllCaps="false"
             android:textColor="#FFFFFF"
             android:textSize="15sp"
             android:textStyle="bold"
+            android:clickable="true"
+            android:focusable="true"
             android:fontFamily="@font/lexend_bold"/>
     </androidx.cardview.widget.CardView>
 

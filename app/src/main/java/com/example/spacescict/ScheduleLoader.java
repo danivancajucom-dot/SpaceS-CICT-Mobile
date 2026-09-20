@@ -20,10 +20,14 @@ import java.util.regex.Pattern;
 public class ScheduleLoader {
 
     public static class ScheduleItem {
-        public String id, kind, subject, roomName, section, startTime, endTime, date, faculty, originalRoom;
+        public String id, kind, subject, roomName, roomId, section, startTime, endTime, date,
+                faculty, originalRoom;
         public long occurrenceMillis;
         public boolean isToday;
         public String status;
+        /** Set when this occurrence was released mid-class; endTime is already truncated. */
+        public boolean released;
+        public String releasedAtTime;
     }
 
     public interface Callback {
@@ -182,10 +186,11 @@ public class ScheduleLoader {
                                 db.collection("events").get().addOnSuccessListener(eventsSnap -> {
 
                                     db.collection("roomReleases").get().addOnSuccessListener(releaseSnap -> {
-                                        Set<String> releasedKeys = new HashSet<>();
+                                        Map<String, DocumentSnapshot> releasedMap = new HashMap<>();
                                         for (DocumentSnapshot d : releaseSnap.getDocuments()) {
                                             if (uid.equals(d.getString("releasedBy"))) {
-                                                releasedKeys.add(d.getString("scheduleId") + "_" + d.getString("date"));
+                                                releasedMap.put(d.getString("scheduleId") + "_"
+                                                        + d.getString("date"), d);
                                             }
                                         }
 
@@ -195,7 +200,7 @@ public class ScheduleLoader {
                                             for (DocumentSnapshot d : reassignSnap.getDocuments()) {
                                                 String status = d.getString("status");
                                                 String facultyId = d.getString("facultyId");
-                                                if (status == null || !status.equalsIgnoreCase("approved")) continue;
+                                                if (!isApprovedReassignment(status)) continue;
                                                 if (!uid.equals(facultyId)) continue;
                                                 if (d.getString("oldRoomId") != null) {
                                                     awayKeys.add(d.getString("scheduleId") + "_" + d.getString("date"));
@@ -213,7 +218,7 @@ public class ScheduleLoader {
                                                     if (isOwnerById || isOwnerByName) approvedReservations.add(r);
                                                 }
 
-                                                buildTodayItems(latestSchedules, onlineSchedules, roomNames, releasedKeys, awayKeys,
+                                                buildTodayItems(latestSchedules, onlineSchedules, roomNames, releasedMap, awayKeys,
                                                         reassignedInto, approvedReservations, eventsSnap.getDocuments(), termLabel, callback);
                                             });
                                         });
@@ -226,7 +231,8 @@ public class ScheduleLoader {
     }
 
     static void buildTodayItems(List<DocumentSnapshot> latestSchedules, List<DocumentSnapshot> onlineSchedules,
-                                Map<String, String> roomNames, Set<String> releasedKeys, Set<String> awayKeys,
+                                Map<String, String> roomNames, Map<String, DocumentSnapshot> releasedMap,
+                                Set<String> awayKeys,
                                 List<DocumentSnapshot> reassignedInto, List<DocumentSnapshot> approvedReservations,
                                 List<DocumentSnapshot> events, String termLabel, Callback callback) {
 
@@ -248,8 +254,11 @@ public class ScheduleLoader {
             String dateStr = toDateStr(occCal);
             String scheduleId = s.getId();
             String key = scheduleId + "_" + dateStr;
-            if (releasedKeys.contains(key)) continue;
             if (awayKeys.contains(key)) continue;
+
+            DocumentSnapshot release = releasedMap.get(key);
+            String effectiveEnd = effectiveEndFor(release, startTime, endTime);
+            if (effectiveEnd == null) continue; // released before it started - hide entirely
 
             String roomId = s.getReference().getParent().getParent() != null
                     ? s.getReference().getParent().getParent().getId() : null;
@@ -258,14 +267,17 @@ public class ScheduleLoader {
             item.id = scheduleId;
             item.kind = "schedule";
             item.subject = s.getString("subject");
+            item.roomId = roomId;
             item.roomName = roomId != null ? roomNames.get(roomId) : null;
             item.section = s.getString("section");
             item.startTime = startTime;
-            item.endTime = endTime;
+            item.endTime = effectiveEnd;
             item.date = dateStr;
             item.occurrenceMillis = occurrence;
             item.isToday = dateStr.equals(todayStr);
             item.faculty = s.getString("faculty");
+            item.released = release != null;
+            item.releasedAtTime = release != null ? effectiveEnd : null;
             scheduleCandidates.add(item);
         }
 
@@ -404,14 +416,22 @@ public class ScheduleLoader {
 
         List<ScheduleItem> upcomingItems = new ArrayList<>();
         for (ScheduleItem item : allItems) {
-            if (!item.isToday) continue; // only today's remaining items — never a future day
-            if (item.occurrenceMillis <= now.getTimeInMillis()) continue; // must not have started yet
-            upcomingItems.add(item);
+            if (item.occurrenceMillis > now.getTimeInMillis()) upcomingItems.add(item);
             if (upcomingItems.size() >= 5) break;
         }
 
         Set<String> roomsUsedSet = new HashSet<>();
         for (ScheduleItem item : allItems) if (item.roomName != null) roomsUsedSet.add(item.roomName);
+
+        // Web compatibility: If no imported schedules exist, clear all generic events/reservations
+        // so the schedule page looks completely empty like the web version.
+        if (latestSchedules.isEmpty()) {
+            todaysItems.clear();
+            upcomingItems.clear();
+            roomsUsedSet.clear();
+            callback.onResult(new ArrayList<>(), new ArrayList<>(), null, 0, 0);
+            return;
+        }
 
         callback.onResult(todaysItems, upcomingItems, termLabel, latestSchedules.size() + onlineSchedules.size(), roomsUsedSet.size());
     }
@@ -497,18 +517,18 @@ public class ScheduleLoader {
         Set<String> weekDateSet = new HashSet<>();
         Collections.addAll(weekDateSet, weekDates);
 
-        Set<String> releasedKeys = new HashSet<>();
+        Map<String, DocumentSnapshot> releasedMap = new HashMap<>();
         for (DocumentSnapshot r : releases) {
             String scheduleId = r.getString("scheduleId");
             String date = r.getString("date");
-            if (scheduleId != null && date != null) releasedKeys.add(scheduleId + "_" + date);
+            if (scheduleId != null && date != null) releasedMap.put(scheduleId + "_" + date, r);
         }
 
         // NEW: build reassigned-away keys (schedule occurrence moved elsewhere this date)
         Set<String> reassignedKeys = new HashSet<>();
         for (DocumentSnapshot r : reassignments) {
             String status = r.getString("status");
-            if (status == null || !status.equalsIgnoreCase("approved")) continue;
+            if (!isApprovedReassignment(status)) continue;
             String scheduleId = r.getString("scheduleId");
             String date = r.getString("date");
             if (scheduleId != null && date != null) reassignedKeys.add(scheduleId + "_" + date);
@@ -527,8 +547,13 @@ public class ScheduleLoader {
             String dateStr = weekDates[dayIdx];
             String scheduleId = s.getId();
             String occurrenceKey = scheduleId + "_" + dateStr;
-            if (releasedKeys.contains(occurrenceKey)) continue;
-            if (reassignedKeys.contains(occurrenceKey)) continue; // NEW: skip reassigned-away occurrences
+            if (reassignedKeys.contains(occurrenceKey)) continue; // moved elsewhere this date
+
+            String rawStart = s.getString("startTime");
+            String rawEnd = s.getString("endTime");
+            DocumentSnapshot release = releasedMap.get(occurrenceKey);
+            String effectiveEnd = effectiveEndFor(release, rawStart, rawEnd);
+            if (effectiveEnd == null) continue; // fully released
 
             String roomId = s.getReference().getParent().getParent() != null
                     ? s.getReference().getParent().getParent().getId() : null;
@@ -537,12 +562,15 @@ public class ScheduleLoader {
             item.id = scheduleId;
             item.kind = "schedule";
             item.subject = s.getString("subject");
+            item.roomId = roomId;
             item.roomName = roomId != null ? roomNames.get(roomId) : null;
             item.section = s.getString("section");
-            item.startTime = s.getString("startTime");
-            item.endTime = s.getString("endTime");
+            item.startTime = rawStart;
+            item.endTime = effectiveEnd;
             item.date = dateStr;
             item.faculty = s.getString("faculty");
+            item.released = release != null;
+            item.releasedAtTime = release != null ? effectiveEnd : null;
             scheduleItems.add(item);
         }
 
@@ -635,7 +663,7 @@ public class ScheduleLoader {
         for (DocumentSnapshot r : reassignments) {
             String status = r.getString("status");
             String facultyId = r.getString("facultyId");
-            if (status == null || !status.equalsIgnoreCase("approved") || !uid.equals(facultyId)) continue;
+            if (!isApprovedReassignment(status) || !uid.equals(facultyId)) continue;
             String date = r.getString("date");
             if (date == null || !weekDateSet.contains(date)) continue;
 
@@ -656,6 +684,13 @@ public class ScheduleLoader {
         for (String d : MON_FIRST) {
             Collections.sort(byDay.get(d), Comparator.comparingInt(i ->
                     parseTimeParts(i.startTime)[0] * 60 + parseTimeParts(i.startTime)[1]));
+        }
+
+        // Web compatibility: Only show events if a term/schedule has been imported
+        if (schedules.isEmpty()) {
+            for (String d : MON_FIRST) byDay.get(d).clear();
+            callback.onResult(byDay, weekLabel, null);
+            return;
         }
 
         callback.onResult(byDay, weekLabel, termLabel);
@@ -679,6 +714,37 @@ public class ScheduleLoader {
             matched.add(s);
         }
         return matched;
+    }
+
+    /**
+     * Reassignment status: the clerk side writes "approved", the faculty side
+     * writes "accepted". Both mean the move is live, so accept either —
+     * otherwise a reassignment accepted on one platform vanishes on the other.
+     */
+    /**
+     * Applies a release to a single occurrence, mirroring FacultySchedule.jsx.
+     *
+     * A release with no effectiveEndTime is an UPCOMING release - the class never
+     * happened, so the card disappears entirely (returns null). A release WITH an
+     * effectiveEndTime happened mid-class, so the card is truncated to the moment
+     * the room was handed back, preserving the elapsed time already used.
+     */
+    static String effectiveEndFor(DocumentSnapshot release, String startTime, String endTime) {
+        if (release == null) return endTime;
+        String effectiveEnd = release.getString("effectiveEndTime");
+        if (effectiveEnd == null || effectiveEnd.isEmpty()) return null;
+        if (minutesOf(effectiveEnd) <= minutesOf(startTime)) return null;
+        return effectiveEnd;
+    }
+
+    static int minutesOf(String time) {
+        int[] parts = parseTimeParts(time);
+        return parts[0] * 60 + parts[1];
+    }
+
+    static boolean isApprovedReassignment(String status) {
+        if (status == null) return false;
+        return status.equalsIgnoreCase("approved") || status.equalsIgnoreCase("accepted");
     }
 
     static boolean overlap(String aStart, String aEnd, String bStart, String bEnd) {

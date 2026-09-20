@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/dialog_bg"
+    android:padding="24dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <FrameLayout
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:background="@drawable/circle_orange">
+
+            <ImageView
+                android:id="@+id/modalIcon"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_gravity="center"
+             />
+        </FrameLayout>
+
+        <ImageView
+            android:id="@+id/modalCloseBtn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_alignParentEnd="true"
+            android:padding="8dp"
+            android:src="@drawable/ic_close"
+            android:rotation="90"
+            android:background="@color/surface_alt"
+            app:tint="@color/ink_700"/>
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/modalTitle"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:textColor="@color/ink_900"
+        android:layout_marginTop="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lexend_bold"/>
+
+    <TextView
+        android:id="@+id/modalSubtitle"
+        android:textColor="@color/ink_500"
+        android:textSize="13sp"
+        android:layout_marginTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/lexend_regular"/>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginTop="16dp"
+        android:maxHeight="420dp"
+        android:fillViewport="false">
+
+        <LinearLayout
+            android:id="@+id/modalBodyContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"/>
+    </ScrollView>
+
+</LinearLayout>

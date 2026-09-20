@@ -1,106 +1,346 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/bg_page">
+    android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/header"
-        android:layout_width="0dp"
-        android:layout_height="70dp"
-        android:paddingHorizontal="20dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:background="@color/surface"
-        android:elevation="1dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent">
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            app:cardCornerRadius="9dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/brand_orange_soft">
-
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="5dp"
-                android:src="@drawable/ic_logo"/>
-        </androidx.cardview.widget.CardView>
-
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:text="SpaceS CICT"
-            android:textStyle="bold"
-            android:textSize="16sp"
-            android:layout_marginStart="10dp"
-            android:layout_weight="1"
-            android:fontFamily="@font/lexend_bold"
-            android:textColor="@color/ink_900"/>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="999dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/surface_alt">
-
-            <ImageView
-                android:id="@+id/notification"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="9dp"
-                android:src="@drawable/ic_notification"
-                app:tint="@color/ink_700"/>
-        </androidx.cardview.widget.CardView>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="38dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="10dp"
-            app:cardCornerRadius="999dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/brand_orange_soft">
-
-            <ImageView
-                android:id="@+id/logout"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:padding="9dp"
-                android:src="@drawable/ic_logout"
-                app:tint="@color/brand_orange"/>
-        </androidx.cardview.widget.CardView>
-
-    </LinearLayout>
-
-    <FrameLayout
-        android:id="@+id/contentFrame"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toBottomOf="@id/header"
-        app:layout_constraintBottom_toTopOf="@id/bottomNav"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNav"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/surface"
-        android:elevation="8dp"
-        app:itemIconTint="@color/bottom_nav_color"
-        app:itemTextColor="@color/bottom_nav_color"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:menu="@menu/bottom_menu"
-        android:fontFamily="@font/lexend_bold"/>
+        android:layout_height="match_parent"
+        android:background="@color/bg_page">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <LinearLayout
+            android:id="@+id/header"
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:background="@color/surface"
+            android:elevation="1dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/menuBtn"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_menu"
+                app:tint="@color/ink_900" />
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="14dp"
+                app:cardBackgroundColor="@color/brand_orange_soft"
+                app:cardCornerRadius="9dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_logo" />
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:fontFamily="@font/lexend_bold"
+                android:text="SpaceS CICT"
+                android:textColor="@color/ink_900"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <FrameLayout
+                android:layout_width="38dp"
+                android:layout_height="38dp">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="38dp"
+                    android:layout_height="38dp"
+                    app:cardBackgroundColor="@color/surface_alt"
+                    app:cardCornerRadius="999dp"
+                    app:cardElevation="0dp">
+
+                    <ImageView
+                        android:id="@+id/notification"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:padding="9dp"
+                        android:src="@drawable/ic_notification"
+                        app:tint="@color/ink_700" />
+                </androidx.cardview.widget.CardView>
+
+                <TextView
+                    android:id="@+id/notificationBadge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_gravity="top|end"
+                    android:background="@drawable/circle_danger"
+                    android:gravity="center"
+                    android:minWidth="16dp"
+                    android:paddingHorizontal="3dp"
+                    android:text="9"
+                    android:textColor="#FFFFFF"
+                    android:textSize="9sp"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+            </FrameLayout>
+        </LinearLayout>
+
+        <FrameLayout
+            android:id="@+id/contentFrame"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/header" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <!-- DRAWER -->
+    <LinearLayout
+        android:layout_width="280dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/surface"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                app:cardBackgroundColor="@color/brand_orange_soft"
+                app:cardCornerRadius="9dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp"
+                    android:src="@drawable/ic_logo" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="SpaceS"
+                    android:textColor="@color/ink_900"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lexend_regular"
+                    android:text="CICT Faculty"
+                    android:textColor="@color/brand_orange"
+                    android:textSize="11sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/closeDrawerBtn"
+                android:layout_width="26dp"
+                android:layout_height="26dp"
+                android:src="@drawable/ic_menu"
+                app:tint="@color/ink_500" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <LinearLayout
+            android:id="@+id/navItemsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingHorizontal="12dp"
+            android:paddingTop="12dp" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/divider" />
+
+        <!-- PROFILE MINI CARD (collapsed) -->
+        <LinearLayout
+            android:id="@+id/profileMiniRow"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:focusable="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="42dp"
+                android:layout_height="42dp"
+                app:cardBackgroundColor="@color/brand_orange_soft"
+                app:cardCornerRadius="999dp"
+                app:cardElevation="0dp">
+
+                <ImageView
+                    android:id="@+id/drawerProfileImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/ic_user" />
+            </androidx.cardview.widget.CardView>
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/drawerProfileName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lexend_bold"
+                    android:textColor="@color/ink_900"
+                    android:textSize="13.5sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/lexend_regular"
+                    android:text="Faculty"
+                    android:textColor="@color/ink_500"
+                    android:textSize="11.5sp" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/profileExpandArrow"
+                android:layout_width="16dp"
+                android:layout_height="16dp"
+                android:rotation="90"
+                android:src="@drawable/ic_chevron_right"
+                app:tint="@color/ink_500" />
+        </LinearLayout>
+
+        <!-- PROFILE EXPANDED OPTIONS -->
+        <LinearLayout
+            android:id="@+id/profileExpandedOptions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:id="@+id/drawerProfileBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="14dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_user"
+                    app:tint="@color/ink_700" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Profile"
+                    android:textColor="@color/ink_900"
+                    android:textSize="13.5sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/drawerSettingsBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="14dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_edit"
+                    app:tint="@color/ink_700" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Settings"
+                    android:textColor="@color/ink_900"
+                    android:textSize="13.5sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginHorizontal="20dp"
+                android:background="@color/divider" />
+
+            <LinearLayout
+                android:id="@+id/drawerLogoutBtn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clickable="true"
+                android:focusable="true"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="14dp">
+
+                <ImageView
+                    android:layout_width="18dp"
+                    android:layout_height="18dp"
+                    android:src="@drawable/ic_logout"
+                    app:tint="@color/danger" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="14dp"
+                    android:fontFamily="@font/lexend_bold"
+                    android:text="Logout"
+                    android:textColor="@color/danger"
+                    android:textSize="13.5sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

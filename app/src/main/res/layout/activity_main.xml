@@ -2,7 +2,8 @@
 <FrameLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- HERO IMAGE -->
     <ImageView
@@ -153,17 +154,26 @@
 
         <!-- BUTTON -->
 
-        <Button
-            android:id="@+id/loginButton"
+        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginTop="24dp"
-            android:backgroundTint="#E86A12"
-            android:text="Sign In"
-            android:textAllCaps="false"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp"
-            android:fontFamily="@font/lexend_bold"/>
+            app:cardCornerRadius="16dp"
+            app:cardElevation="2dp"
+            app:cardBackgroundColor="#E86A12">
+            <TextView
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Sign In"
+                android:gravity="center"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:clickable="true"
+                android:focusable="true"
+                android:fontFamily="@font/lexend_bold"/>
+        </androidx.cardview.widget.CardView>
 
         <!-- FOOTER -->
 

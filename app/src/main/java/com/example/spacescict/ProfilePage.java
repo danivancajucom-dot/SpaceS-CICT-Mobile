@@ -28,8 +28,8 @@ public class ProfilePage {
 
     Context context;
     EditText name, email;
-    ImageView editBtn, backBtn, profilePhoto, cameraBtn;
-    Button resetPasswordBtn;
+    ImageView editBtn, backBtn, profilePhoto;
+    View cameraBtn, uploadPictureBtn;
 
     boolean isEditing = false;
     FirebaseFirestore db;
@@ -58,7 +58,7 @@ public class ProfilePage {
         backBtn = view.findViewById(R.id.backBtn);
         profilePhoto = view.findViewById(R.id.profilePhoto);
         cameraBtn = view.findViewById(R.id.cameraBtn);
-        resetPasswordBtn = view.findViewById(R.id.resetPasswordBtn);
+        uploadPictureBtn = view.findViewById(R.id.uploadPictureBtn);
 
         tabDetails = view.findViewById(R.id.tabDetails);
         tabActivityLog = view.findViewById(R.id.tabActivityLog);
@@ -83,6 +83,7 @@ public class ProfilePage {
         loadProfile();
         setFieldsEnabled(false);
         cameraBtn.setVisibility(View.GONE);
+        if (uploadPictureBtn != null) uploadPictureBtn.setVisibility(View.GONE);
 
         editBtn.setOnClickListener(v -> {
             if (!isEditing) Toast.makeText(context, "Edit mode enabled", Toast.LENGTH_SHORT).show();
@@ -95,7 +96,11 @@ public class ProfilePage {
             if (photoPickerHandler != null) photoPickerHandler.launchPicker();
         });
 
-        resetPasswordBtn.setOnClickListener(v -> sendPasswordReset());
+        if (uploadPictureBtn != null) {
+            uploadPictureBtn.setOnClickListener(v -> {
+                if (photoPickerHandler != null) photoPickerHandler.launchPicker();
+            });
+        }
     }
 
     void switchTab(boolean showDetails) {
@@ -159,16 +164,40 @@ public class ProfilePage {
                     if (doc.exists()) {
                         String first = doc.getString("firstName");
                         String last = doc.getString("lastName");
-                        name.setText(((first != null ? first : "") + " " + (last != null ? last : "")).trim());
+                        if (first == null) first = "";
+                        if (last == null) last = "";
+                        name.setText((first + " " + last).trim());
                         email.setText(doc.getString("email"));
 
                         String photoUrl = doc.getString("photoUrl");
-                        if (photoUrl != null && !photoUrl.isEmpty()) {
-                            Glide.with(context)
-                                    .load(photoUrl)
-                                    .circleCrop()
-                                    .placeholder(R.drawable.ic_user)
-                                    .into(profilePhoto);
+                        if (profilePhoto != null) {
+                            if (photoUrl != null && !photoUrl.isEmpty()) {
+                                Glide.with(context)
+                                        .load(photoUrl)
+                                        .circleCrop()
+                                        .placeholder(R.drawable.ic_user)
+                                        .into(profilePhoto);
+                            } else {
+                                String initial = "";
+                                if (!first.isEmpty()) initial += first.substring(0, 1).toUpperCase();
+                                if (!last.isEmpty()) initial += last.substring(0, 1).toUpperCase();
+                                if (initial.isEmpty()) initial = "U";
+
+                                android.graphics.Bitmap bitmap = android.graphics.Bitmap.createBitmap(240, 240, android.graphics.Bitmap.Config.ARGB_8888);
+                                android.graphics.Canvas canvas = new android.graphics.Canvas(bitmap);
+                                android.graphics.Paint paint = new android.graphics.Paint();
+                                paint.setColor(android.graphics.Color.parseColor("#FFEDD5"));
+                                paint.setAntiAlias(true);
+                                canvas.drawCircle(120, 120, 120, paint);
+
+                                paint.setColor(android.graphics.Color.parseColor("#EA580C"));
+                                paint.setTextSize(88);
+                                paint.setTypeface(android.graphics.Typeface.create("sans-serif-black", android.graphics.Typeface.BOLD));
+                                paint.setTextAlign(android.graphics.Paint.Align.CENTER);
+                                float yPos = (canvas.getHeight() / 2L) - ((paint.descent() + paint.ascent()) / 2L);
+                                canvas.drawText(initial, 120, yPos, paint);
+                                profilePhoto.setImageBitmap(bitmap);
+                            }
                         }
                     }
                 })
@@ -176,22 +205,13 @@ public class ProfilePage {
                         Toast.makeText(context, "Failed to load profile: " + e.getMessage(), Toast.LENGTH_SHORT).show());
     }
 
-    void sendPasswordReset() {
-        String userEmail = email.getText().toString().trim();
-        if (userEmail.isEmpty()) return;
-
-        FirebaseAuth.getInstance().sendPasswordResetEmail(userEmail)
-                .addOnSuccessListener(unused ->
-                        Toast.makeText(context, "Reset email sent. Check your inbox.", Toast.LENGTH_LONG).show())
-                .addOnFailureListener(e ->
-                        Toast.makeText(context, "Failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
-    }
 
     void toggleEdit() {
         if (!isEditing) {
             isEditing = true;
             setFieldsEnabled(true);
             cameraBtn.setVisibility(View.VISIBLE);
+            if (uploadPictureBtn != null) uploadPictureBtn.setVisibility(View.VISIBLE);
             editBtn.setImageResource(R.drawable.ic_check);
         } else {
             ConfirmDialog.show(context, "Save Changes?", "Do you want to save your changes?",
@@ -218,6 +238,7 @@ public class ProfilePage {
                     isEditing = false;
                     setFieldsEnabled(false);
                     cameraBtn.setVisibility(View.GONE);
+                    if (uploadPictureBtn != null) uploadPictureBtn.setVisibility(View.GONE);
                     editBtn.setImageResource(R.drawable.ic_edit);
 
                     ActivityLogger.log("Updated profile", "edit", "Faculty Profile", "Success", new HashMap<>(), null);

@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -26,6 +27,7 @@ import com.google.firebase.firestore.Query;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class NotificationsActivity extends AppCompatActivity {
@@ -46,7 +48,7 @@ public class NotificationsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_notifications);
 
         recyclerView = findViewById(R.id.notificationRecycler);
-        ImageView backButton = findViewById(R.id.backBtn);
+        android.widget.ImageButton backButton = findViewById(R.id.backBtn);
         backButton.setOnClickListener(v -> finish());
 
         tabAllText = findViewById(R.id.tabAllText);
@@ -56,6 +58,9 @@ public class NotificationsActivity extends AppCompatActivity {
         findViewById(R.id.tabAll).setOnClickListener(v -> setFilter(Filter.ALL));
         findViewById(R.id.tabUnread).setOnClickListener(v -> setFilter(Filter.UNREAD));
         tabArchivedText.setOnClickListener(v -> setFilter(Filter.ARCHIVED));
+
+        View markAllReadBtn = findViewById(R.id.markAllReadBtn);
+        if (markAllReadBtn != null) markAllReadBtn.setOnClickListener(v -> markAllAsRead());
 
         adapter = new NotificationAdapter(filteredList, new NotificationAdapter.OnActionListener() {
             @Override
@@ -153,6 +158,34 @@ public class NotificationsActivity extends AppCompatActivity {
         tabAllText.setTextColor(currentFilter == Filter.ALL ? active : inactive);
         tabUnreadText.setTextColor(currentFilter == Filter.UNREAD ? active : inactive);
         tabArchivedText.setTextColor(currentFilter == Filter.ARCHIVED ? active : inactive);
+    }
+
+    void markAllAsRead() {
+        List<NotificationModel> unread = new ArrayList<>();
+        for (NotificationModel n : fullList) {
+            if (n.unread && !n.archived) unread.add(n);
+        }
+        if (unread.isEmpty()) {
+            Toast.makeText(this, "Nothing to mark as read.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        com.google.firebase.firestore.WriteBatch batch = FirebaseFirestore.getInstance().batch();
+        for (NotificationModel n : unread) {
+            if (n.id == null) continue;
+            n.unread = false;
+            batch.update(FirebaseFirestore.getInstance().collection("notifications").document(n.id),
+                    "unread", false);
+        }
+        applyFilter();
+
+        batch.commit()
+                .addOnSuccessListener(ignored -> Toast.makeText(this,
+                        unread.size() + " notification" + (unread.size() == 1 ? "" : "s")
+                                + " marked as read.", Toast.LENGTH_SHORT).show())
+                .addOnFailureListener(e -> Toast.makeText(this,
+                        "Some notifications could not be updated: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show());
     }
 
     void markNotificationRead(NotificationModel n) {

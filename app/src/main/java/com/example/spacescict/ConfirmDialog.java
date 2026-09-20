@@ -4,8 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.view.View;
 import android.view.Window;
-import android.widget.Button;
 import android.widget.TextView;
 
 public class ConfirmDialog {
@@ -33,21 +33,23 @@ public class ConfirmDialog {
         TextView dialogTitle = dialog.findViewById(R.id.dialogTitle);
         TextView dialogMessage = dialog.findViewById(R.id.dialogMessage);
 
-        Button btnConfirm = dialog.findViewById(R.id.btnConfirm);
-        Button btnCancel = dialog.findViewById(R.id.btnCancel);
+        View btnConfirm = dialog.findViewById(R.id.btnConfirm);
+        View btnCancel = dialog.findViewById(R.id.btnCancel);
 
-        dialogTitle.setText(title);
-        dialogMessage.setText(message);
+        if (dialogTitle != null) dialogTitle.setText(title);
+        if (dialogMessage != null) dialogMessage.setText(message);
 
-        btnConfirm.setText(confirmText);
-        btnCancel.setText(cancelText);
+        if (btnConfirm instanceof TextView) ((TextView) btnConfirm).setText(confirmText);
+        if (btnCancel instanceof TextView) ((TextView) btnCancel).setText(cancelText);
 
-        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        if (btnCancel != null) btnCancel.setOnClickListener(v -> dialog.dismiss());
 
-        btnConfirm.setOnClickListener(v -> {
-            listener.onConfirm();
-            dialog.dismiss();
-        });
+        if (btnConfirm != null) {
+            btnConfirm.setOnClickListener(v -> {
+                listener.onConfirm();
+                dialog.dismiss();
+            });
+        }
 
         dialog.show();
         dialog.getWindow().setLayout(
